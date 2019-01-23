@@ -94,7 +94,6 @@ public final class Gates {
     }
 
     public static void save(Context ctx) {
-        Markers.update();
         if (gates.isEmpty()) return;
         Set<LocalGateImpl> lgates = getLocalGates();
         for (LocalGateImpl gate : lgates) {
@@ -145,7 +144,6 @@ public final class Gates {
             Global.plugin.getServer().getPluginManager().callEvent(event);
             for (Server server : Servers.getAll())
                 server.sendGateAdded(lg);
-            Markers.update();
             World world = lg.getWorld();
             if (Config.getAutoAddWorlds())
                 try {
@@ -170,7 +168,6 @@ public final class Gates {
             lg.save(false);
             for (Server server : Servers.getAll())
                 server.sendGateRemoved(lg);
-            Markers.update();
         }
     }
 
@@ -186,7 +183,6 @@ public final class Gates {
             lg.destroy(unbuild);
             for (Server server : Servers.getAll())
                 server.sendGateDestroyed(lg);
-            Markers.update();
         }
     }
 
@@ -212,7 +208,6 @@ public final class Gates {
             lg.onRenameComplete();
             for (Server server : Servers.getAll())
                 server.sendGateRenamed(oldFullName, gate.getName());
-            Markers.update();
         }
     }
 

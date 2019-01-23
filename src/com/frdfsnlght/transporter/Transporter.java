@@ -149,7 +149,6 @@ public class Transporter extends JavaPlugin {
         Runnable loadWorlds = new Runnable() {
             public void run() {
                 Worlds.autoLoad(ctx);
-                Markers.update();
             }
         };
 

@@ -19,8 +19,6 @@ import com.frdfsnlght.transporter.Config;
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.Design;
 import com.frdfsnlght.transporter.Designs;
-import com.frdfsnlght.transporter.Economy;
-import com.frdfsnlght.transporter.EconomyException;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Global;
 import com.frdfsnlght.transporter.Inventory;
@@ -119,18 +117,10 @@ public class DesignCommand extends TrpCommandProcessor {
                 throw new CommandException("gate type '%s' is not buildable in this world", design.getName());
 
             Permissions.require(ctx.getPlayer(), "trp.design.build." + design.getName());
-            Economy.requireFunds(ctx.getPlayer(), design.getBuildCost());
             if (design.mustBuildFromInventory())
                 Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
 
             design.build(player.getLocation(), player.getName());
-
-            try {
-                if (Economy.deductFunds(ctx.getPlayer(), design.getBuildCost()))
-                    ctx.sendLog("debited %s for gate construction", design.getBuildCost());
-            } catch (EconomyException ee) {
-                Utils.warning("unable to debit gate construction costs for %s: %s", ctx.getPlayer().getName(), ee.getMessage());
-            }
 
             if (design.mustBuildFromInventory())
                 if (Inventory.deductBlocks(ctx.getPlayer(), design.getInventoryBlocks()))
@@ -182,7 +172,6 @@ public class DesignCommand extends TrpCommandProcessor {
                     throw new CommandException("gate type '%s' is not buildable in this world", design.getName());
                 Permissions.require(ctx.getPlayer(), "trp.design.build." + design.getName());
                 Permissions.require(ctx.getPlayer(), "trp.create." + design.getName());
-                Economy.requireFunds(ctx.getPlayer(), design.getBuildCost() + design.getCreateCost());
                 if (design.mustBuildFromInventory())
                     Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
 
@@ -190,19 +179,6 @@ public class DesignCommand extends TrpCommandProcessor {
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);
-
-                try {
-                    if (Economy.deductFunds(ctx.getPlayer(), design.getBuildCost()))
-                        ctx.sendLog("debited %s for gate construction", Economy.format(design.getBuildCost()));
-                } catch (EconomyException ee) {
-                    Utils.warning("unable to debit gate construction costs for %s: %s", ctx.getPlayer().getName(), ee.getMessage());
-                }
-                try {
-                    if (Economy.deductFunds(ctx.getPlayer(), design.getCreateCost()))
-                        ctx.sendLog("debited %s for gate creation", Economy.format(design.getCreateCost()));
-                } catch (EconomyException ee) {
-                    Utils.warning("unable to debit gate creation costs for %s: %s", ctx.getPlayer().getName(), ee.getMessage());
-                }
 
                 if (design.mustBuildFromInventory())
                     if (Inventory.deductBlocks(ctx.getPlayer(), design.getInventoryBlocks()))

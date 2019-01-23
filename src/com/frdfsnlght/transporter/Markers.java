@@ -88,12 +88,6 @@ public final class Markers {
                 format = format.replace("%name%", gate.getName());
                 format = format.replace("%type%", gate.getType().toString());
                 format = format.replace("%creator%", gate.getCreatorName());
-                format = format.replace("%sendLocal%", Economy.format(gate.getSendLocalCost()));
-                format = format.replace("%sendWorld%", Economy.format(gate.getSendWorldCost()));
-                format = format.replace("%sendServer%", Economy.format(gate.getSendServerCost()));
-                format = format.replace("%receiveLocal%", Economy.format(gate.getReceiveLocalCost()));
-                format = format.replace("%receiveWorld%", Economy.format(gate.getReceiveWorldCost()));
-                format = format.replace("%receiveServer%", Economy.format(gate.getReceiveServerCost()));
 
                 if (format.trim().isEmpty()) {
                     if (marker != null)
@@ -148,20 +142,6 @@ public final class Markers {
                 out.println("    \"x\": " + center.getX() + ",");
                 out.println("    \"y\": " + center.getY() + ",");
                 out.println("    \"z\": " + center.getZ() + ",");
-                if (Economy.isAvailable()) {
-                    if (gate.getLinkLocal()) {
-                        out.println("    \"onWorldSend\": \"" + Economy.format(gate.getSendLocalCost()) + "\",");
-                        out.println("    \"onWorldReceive\": \"" + Economy.format(gate.getReceiveLocalCost()) + "\",");
-                    }
-                    if (gate.getLinkWorld()) {
-                        out.println("    \"offWorldSend\": \"" + Economy.format(gate.getSendWorldCost()) + "\",");
-                        out.println("    \"offWorldReceive\": \"" + Economy.format(gate.getReceiveWorldCost()) + "\",");
-                    }
-                    if (gate.getLinkServer()) {
-                        out.println("    \"offServerSend\": \"" + Economy.format(gate.getSendServerCost()) + "\",");
-                        out.println("    \"offServerReceive\": \"" + Economy.format(gate.getReceiveServerCost()) + "\",");
-                    }
-                }
                 out.println("    \"creator\": \"" + gate.getCreatorName() + "\"");
                 out.println("  }" + (i.hasNext() ? "," : ""));
             }

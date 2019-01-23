@@ -731,23 +731,6 @@ public final class ReservationImpl implements Reservation {
                 if (level < fromGateLocal.getRequireLevel())
                     throw new ReservationException("this gate requires you to be level %s or above", fromGateLocal.getRequireLevel());
             }
-            // player cost
-            double cost = fromGateLocal.getSendCost(toGate);
-            if (cost > 0)
-                try {
-                    Economy.requireFunds(player, cost);
-                } catch (EconomyException e) {
-                    throw new ReservationException("this gate requires %s", Economy.format(cost));
-                }
-            if ((toGate != null) && toGate.isSameServer()) {
-                cost += ((LocalGateImpl)toGate).getReceiveCost(fromGateLocal);
-                if (cost > 0)
-                    try {
-                        Economy.requireFunds(player, cost);
-                    } catch (EconomyException e) {
-                        throw new ReservationException("total travel cost requires %s", Economy.format(cost));
-                    }
-            }
         }
 
         // check gate permission
@@ -787,17 +770,6 @@ public final class ReservationImpl implements Reservation {
                 if (! toGateLocal.isAllowedGameMode(gameMode))
                     throw new ReservationException("remote gate rejected your game mode");
             }
-            // player cost
-            if (fromServer != null) {
-                // only check this side since the departure side already checked itself
-                double cost = toGateLocal.getReceiveCost(fromGate);
-                if (cost > 0)
-                    try {
-                        Economy.requireFunds(player, cost);
-                    } catch (EconomyException e) {
-                        throw new ReservationException("remote gate requires %s", Economy.format(cost));
-                    }
-            }
         }
 
         // check inventory
@@ -829,24 +801,6 @@ public final class ReservationImpl implements Reservation {
         // Handle lightning strike...
 
         fromGateLocal.onSend(entity);
-
-        if (player != null) {
-
-            Context ctx = new Context(player);
-
-            // player cost
-            double cost = fromGateLocal.getSendCost(toGate);
-            if ((toGate != null) && toGate.isSameServer())
-                cost += ((LocalGateImpl)toGate).getReceiveCost(fromGateLocal);
-            if (cost > 0)
-                try {
-                    if (Economy.deductFunds(player, cost))
-                        ctx.send("debited %s for travel costs", Economy.format(cost));
-                } catch (EconomyException e) {
-                    // too late to do anything useful
-                    Utils.warning("unable to debit travel costs for %s: %s", getTraveler(), e.getMessage());
-                }
-        }
 
     }
 
@@ -882,19 +836,6 @@ public final class ReservationImpl implements Reservation {
                 player.damage(toGateLocal.getInvalidPinDamage());
             }
 
-            // player cost
-            if (fromServer != null) {
-                // only deduct this side since the departure side already deducted itself
-                double cost = toGateLocal.getReceiveCost(fromGate);
-                if (cost > 0)
-                    try {
-                        if (Economy.deductFunds(player, cost))
-                            ctx.sendLog("debited %s for travel costs", Economy.format(cost));
-                    } catch (EconomyException e) {
-                        // too late to do anything useful
-                        Utils.warning("unable to debit travel costs for %s: %s", getTraveler(), e.getMessage());
-                    }
-            }
         } else {
             Utils.debug("%s arrived at '%s'", getTraveler(), toGateLocal.getFullName());
         }

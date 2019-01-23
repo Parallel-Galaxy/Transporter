@@ -1689,40 +1689,19 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
             if (isSameWorld(toGateLocal.getWorld())) {
                 if (! Config.getAllowLinkLocal())
                     throw new CommandException("linking to on-world gates is not permitted");
-                Economy.requireFunds(ctx.getPlayer(), getLinkLocalCost());
             } else {
                 if (! Config.getAllowLinkWorld())
                     throw new CommandException("linking to off-world gates is not permitted");
-                Economy.requireFunds(ctx.getPlayer(), getLinkWorldCost());
             }
         } else {
             if (! Config.getAllowLinkServer())
                 throw new CommandException("linking to remote gates is not permitted");
-            Economy.requireFunds(ctx.getPlayer(), getLinkServerCost());
         }
 
         if (! addLink(toGate.getFullName()))
             throw new GateException("gate '%s' already links to '%s'", getName(ctx), toGate.getName(ctx));
 
         ctx.sendLog("added link from '%s' to '%s'", getName(ctx), toGate.getName(ctx));
-
-        try {
-            if (toGate.isSameServer()) {
-                LocalGateImpl toGateLocal = (LocalGateImpl)toGate;
-                if (isSameWorld(toGateLocal.getWorld())) {
-                    if (Economy.deductFunds(ctx.getPlayer(), getLinkLocalCost()))
-                        ctx.sendLog("debited %s for on-world linking", Economy.format(getLinkLocalCost()));
-                } else {
-                    if (Economy.deductFunds(ctx.getPlayer(), getLinkWorldCost()))
-                        ctx.sendLog("debited %s for off-world linking", Economy.format(getLinkWorldCost()));
-                }
-            } else {
-                if (Economy.deductFunds(ctx.getPlayer(), getLinkServerCost()))
-                    ctx.sendLog("debited %s for off-server linking", Economy.format(getLinkServerCost()));
-            }
-        } catch (EconomyException ee) {
-            Utils.warning("unable to debit linking costs for %s: %s", ctx.getPlayer().getName(), ee.getMessage());
-        }
     }
 
     protected boolean addLink(String link) {

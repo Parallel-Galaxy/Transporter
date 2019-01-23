@@ -100,19 +100,11 @@ public class BlockListenerImpl implements Listener {
             if (match == null) return;
 
             Permissions.require(ctx.getPlayer(), "trp.create." + match.design.getName());
-            Economy.requireFunds(ctx.getPlayer(), match.design.getCreateCost());
 
             gate = match.design.create(match, ctx.getPlayer().getName(), gateName);
             Gates.add(gate, true);
             ctx.sendLog("created gate '%s'", gate.getName());
             Gates.setSelectedGate(ctx.getPlayer(), gate);
-
-            try {
-                if (Economy.deductFunds(ctx.getPlayer(), match.design.getCreateCost()))
-                    ctx.sendLog("debited %s for gate creation", Economy.format(match.design.getCreateCost()));
-            } catch (EconomyException e) {
-                Utils.warning("unable to debit gate creation costs for %s: %s", ctx.getPlayer().getName(), e.getMessage());
-            }
 
             if (link == null) return;
             ctx.getPlayer().performCommand("trp gate link add \"" + link + "\"" + (reverse ? " reverse" : ""));

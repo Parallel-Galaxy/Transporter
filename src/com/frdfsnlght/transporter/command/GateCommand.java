@@ -16,7 +16,6 @@
 package com.frdfsnlght.transporter.command;
 
 import com.frdfsnlght.transporter.Context;
-import com.frdfsnlght.transporter.Economy;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Global;
@@ -162,20 +161,6 @@ public class GateCommand extends TrpCommandProcessor {
             ctx.send("Full name: %s", gate.getFullName());
             ctx.send("Type: %s", gate.getType().toString());
             ctx.send("Creator: %s", gate.getCreatorName());
-            if (Economy.isAvailable()) {
-                if (gate.getLinkLocal())
-                    ctx.send("On-world travel cost: %s/%s",
-                            Economy.format(gate.getSendLocalCost()),
-                            Economy.format(gate.getReceiveLocalCost()));
-                if (gate.getLinkWorld())
-                    ctx.send("Off-world travel cost: %s/%s",
-                            Economy.format(gate.getSendWorldCost()),
-                            Economy.format(gate.getReceiveWorldCost()));
-                if (gate.getLinkServer())
-                    ctx.send("Off-server travel cost: %s/%s",
-                            Economy.format(gate.getSendServerCost()),
-                            Economy.format(gate.getReceiveServerCost()));
-            }
             List<String> links = gate.getLinks();
             ctx.send("Links: %d", links.size());
             for (String link : links)

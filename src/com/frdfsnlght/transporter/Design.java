@@ -696,7 +696,7 @@ public class Design {
         Map<Material,Integer> ib = new EnumMap<Material,Integer>(Material.class);
         for (DesignBlock db : blocks)
             if (db.getDetail().isInventory()) {
-                Material m = db.getDetail().getBuildBlock().getMaterial();
+                Material m = db.getDetail().getBuildBlock().getType();
                 if (ib.containsKey(m))
                     ib.put(m, ib.get(m) + 1);
                 else

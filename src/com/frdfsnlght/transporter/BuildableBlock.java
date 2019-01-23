@@ -25,10 +25,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.Sign;
 import org.bukkit.material.Colorable;
 import org.bukkit.material.Directional;
-import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
 
 /**
@@ -37,8 +37,8 @@ import org.bukkit.material.Openable;
  */
 public final class BuildableBlock {
 
-    protected int type;
-    protected byte data = 0;
+    protected Material type;
+    protected BlockData data;
     protected String[] lines = null;
     protected boolean physics = false;
 
@@ -51,56 +51,53 @@ public final class BuildableBlock {
     }
 
     public BuildableBlock(Location location) {
-        extract(location);
+        Block block = location.getBlock();
+        type = block.getType();
+        data = block.getBlockData();
+        BlockState state = block.getState();
+        if (state instanceof Sign)
+            lines = ((Sign)state).getLines();
+        physics = false;
     }
 
     public BuildableBlock(String str) throws BlockException {
-        type = parseType(str);
+        type = Material.getMaterial(str);
+        data = type.createBlockData();
     }
 
     public BuildableBlock(TypeMap map) throws BlockException {
-        type = parseType(map.getString("type"));
-        data = 0;
+        type = Material.getMaterial(map.getString("type"));
+        data = type.createBlockData();
         physics = map.getBoolean("physics", false);
 
-        if (type == -1) return;
-        String str;
-        str = map.getString("data");
+        if (type == null) return;
+
+        String str = map.getString("data");
         if (str != null) {
-            try {
-                data = Byte.parseByte(str);
-            } catch (NumberFormatException nfe) {
-                throw new BlockException("invalid data '%s'", str);
+            if (data instanceof Directional) {
+                str = map.getString("facing");
+                if (str != null) {
+                    try {
+                        ((Directional)data).setFacingDirection(Utils.valueOf(BlockFace.class, str));
+                    } catch (IllegalArgumentException iae) {
+                        throw new BlockException(iae.getMessage() + " facing '%s'", str);
+                    }
+                }
             }
-        } else {
-            MaterialData md = Material.getMaterial(type).getNewData((byte)0);
-            if (md != null) {
-                if (md instanceof Directional) {
-                    str = map.getString("facing");
-                    if (str != null) {
-                        try {
-                            ((Directional)md).setFacingDirection(Utils.valueOf(BlockFace.class, str));
-                        } catch (IllegalArgumentException iae) {
-                            throw new BlockException(iae.getMessage() + " facing '%s'", str);
-                        }
+            if (data instanceof Colorable) {
+                str = map.getString("color");
+                if (str != null) {
+                    try {
+                        ((Colorable)data).setColor(Utils.valueOf(DyeColor.class, str));
+                    } catch (IllegalArgumentException iae) {
+                        throw new BlockException(iae.getMessage() + " color '%s'", str);
                     }
                 }
-                if (md instanceof Colorable) {
-                    str = map.getString("color");
-                    if (str != null) {
-                        try {
-                            ((Colorable)md).setColor(Utils.valueOf(DyeColor.class, str));
-                        } catch (IllegalArgumentException iae) {
-                            throw new BlockException(iae.getMessage() + " color '%s'", str);
-                        }
-                    }
-                }
-                if (md instanceof Openable) {
-                    str = map.getString("open");
-                    if (str != null)
-                        ((Openable)md).setOpen(map.getBoolean("open"));
-                }
-                data = md.getData();
+            }
+            if (data instanceof Openable) {
+                str = map.getString("open");
+                if (str != null)
+                    ((Openable)data).setOpen(map.getBoolean("open"));
             }
         }
 
@@ -118,8 +115,8 @@ public final class BuildableBlock {
 
     public Map<String,Object> encode() {
         Map<String,Object> node = new HashMap<String,Object>();
-        node.put("type", getMaterial().toString());
-        node.put("data", new Byte(data));
+        node.put("type", type.toString());
+        node.put("data", data.getAsString());
         if (physics) node.put("physics", physics);
         if (lines != null) {
             StringBuilder buf = new StringBuilder();
@@ -133,18 +130,14 @@ public final class BuildableBlock {
     }
 
     public boolean hasType() {
-        return type != -1;
+        return type != null;
     }
 
-    public int getType() {
+    public Material getType() {
         return type;
     }
 
-    public Material getMaterial() {
-        return Material.getMaterial(type);
-    }
-
-    public byte getData() {
+    public BlockData getData() {
         return data;
     }
 
@@ -154,7 +147,8 @@ public final class BuildableBlock {
 
     public Block build(Location location) {
         Block block = location.getBlock();
-        block.setTypeIdAndData(type, data, physics);
+        block.setType(type, physics);
+        block.setBlockData(data);
         if (lines != null) {
             BlockState sign = block.getState();
             if (sign instanceof Sign) {
@@ -166,17 +160,6 @@ public final class BuildableBlock {
         return block;
     }
 
-    public Block extract(Location location) {
-        Block block = location.getBlock();
-        type = block.getTypeId();
-        data = block.getData();
-        BlockState state = block.getState();
-        if (state instanceof Sign)
-            lines = ((Sign)state).getLines();
-        physics = false;
-        return block;
-    }
-
     public boolean matches(Location location) {
         return matches(location.getBlock());
     }
@@ -184,52 +167,37 @@ public final class BuildableBlock {
     public boolean matches(Block block) {
         Utils.debug("match %s to %s", this, Utils.block(block));
 
-        if (block.getTypeId() != type) {
-            // handle liquids special
-            switch (block.getType()) {
-                case WATER:
-                case STATIONARY_WATER:
-                    if ((type == Material.WATER.getId()) ||
-                        (type == Material.STATIONARY_WATER.getId())) return true;
-                    break;
-                case LAVA:
-                case STATIONARY_LAVA:
-                    if ((type == Material.LAVA.getId()) ||
-                        (type == Material.STATIONARY_LAVA.getId())) return true;
-                    break;
-            }
+        if (block.getType() != type) {
             return false;
         }
 
         // can't simply compare data values because signs can have multiple values indicating
         // the same facing direction!
-        MaterialData myMd = Material.getMaterial(type).getNewData(data);
-        MaterialData otherMd = block.getType().getNewData(block.getData());
-        if ((myMd instanceof Directional) &&
-            (otherMd instanceof Directional)) {
-            return ((Directional)myMd).getFacing() == ((Directional)otherMd).getFacing();
+        BlockData otherData = block.getBlockData();
+        if ((data instanceof Directional) &&
+            (otherData instanceof Directional)) {
+            return ((Directional)data).getFacing() == ((Directional)otherData).getFacing();
             // this is broken if there are other aspects to compare
         }
-        if (block.getData() != data) return false;
+        if (otherData != data) return false;
         // we don't care about matching lines on a sign
         return true;
     }
 
     // only applied to screens (i.e., signs)
     public BlockFace matchTypeAndDirection(Block block) {
-        if (block.getTypeId() != type) return null;
+        if (block.getType() != type) return null;
 
-        MaterialData myMD = Material.getMaterial(type).getNewData(data);
-        if (myMD == null) return null;
-        if (! (myMD instanceof Directional)) return null;
-        Directional myDir = (Directional)myMD;
+        if (data == null) return null;
+        if (! (data instanceof Directional)) return null;
+        Directional myDir = (Directional)data;
         if ((myDir.getFacing() == BlockFace.UP) ||
             (myDir.getFacing() == BlockFace.DOWN)) return null;
 
-        MaterialData otherMD = block.getType().getNewData(block.getData());
-        if (otherMD == null) return null;
-        if (! (otherMD instanceof Directional)) return null;
-        Directional otherDir = (Directional)otherMD;
+        BlockData otherData = block.getBlockData();
+        if (otherData == null) return null;
+        if (! (otherData instanceof Directional)) return null;
+        Directional otherDir = (Directional)otherData;
         if ((otherDir.getFacing() == BlockFace.UP) ||
             (otherDir.getFacing() == BlockFace.DOWN)) return null;
 
@@ -246,29 +214,21 @@ public final class BuildableBlock {
     }
 
     public boolean isSign() {
-        return (type == Material.WALL_SIGN.getId()) ||
-               (type == Material.SIGN_POST.getId());
+        return type == Material.WALL_SIGN;
     }
 
     public void rotate(BlockFace to) {
-        MaterialData md = Material.getMaterial(type).getNewData(data);
-        if (md == null) return;
-        if (! (md instanceof Directional)) return;
-        Directional dir = (Directional)md;
+        if (! (data instanceof Directional)) return;
 
-//        Utils.debug("facing=%s", dir.getFacing());
-//        Utils.debug("to=%s", to);
-//        Utils.debug("rotate result=%s", Utils.rotate(dir.getFacing(), to));
-
+        Directional dir = (Directional)data;
         dir.setFacingDirection(Utils.rotate(dir.getFacing(), to));
-        data = md.getData();
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder("BuildableBlock[");
-        buf.append(Material.getMaterial(type)).append(",");
-        buf.append(data).append(",");
+        buf.append(type.toString()).append(",");
+        buf.append(data.getAsString()).append(",");
         buf.append(physics);
         if (lines != null)
             buf.append(",").append(lines.length).append(" lines");
@@ -278,7 +238,7 @@ public final class BuildableBlock {
 
     @Override
     public int hashCode() {
-        return type + data + ((lines != null) ? lines.hashCode() : 0) + (physics ? 1 : 0);
+        return type.hashCode() + data.hashCode() + ((lines != null) ? lines.hashCode() : 0) + (physics ? 1 : 0);
     }
 
     @Override
@@ -299,22 +259,6 @@ public final class BuildableBlock {
                 if (! lines[i].equals(other.lines[i])) return false;
         }
         return true;
-    }
-
-    private int parseType(String type) throws BlockException {
-        if (type == null)
-            throw new BlockException("block type required");
-        if (type.equalsIgnoreCase("NONE")) return -1;
-        Material m = Material.matchMaterial(type);
-        if (m == null)
-            try {
-                m = Material.getMaterial(Integer.parseInt(type));
-            } catch (NumberFormatException nfe) {}
-        if (m == null)
-            throw new BlockException("invalid block type '%s'", type);
-        if (! m.isBlock())
-            throw new BlockException("block type '%s' is not a block type", type);
-        return m.getId();
     }
 
 }

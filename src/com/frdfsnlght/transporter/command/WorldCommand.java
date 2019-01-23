@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
@@ -212,8 +213,8 @@ public class WorldCommand extends TrpCommandProcessor {
                     // given x,z, so figure out sensible y
                     int y = world.getHighestBlockYAt((int)ords[0], (int)ords[1]) + 1;
                     while (y > 1) {
-                        if ((world.getBlockTypeIdAt((int)ords[0], y, (int)ords[1]) == 0) &&
-                            (world.getBlockTypeIdAt((int)ords[0], y, (int)ords[1]) == 0)) break;
+                        if ((world.getBlockAt((int)ords[0], y, (int)ords[1]).getType() == Material.AIR) &&
+                            (world.getBlockAt((int)ords[0], y, (int)ords[1]).getType() == Material.AIR)) break;
                         y--;
                     }
                     if (y == 1)
@@ -263,8 +264,8 @@ public class WorldCommand extends TrpCommandProcessor {
                     // given x,z, so figure out sensible y
                     int y = world.getHighestBlockYAt((int)ords[0], (int)ords[1]) + 1;
                     while (y > 1) {
-                        if ((world.getBlockTypeIdAt((int)ords[0], y, (int)ords[1]) == 0) &&
-                            (world.getBlockTypeIdAt((int)ords[0], y, (int)ords[1]) == 0)) break;
+                        if ((world.getBlockAt((int)ords[0], y, (int)ords[1]).getType() == Material.AIR) &&
+                            (world.getBlockAt((int)ords[0], y, (int)ords[1]).getType() == Material.AIR)) break;
                         y--;
                     }
                     if (y == 1)

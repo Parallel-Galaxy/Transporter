@@ -155,7 +155,7 @@ public final class DesignBlockDetail {
         }
 
         if (isScreen && ((buildBlock == null) || (! buildBlock.isSign())))
-            throw new BlockException("screen blocks must be wall signs or sign posts");
+            throw new BlockException("screen blocks must be signs");
 
     }
 
@@ -234,7 +234,7 @@ public final class DesignBlockDetail {
     }
 
     public boolean isInventory() {
-        return (buildBlock != null) && (buildBlock.getType() != Material.AIR.getId());
+        return (buildBlock != null) && (buildBlock.getType() != Material.AIR);
     }
 
     public boolean isBuildable() {
@@ -246,7 +246,7 @@ public final class DesignBlockDetail {
     }
 
     public boolean isMatchable() {
-        return (buildBlock != null) && (buildBlock.getMaterial() != Material.AIR);
+        return (buildBlock != null) && (buildBlock.getType() != Material.AIR);
     }
 
     @Override

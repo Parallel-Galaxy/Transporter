@@ -395,14 +395,12 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
     private boolean isSolid(Material m) {
         return (! isLiquid(m)) &&
                (m != Material.AIR) &&
-               (m != Material.WEB);
+               (m != Material.COBWEB);
     }
 
     private boolean isLiquid(Material m) {
         return (m == Material.WATER) ||
-               (m == Material.STATIONARY_WATER) ||
-               (m == Material.LAVA) ||
-               (m == Material.STATIONARY_LAVA);
+               (m == Material.LAVA);
     }
 
     private void hideBox() {

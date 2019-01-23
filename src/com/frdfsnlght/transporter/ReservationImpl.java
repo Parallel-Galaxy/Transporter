@@ -871,15 +871,14 @@ public final class ReservationImpl implements Reservation {
                 // there are probably others
                 case AIR:
                 case WATER:
-                case STATIONARY_WATER:
                 case LAVA:
-                case STATIONARY_LAVA:
-                case WEB:
+                case COBWEB:
                 case TORCH:
-                case REDSTONE_TORCH_OFF:
-                case REDSTONE_TORCH_ON:
-                case SIGN_POST:
-                case RAILS:
+                case REDSTONE_TORCH:
+                case RAIL:
+                case ACTIVATOR_RAIL:
+                case DETECTOR_RAIL:
+                case POWERED_RAIL:
                     break;
                 default:
                     // should we try to zero just each ordinate and test again?

@@ -1451,8 +1451,6 @@ public final class Server implements OptionsListener, RemoteServer {
             RemoteServerConnectEvent event = new RemoteServerConnectEvent(this);
             Global.plugin.getServer().getPluginManager().callEvent(event);
         }
-        
-        TabList.updateAll();
     }
 
     private void receiveGateCreated(TypeMap message) {
@@ -2037,7 +2035,6 @@ public final class Server implements OptionsListener, RemoteServer {
         for (String playerName : new HashSet<String>(remotePlayers.keySet()))
             removeRemotePlayer(playerName, false);
         remotePlayers.clear();
-        if (updateTabList) TabList.updateAll();
     }
 
     private void addRemotePlayer(RemotePlayerImpl player, boolean updateTabList) {
@@ -2045,7 +2042,6 @@ public final class Server implements OptionsListener, RemoteServer {
         remotePlayers.put(playerName, player);
         playerName = formatPlayerListName(player);
         if (playerName == null) return;
-        if (updateTabList) TabList.updateAll();
     }
 
     private void removeRemotePlayer(String playerName, boolean updateTabList) {
@@ -2053,7 +2049,6 @@ public final class Server implements OptionsListener, RemoteServer {
         if (player == null) return;
         playerName = formatPlayerListName(player);
         if (playerName == null) return;
-        if (updateTabList) TabList.updateAll();
     }
 
     /*

@@ -8,7 +8,6 @@ import org.kitteh.vanish.staticaccess.VanishNoPacket;
 import org.kitteh.vanish.staticaccess.VanishNotLoadedException;
 
 import com.frdfsnlght.transporter.Global;
-import com.frdfsnlght.transporter.TabList;
 
 public class VanishHelper implements Listener {
 
@@ -18,15 +17,5 @@ public class VanishHelper implements Listener {
         } catch (VanishNotLoadedException e) {
             return false;
         }
-    }
-    
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onVanishStatusChange(VanishStatusChangeEvent event) {
-        Global.plugin.getServer().getScheduler().runTaskLater(Global.plugin, new Thread() {
-            @Override
-            public void run() {
-                TabList.updateAll();
-            }
-        }, 1L);
     }
 }

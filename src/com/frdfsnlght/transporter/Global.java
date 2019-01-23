@@ -28,7 +28,6 @@ import com.frdfsnlght.transporter.command.RealmCommand;
 import com.frdfsnlght.transporter.command.ReloadCommand;
 import com.frdfsnlght.transporter.command.SaveCommand;
 import com.frdfsnlght.transporter.command.ServerCommand;
-import com.frdfsnlght.transporter.command.TabListCommand;
 import com.frdfsnlght.transporter.command.WorldCommand;
 import com.frdfsnlght.transporter.test.TestCommand;
 import java.util.ArrayList;
@@ -65,7 +64,6 @@ public final class Global {
         commands.add(new NetworkCommand());
         commands.add(new WorldCommand());
         commands.add(new RealmCommand());
-        commands.add(new TabListCommand());
         commands.add(new APICommand());
         commands.add(new DebugCommand());
 

@@ -300,7 +300,6 @@ public final class PlayerListenerImpl implements Listener {
 
         for (Server server : Servers.getAll())
             server.sendPlayerJoin(player, r != null);
-        TabList.startPlayer(player);
         if (r == null) {
             LocalGateImpl gate = Gates.findGateForPortal(player.getLocation());
             if (gate != null)
@@ -320,8 +319,6 @@ public final class PlayerListenerImpl implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         ReservationImpl r = ReservationImpl.get(player);
-
-        TabList.stopPlayer(player);
 
         for (Server server : Servers.getAll())
             server.sendPlayerQuit(player, r != null);

@@ -778,36 +778,5 @@ public class Utils {
         return out;
     }
 
-    
-    public static void startVersionChecker(final Plugin plugin) {
-        currentVersion = plugin.getDescription().getVersion();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-            public void run() {
-                try {
-                    UpdateChecker updateChecker = new UpdateChecker();
-                    updateChecker.checkUpdate("v" + currentVersion);
-                    latestVersion = updateChecker.getLatestVersion();
-                    if (latestVersion != null) {
-                        latestVersion = "v" + latestVersion;
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                            public void run() {
-                                info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                                info("!! This is an outdated version of %s.", Global.pluginName);
-                                info("!! Please upgrade to %s.", latestVersion);
-                                info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                                
-                                for (Player p : Bukkit.getOnlinePlayers())
-                                    if (p.hasPermission("trp.update"))
-                                        p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
-                            }
-                        });
-                    }
-                } catch (Exception ex) {
-                    System.out.print(String.format("[%s] Failed to check for update: %s", Global.pluginName, ex.getMessage()));
-                }
-            }
-        }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
-    }
-
 
 }

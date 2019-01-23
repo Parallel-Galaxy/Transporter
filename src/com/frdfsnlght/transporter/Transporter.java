@@ -118,10 +118,6 @@ public class Transporter extends JavaPlugin {
 
         Config.load(ctx);
 
-        if (Config.getCheckVersion()) {
-            Utils.startVersionChecker(this);
-        }
-
         serverListener = new ServerListenerImpl();
         blockListener = new BlockListenerImpl();
         playerListener = new PlayerListenerImpl();

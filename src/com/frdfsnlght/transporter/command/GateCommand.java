@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -633,7 +635,7 @@ public class GateCommand extends TrpCommandProcessor {
             Location loc;
 
             if (pick) {
-                Block block = ctx.getPlayer().getTargetBlock(null, 1000);
+                Block block = ctx.getPlayer().getTargetBlock((Set<Material>)null, 1000);
                 if ((block == null) || (block.getType() == Material.AIR))
                     throw new CommandException("no block found");
                 loc = block.getLocation();

@@ -70,7 +70,7 @@ public final class Inventory {
     public static ItemStack decodeItemStack(TypeMap s) {
         if (s == null) return null;
         ItemStack stack = new ItemStack(
-                s.getInt("type"),
+                Material.getMaterial(s.getInt("type")),
                 s.getInt("amount"),
                 (short)s.getInt("durability"));
         if (s.containsKey("data")) {

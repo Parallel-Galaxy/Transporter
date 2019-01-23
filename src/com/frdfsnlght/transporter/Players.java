@@ -75,7 +75,7 @@ public final class Players {
             PlayerInventory inv = player.getInventory();
             for (int slot = 0; slot < inventory.length; slot++) {
                 if (inventory[slot] == null)
-                    inv.setItem(slot, new ItemStack(Material.AIR.getId()));
+                    inv.setItem(slot, new ItemStack(Material.AIR));
                 else
                     inv.setItem(slot, inventory[slot]);
             }

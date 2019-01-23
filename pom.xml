@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.frdfsnlght.transporter</groupId>
   <artifactId>Transporter</artifactId>
-  <version>9.0</version>
+  <version>9.1</version>
   <name>Transporter</name>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -48,7 +48,7 @@
       <dependency>
          <groupId>org.bukkit</groupId>
          <artifactId>bukkit</artifactId>
-         <version>1.12-R0.1-SNAPSHOT</version>
+         <version>1.13-R0.1-SNAPSHOT</version>
          <type>jar</type>
       </dependency>
       <dependency>

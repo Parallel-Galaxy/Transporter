@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.material.MaterialData;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -55,13 +57,10 @@ public final class Inventory {
         TypeMap s = new TypeMap();
         s.put("type", stack.getType().toString());
         s.put("amount", stack.getAmount());
-        s.put("durability", stack.getDurability());
-        MaterialData data = stack.getData();
-        if (data != null)
-            s.put("data", (int)data.getData());
+        s.put("durability", ((Damageable)stack.getItemMeta()).getDamage());
         TypeMap ench = new TypeMap();
         for (Enchantment e : stack.getEnchantments().keySet())
-            ench.put(e.getName(), stack.getEnchantments().get(e));
+            ench.put(e.getKey().getKey(), stack.getEnchantments().get(e));
         if (! ench.isEmpty())
             s.put("enchantments", ench);
         return s;
@@ -71,18 +70,12 @@ public final class Inventory {
         if (s == null) return null;
         ItemStack stack = new ItemStack(
                 Material.getMaterial(s.getString("type")),
-                s.getInt("amount"),
-                (short)s.getInt("durability"));
-        if (s.containsKey("data")) {
-            MaterialData data = stack.getData();
-            if (data != null)
-                data.setData((byte)s.getInt("data"));
-            stack.setData(data);
-        }
+                s.getInt("amount"));
+        ((Damageable)stack.getItemMeta()).setDamage(s.getInt("durability"));
         if (s.containsKey("enchantments")) {
             TypeMap ench = s.getMap("enchantments");
             for (String name : ench.getKeys()) {
-                Enchantment e = Enchantment.getByName(name);
+                Enchantment e = Enchantment.getByKey(NamespacedKey.minecraft(name));
                 int level = ench.getInt(name);
                 if (e != null)
                     stack.addEnchantment(e, level);
@@ -197,8 +190,10 @@ public final class Inventory {
     private static String stringifyItemStack(ItemStack stack) {
         if ((stack == null) || (stack.getType() == null)) return null;
         String item = stack.getType().toString();
-        if (stack.getDurability() > 0)
-            item += ":" + stack.getDurability();
+
+        int damage = ((Damageable)stack.getItemMeta()).getDamage();
+        if (damage > 0)
+            item += ":" + damage;
         return item;
     }
 
@@ -211,12 +206,15 @@ public final class Inventory {
             material = Material.AIR;
         }
         int amount = oldItem.getAmount();
-        short damage = oldItem.getDurability();
+        Damageable damage = (Damageable)oldItem.getItemMeta();
         if (parts.length > 1)
             try {
-                damage = Short.parseShort(parts[1]);
+                damage.setDamage(Integer.parseInt(parts[1]));
             } catch (NumberFormatException e) {}
-        return new ItemStack(material, amount, damage);
+
+        ItemStack newItem = new ItemStack(material, amount);
+        newItem.setItemMeta((ItemMeta)damage);
+        return newItem;
     }
 
     public static void requireBlocks(Player player, Map<Material,Integer> blocks) throws InventoryException {

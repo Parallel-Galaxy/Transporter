@@ -186,7 +186,6 @@ public final class ReservationImpl implements Reservation {
     private String fromGateName = null;
     private LocalGateImpl fromGateLocal = null; // local gate
     private World fromWorld = null;         // local gate
-    private Server fromServer = null;       // remote gate
 
     private Location toLocation = null;
     private Vector toVelocity = null;
@@ -196,7 +195,6 @@ public final class ReservationImpl implements Reservation {
     private String toGateName = null;
     private LocalGateImpl toGateLocal = null;   // local gate
     private World toWorld = null;           // local gate
-    private Server toServer = null;         // remote gate
 
     private boolean createdEntity = false;
 
@@ -229,31 +227,28 @@ public final class ReservationImpl implements Reservation {
     }
 
     // player direct to remote server, default world, spawn location
-    public ReservationImpl(Player player, Server server) throws ReservationException {
+    public ReservationImpl(Player player) throws ReservationException {
         addGateLock(player);
         extractPlayer(player);
-        toServer = server;
     }
 
     // player direct to remote server, specified world, spawn location
-    public ReservationImpl(Player player, Server server, String worldName) throws ReservationException {
+    public ReservationImpl(Player player, String worldName) throws ReservationException {
         addGateLock(player);
         extractPlayer(player);
-        toServer = server;
         toWorldName = worldName;
     }
 
     // player direct to remote server, specified world, specified location
-    public ReservationImpl(Player player, Server server, String worldName, double x, double y, double z) throws ReservationException {
+    public ReservationImpl(Player player, String worldName, double x, double y, double z) throws ReservationException {
         addGateLock(player);
         extractPlayer(player);
-        toServer = server;
         toWorldName = worldName;
         toLocation = new Location(null, x, y, z);
     }
 
     // reception of reservation from sending server
-    public ReservationImpl(TypeMap in, Server server) throws ReservationException {
+    public ReservationImpl(TypeMap in) throws ReservationException {
         remoteId = in.getInt("id");
         departing = false;
         try {
@@ -290,8 +285,6 @@ public final class ReservationImpl implements Reservation {
 
         fromWorldName = in.getString("fromWorld");
 
-        fromServer = server;
-
         if (in.get("toX") != null)
             toLocation = new Location(null, in.getDouble("toX"), in.getDouble("toY"), in.getDouble("toZ"));
 
@@ -304,7 +297,6 @@ public final class ReservationImpl implements Reservation {
 
         fromGateName = in.getString("fromGate");
         if (fromGateName != null) {
-            fromGateName = server.getName() + "." + fromGateName;
             fromGate = Gates.get(fromGateName);
             if (fromGate == null)
                 throw new ReservationException("unknown fromGate '%s'", fromGateName);
@@ -425,24 +417,18 @@ public final class ReservationImpl implements Reservation {
         }
 
         toGateName = toGate.getFullName();
-        if (toGate.isSameServer()) {
-            toGateLocal = (LocalGateImpl)toGate;
-            toWorld = toGateLocal.getWorld();
-        } else
-            toServer = (Server)((RemoteGateImpl)toGate).getRemoteServer();
+        toGateLocal = (LocalGateImpl)toGate;
+        toWorld = toGateLocal.getWorld();
     }
 
     private void extractToGate(GateImpl toGate) {
         this.toGate = toGate;
         toGateName = toGate.getFullName();
-        if (toGate.isSameServer()) {
-            toGateLocal = (LocalGateImpl)toGate;
-            toWorld = toGateLocal.getWorld();
-            toDirection = toGateLocal.getDirection();
-            if (fromDirection == null)
-                fromDirection = toDirection;
-        } else
-            toServer = (Server)((RemoteGateImpl)toGate).getRemoteServer();
+        toGateLocal = (LocalGateImpl)toGate;
+        toWorld = toGateLocal.getWorld();
+        toDirection = toGateLocal.getDirection();
+        if (fromDirection == null)
+            fromDirection = toDirection;
     }
 
     public TypeMap encode() {
@@ -505,98 +491,16 @@ public final class ReservationImpl implements Reservation {
                 addGateLock(player);
 
             checkLocalDepartureGate();
+            checkLocalArrivalGate();
 
-            if (toServer == null) {
-                // staying on this server
-                checkLocalArrivalGate();
+            EntityDepartEvent event = new EntityDepartEvent(this);
+            Global.plugin.getServer().getPluginManager().callEvent(event);
 
-                EntityDepartEvent event = new EntityDepartEvent(this);
-                Global.plugin.getServer().getPluginManager().callEvent(event);
-
-                arrive();
-                completeLocalDepartureGate();
-
-            } else {
-                // going to remote server
-                try {
-                    Utils.debug("sending reservation for %s to %s...", getTraveler(), getDestination());
-                    toServer.sendReservation(this);
-
-                    // setup delayed task to remove the reservation on this side if it doesn't work out
-                    final ReservationImpl me = this;
-                    Utils.fireDelayed(new Runnable() {
-                        public void run() {
-                            if (! remove(me)) return;
-                            Utils.warning("reservation for %s to %s timed out", getTraveler(), getDestination());
-                        }
-                    }, Config.getArrivalWindow());
-
-                } catch (ServerException e) {
-                    Utils.severe(e, "reservation send for %s to %s failed:", getTraveler(), getDestination());
-                    remove(this);
-                    throw new ReservationException("teleport %s to %s failed", getTraveler(), getDestination());
-                }
-            }
+            arrive();
+            completeLocalDepartureGate();
         } catch (ReservationException e) {
             remove(this);
             throw e;
-        }
-    }
-
-    // called on the receiving side to indicate this reservation has been sent from the sender
-    public void receive() {
-        try {
-            Utils.debug("received reservation for %s to %s from %s...", getTraveler(), getDestination(), fromServer.getName());
-            if (playerName != null) {
-                try {
-                    Permissions.connect(playerName);
-                } catch (PermissionsException e) {
-                    throw new ReservationException(e.getMessage());
-                }
-            }
-            checkLocalArrivalGate();
-            put(this);
-            try {
-                fromServer.sendReservationApproved(remoteId);
-            } catch (ServerException e) {
-                Utils.severe(e, "send reservation approval for %s to %s to %s failed:", getTraveler(), getDestination(), fromServer.getName());
-                remove(this);
-                return;
-            }
-
-            Utils.debug("reservation for %s to %s approved", getTraveler(), getDestination());
-
-            if (playerName == null) {
-                // there's no player coming, so handle the "arrival" now
-                try {
-                    arrive();
-                } catch (ReservationException e) {
-                    Utils.warning("reservation arrival for %s to %s to %s failed:", getTraveler(), getDestination(), fromServer.getName(), e.getMessage());
-                }
-            } else {
-                // set up a delayed task to cancel the arrival if they never arrive
-                final ReservationImpl res = this;
-                Utils.fireDelayed(new Runnable() {
-                    public void run() {
-                        if (! remove(res)) return;
-                        Utils.warning("reservation for %s to %s timed out", getTraveler(), getDestination());
-                        try {
-                            fromServer.sendReservationTimeout(remoteId);
-                        } catch (ServerException e) {
-                            Utils.severe(e, "send reservation timeout for %s to %s to %s failed:", getTraveler(), getDestination(), fromServer.getName());
-                        }
-                    }
-                }, Config.getArrivalWindow());
-            }
-
-        } catch (ReservationException e) {
-            Utils.debug("reservation for %s to %s denied: %s", getTraveler(), getDestination(), e.getMessage());
-            remove(this);
-            try {
-                fromServer.sendReservationDenied(remoteId, e.getMessage());
-            } catch (ServerException e2) {
-                Utils.severe(e, "send reservation denial for %s to %s to %s failed:", getTraveler(), getDestination(), fromServer.getName());
-            }
         }
     }
 
@@ -629,14 +533,7 @@ public final class ReservationImpl implements Reservation {
 
         completeLocalArrivalGate();
 
-        if (fromServer == null)
-            arrived();
-        else
-            try {
-                fromServer.sendReservationArrived(remoteId);
-            } catch (ServerException e) {
-                Utils.severe(e, "send reservation arrival for %s to %s to %s failed:", getTraveler(), getDestination(), fromServer.getName());
-            }
+        arrived();
     }
 
     // called on the sending side to confirm reception of the valid reservation on the receiving side
@@ -644,11 +541,7 @@ public final class ReservationImpl implements Reservation {
         Utils.debug("reservation to send %s to %s was approved", getTraveler(), getDestination());
 
         if (player != null) {
-            Context ctx = new Context(player);
-
             completeLocalDepartureGate();
-
-            if (! toServer.sendPlayer(player)) return;
         }
         if ((entity != null) && (entity != player))
             entity.remove();
@@ -674,18 +567,6 @@ public final class ReservationImpl implements Reservation {
         remove(this);
         Utils.debug("reservation to send %s to %s was completed", getTraveler(), getDestination());
 
-        if ((toServer != null) && (player != null)) {
-            if ((fromGateLocal != null) && fromGateLocal.getDeleteInventory()) {
-                PlayerInventory inv = player.getInventory();
-                inv.clear();
-                inv.setBoots(new ItemStack(Material.AIR));
-                inv.setHelmet(new ItemStack(Material.AIR));
-                inv.setChestplate(new ItemStack(Material.AIR));
-                inv.setLeggings(new ItemStack(Material.AIR));
-                player.saveData();
-            }
-        }
-
         EntityArriveEvent event = new EntityArriveEvent(this);
         Global.plugin.getServer().getPluginManager().callEvent(event);
 
@@ -704,10 +585,6 @@ public final class ReservationImpl implements Reservation {
     public Location getToLocation() {
         return toLocation;
     }
-
-
-
-
 
 
     private void checkLocalDepartureGate() throws ReservationException {
@@ -823,7 +700,6 @@ public final class ReservationImpl implements Reservation {
                 format = format.replace("%fromGateCtx%", (fromGate == null) ? "" : fromGate.getName(ctx));
                 format = format.replace("%fromGate%", (fromGate == null) ? "" : fromGate.getName());
                 format = format.replace("%fromWorld%", fromWorldName);
-                format = format.replace("%fromServer%", (fromServer == null) ? "local" : fromServer.getName());
                 if (! format.isEmpty())
                     ctx.send(format);
             }
@@ -1098,9 +974,7 @@ public final class ReservationImpl implements Reservation {
         if (toGateName != null)
             return "'" + toGateName + "'";
         String dst;
-        if (toServer != null)
-            dst = String.format("server '%s'", toServer.getName());
-        else if (toWorld != null)
+        if (toWorld != null)
             dst = String.format("world '%s'", toWorld.getName());
         else
             dst = "unknown";
@@ -1108,15 +982,5 @@ public final class ReservationImpl implements Reservation {
             dst += String.format(" @ %s,%s,%s", toLocation.getBlockX(), toLocation.getBlockY(), toLocation.getBlockZ());
         return dst;
     }
-
-    /*
-    private enum EntityType {
-        PLAYER,
-        MINECART,
-        POWERED_MINECART,
-        STORAGE_MINECART,
-        BOAT
-    }
-*/
 
 }

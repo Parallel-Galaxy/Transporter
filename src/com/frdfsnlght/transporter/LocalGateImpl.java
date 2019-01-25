@@ -1387,9 +1387,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         boolean old = hidden;
         hidden = b;
         dirty = dirty || (old != hidden);
-        if (old != hidden)
-            for (Server server : Servers.getAll())
-                server.sendRefreshData();
     }
 
     
@@ -1681,18 +1678,13 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         if (toGate == null)
             throw new GateException("gate '%s' cannot be found", toGateName);
 
-        if (toGate.isSameServer()) {
-            LocalGateImpl toGateLocal = (LocalGateImpl)toGate;
-            if (isSameWorld(toGateLocal.getWorld())) {
-                if (! Config.getAllowLinkLocal())
-                    throw new CommandException("linking to on-world gates is not permitted");
-            } else {
-                if (! Config.getAllowLinkWorld())
-                    throw new CommandException("linking to off-world gates is not permitted");
-            }
+        LocalGateImpl toGateLocal = (LocalGateImpl)toGate;
+        if (isSameWorld(toGateLocal.getWorld())) {
+            if (! Config.getAllowLinkLocal())
+                throw new CommandException("linking to on-world gates is not permitted");
         } else {
-            if (! Config.getAllowLinkServer())
-                throw new CommandException("linking to remote gates is not permitted");
+            if (! Config.getAllowLinkWorld())
+                throw new CommandException("linking to off-world gates is not permitted");
         }
 
         if (! addLink(toGate.getFullName()))

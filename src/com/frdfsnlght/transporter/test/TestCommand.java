@@ -17,20 +17,15 @@ package com.frdfsnlght.transporter.test;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.frdfsnlght.transporter.Context;
-import com.frdfsnlght.transporter.Global;
-import com.frdfsnlght.transporter.api.API;
-import com.frdfsnlght.transporter.api.Callback;
-import com.frdfsnlght.transporter.api.RemoteException;
-import com.frdfsnlght.transporter.api.RemotePlayer;
-import com.frdfsnlght.transporter.api.RemoteServer;
-import com.frdfsnlght.transporter.api.RemoteWorld;
-import com.frdfsnlght.transporter.api.TransporterException;
-import com.frdfsnlght.transporter.command.CommandException;
-import com.frdfsnlght.transporter.command.TrpCommandProcessor;
+
 import org.bukkit.command.Command;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.frdfsnlght.transporter.Context;
+import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.command.CommandException;
+import com.frdfsnlght.transporter.command.TrpCommandProcessor;
 
 /**
  *
@@ -103,45 +98,6 @@ public class TestCommand extends TrpCommandProcessor {
             PotionEffect pe = type.createEffect(duration, amplifier);
             ctx.getPlayer().addPotionEffect(pe, true);
             ctx.send("added potion %s %s %s", type.getName(), duration, amplifier);
-            return;
-        }
-
-        if ("api".startsWith(subCmd)) {
-            API api = Global.plugin.getAPI();
-            for (RemoteServer server : api.getRemoteServers()) {
-                final RemoteServer s = server;
-                ctx.send("requesting version from %s", server.getName());
-                server.getVersion(new Callback<String>() {
-                    @Override
-                    public void onSuccess(String version) {
-                        ctx.send("%s version: %s", s.getName(), version);
-                    }
-                    @Override
-                    public void onFailure(RemoteException re) {
-                        ctx.send("%s failed: %s", s.getName(), re.getMessage());
-                    }
-                });
-                for (RemoteWorld world : server.getRemoteWorlds()) {
-                    ctx.send("requesting time from %s.%s", server.getName(), world.getName());
-                    final RemoteWorld w = world;
-                    world.getTime(new Callback<Long>() {
-                        @Override
-                        public void onSuccess(Long time) {
-                            ctx.send("%s.%s time: %s", s.getName(), w.getName(), time);
-                        }
-                        @Override
-                        public void onFailure(RemoteException re) {
-                            ctx.send("%s.%s failed: %s", s.getName(), w.getName(), re.getMessage());
-                        }
-                    });
-                }
-                for (RemotePlayer player : server.getRemotePlayers()) {
-                    ctx.send("sending message to %s.%s", server.getName(), player.getName());
-                    final RemotePlayer p = player;
-                    player.sendMessage(null, "hello there");
-
-                }
-            }
             return;
         }
 

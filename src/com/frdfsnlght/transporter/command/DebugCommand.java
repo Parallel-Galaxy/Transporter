@@ -56,21 +56,6 @@ public class DebugCommand extends TrpCommandProcessor {
             throw new CommandException("debug what?");
         String subCmd = args.remove(0).toLowerCase();
 
-        if ("submit".startsWith(subCmd)) {
-            if (! ctx.isConsole())
-                throw new CommandException("this command is only available on the console");
-            if (args.isEmpty())
-                throw new CommandException("message identifier required, how about a player name?");
-            String id = null;
-            while (! args.isEmpty()) {
-                if (id == null) id = "";
-                else id = id + " " + args.remove(0);
-            }
-            ctx.send("requested submission of debug data");
-            Utils.submitDebug(id);
-            return;
-        }
-
         if ("interact".startsWith(subCmd)) {
             if (! ctx.isPlayer())
                 throw new CommandException("this command is only available to players");

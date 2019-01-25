@@ -82,7 +82,6 @@ public final class PlayerListenerImpl implements Listener {
     private static void addAction(String mask, String action) {
         Set<Integer> masks = expandMask(mask);
         for (Integer m : masks) {
-            //System.out.println("add " + expandMask(m) + " (" + m + ")");
             ACTIONS.put(m, action);
         }
     }
@@ -109,40 +108,6 @@ public final class PlayerListenerImpl implements Listener {
                 return masks;
         }
     }
-
-    /*
-    private static void checkAction(String mask, String action) {
-        Set<Integer> masks = expandMask(mask);
-        for (Integer m : masks) {
-            String act = ACTIONS.get(m);
-            if (act == null) {
-                System.out.println("mask " + expandMask(m) + " (" + m + ") is not permitted but should be " + action);
-                continue;
-            }
-            if (! act.equals(action))
-                System.out.println("mask " + expandMask(m) + " (" + m + ") is " + act + " but should be " + action);
-        }
-    }
-
-    private static String expandMask(int mask) {
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < 8; i++)
-            b.append(((mask & (int)Math.pow(2, i)) > 0) ? "1" : "0");
-        return b.toString();
-    }
-
-    private static void dumpAction(String action) {
-        List<String> masks = new ArrayList<String>();
-        for (int mask : ACTIONS.keySet()) {
-            if (! ACTIONS.get(mask).equals(action)) continue;
-            String m = expandMask(mask);
-            if (! masks.contains(m)) masks.add(m);
-        }
-        Collections.sort(masks);
-        for (String mask : masks)
-            System.out.println(mask);
-    }
-    */
 
     public static Player testPlayer = null;
 
@@ -258,110 +223,6 @@ public final class PlayerListenerImpl implements Listener {
         } catch (ReservationException re) {
             ctx.warnLog(re.getMessage());
         }
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        Player player = event.getPlayer();
-        Location location = event.getTo();
-        if ((location == null) ||
-            (location.getWorld() == null)) return;
-
-        // Realm handling
-        Realm.onTeleport(player, location);
-
- Utils.debug("teleported %s", Utils.blockCoords(location));
-
-        for (Server server : Servers.getAll())
-            server.sendPlayerChangeWorld(player);
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        ReservationImpl r = ReservationImpl.get(player);
-
-        if ((r == null) && Realm.onJoin(player)) return;
-
-        Context ctx = new Context(player);
-
-        if ((r != null) && r.isDeparting()) {
-
-            if (Config.getResendLostPlayers()) {
-                // try to send them again
-                Server server = ((RemoteGateImpl)r.getDepartureGate()).server;
-                if (server.sendPlayer(player)) return;
-            }
-            ctx.warnLog("You're not supposed to be here.");
-            r = null;
-        }
-
-        for (Server server : Servers.getAll())
-            server.sendPlayerJoin(player, r != null);
-        if (r == null) {
-            LocalGateImpl gate = Gates.findGateForPortal(player.getLocation());
-            if (gate != null)
-                ReservationImpl.addGateLock(player);
-            return;
-        }
-        try {
-            r.arrive();
-            if (Config.getHideLocalLoginLeaveMessage()) event.setJoinMessage(null);
-        } catch (ReservationException e) {
-            ctx.warnLog("there was a problem processing your arrival: ", e.getMessage());
-        }
-
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        ReservationImpl r = ReservationImpl.get(player);
-
-        for (Server server : Servers.getAll())
-            server.sendPlayerQuit(player, r != null);
-        if (r != null) {
-            if (Config.getHideLocalLoginLeaveMessage()) event.setQuitMessage(null);
-        }
-
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerKick(PlayerKickEvent event) {
-        Player player = event.getPlayer();
-        ReservationImpl r = ReservationImpl.get(player);
-
-        for (Server server : Servers.getAll())
-            server.sendPlayerKick(player, r != null);
-        if (r != null)
-            event.setLeaveMessage(null);
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player player = (Player)event.getEntity();
-        for (Server server : Servers.getAll())
-            server.sendPlayerDeath(player);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
-        Realm.onRespawn(player);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerChatAsync(final AsyncPlayerChatEvent event) {
-        Utils.debug("chat event is canceled: %s", event.isCancelled());
-        if (event.isAsynchronous())
-            Utils.fire(new Runnable() {
-                public void run() {
-                    Chat.send(event.getPlayer(), event.getMessage(), event.getFormat());
-                }
-            });
-        else
-            Chat.send(event.getPlayer(), event.getMessage(), event.getFormat());
     }
 
 }

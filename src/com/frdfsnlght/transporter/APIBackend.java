@@ -22,7 +22,6 @@ import java.util.logging.Level;
 import com.frdfsnlght.transporter.api.RemoteException;
 import com.frdfsnlght.transporter.api.TransporterException;
 import org.bukkit.ChatColor;
-import com.frdfsnlght.transporter.api.event.RemoteRequestReceivedEvent;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -99,11 +98,9 @@ public final class APIBackend {
         Utils.logger.log(Level.INFO, String.format("[%s] (API-DEBUG) %s", Global.pluginName, msg));
     }
 
-    public static void invoke(String target, String method, TypeMap args, TypeMap out, Server source) throws TransporterException {
+    public static void invoke(String target, String method, TypeMap args, TypeMap out) throws TransporterException {
         debug("invoke %s.%s: %s", target, method, args);
-        if (target.equals("server"))
-            invokeServerMethod(method, args, out, source);
-        else if (target.equals("world"))
+        if (target.equals("world"))
             invokeWorldMethod(method, args, out);
         else if (target.equals("player"))
             invokePlayerMethod(method, args, out);
@@ -112,19 +109,13 @@ public final class APIBackend {
             throw new RemoteException("unknown API target '%s'", target);
     }
 
-    private static void invokeServerMethod(String method, TypeMap args, TypeMap out, Server source) throws TransporterException {
+    private static void invokeServerMethod(String method, TypeMap args, TypeMap out) throws TransporterException {
         org.bukkit.Server server = Global.plugin.getServer();
         if (method.equals("broadcast"))
             out.put("result", server.broadcast(args.getString("message"), args.getString("permission")));
         else if (method.equals("broadcastMessage"))
             out.put("result", server.broadcastMessage(args.getString("message")));
-        else if (method.equals("remoteRequest")) {
-            TypeMap request = args.getMap("request");
-            TypeMap response = new TypeMap();
-            RemoteRequestReceivedEvent event = new RemoteRequestReceivedEvent(source, request, response);
-            server.getPluginManager().callEvent(event);
-            response.put("cancelled", event.isCancelled());
-        } else if (method.equals("dispatchCommand")) {
+        else if (method.equals("dispatchCommand")) {
             String senderStr = args.getString("sender");
             CommandSender sender = null;
             if ("console".equals(senderStr))
@@ -175,7 +166,7 @@ public final class APIBackend {
             throw new RemoteException("player is required");
         Player player = Global.plugin.getServer().getPlayer(playerName);
         if (player == null)
-            throw new ServerException("player '%s' is unknown", playerName);
+            throw new RemoteException("player '%s' is unknown", playerName);
 
         if (method.equals("getLocation")) {
             TypeMap locMsg = new TypeMap();
@@ -190,7 +181,7 @@ public final class APIBackend {
         } else if (method.equals("sendRawMessage")) {
             player.sendRawMessage(args.getString("message"));
         } else
-            throw new ServerException("unknown player method '%s'", method);
+            throw new RemoteException("unknown player method '%s'", method);
     }
 
 }

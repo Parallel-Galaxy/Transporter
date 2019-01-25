@@ -15,25 +15,25 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.API;
-import com.frdfsnlght.transporter.api.TransporterException;
-import com.frdfsnlght.transporter.command.CommandException;
-import com.frdfsnlght.transporter.command.CommandProcessor;
-import com.frdfsnlght.transporter.net.Network;
-
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.frdfsnlght.transporter.api.API;
+import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.command.CommandException;
+import com.frdfsnlght.transporter.command.CommandProcessor;
 
 
 /**
@@ -42,7 +42,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Transporter extends JavaPlugin {
 
-    private ServerListenerImpl serverListener;
     private BlockListenerImpl blockListener;
     private PlayerListenerImpl playerListener;
     private VehicleListenerImpl vehicleListener;
@@ -117,7 +116,6 @@ public class Transporter extends JavaPlugin {
 
         Config.load(ctx);
 
-        serverListener = new ServerListenerImpl();
         blockListener = new BlockListenerImpl();
         playerListener = new PlayerListenerImpl();
         vehicleListener = new VehicleListenerImpl();
@@ -125,12 +123,9 @@ public class Transporter extends JavaPlugin {
         entityListener = new EntityListenerImpl();
 
         Designs.load(ctx);
-        Network.start(ctx);
-        Realm.start(ctx);
 
         PluginManager pm = getServer().getPluginManager();
 
-        pm.registerEvents(serverListener, this);
         pm.registerEvents(blockListener, this);
         pm.registerEvents(playerListener, this);
         pm.registerEvents(vehicleListener, this);
@@ -162,8 +157,6 @@ public class Transporter extends JavaPlugin {
         if (! Global.enabled) return;
         Global.enabled = false;
         Context ctx = new Context();
-        Realm.stop(ctx);
-        Network.stop(ctx);
         Config.save(ctx);
         Gates.save(ctx);
         ctx.sendLog("disabled");

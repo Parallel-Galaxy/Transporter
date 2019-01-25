@@ -451,22 +451,12 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             format = format.replace("%fromWorld%", this.getWorld().getName());
             if (toGate != null) {
                 format = format.replace("%toGate%", toGate.getName());
-                if (toGate.isSameServer()) {
-                    format = format.replace("%toWorld%", ((LocalGateImpl)toGate).getWorld().getName());
-                    format = format.replace("%toServer%", "local");
-                } else {
-                    format = format.replace("%toWorld%", ((RemoteGateImpl)toGate).getRemoteWorld().getName());
-                    format = format.replace("%toServer%", ((RemoteGateImpl)toGate).getRemoteServer().getName());
-                }
+                format = format.replace("%toWorld%", ((LocalGateImpl)toGate).getWorld().getName());
             } else if (outgoing != null) {
                 String[] parts = outgoing.split("\\.");
                 format = format.replace("%toGate%", parts[parts.length - 1]);
                 if (parts.length > 1)
                     format = format.replace("%toWorld%", parts[parts.length - 2]);
-                if (parts.length > 2)
-                    format = format.replace("%toServer%", parts[parts.length - 3]);
-                else
-                    format = format.replace("%toServer%", "local");
             }
             lines.addAll(Arrays.asList(NEWLINE_PATTERN.split(format)));
         }

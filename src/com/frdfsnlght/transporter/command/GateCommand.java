@@ -15,19 +15,6 @@
  */
 package com.frdfsnlght.transporter.command;
 
-import com.frdfsnlght.transporter.Context;
-import com.frdfsnlght.transporter.GateImpl;
-import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.Global;
-import com.frdfsnlght.transporter.LocalAreaGateImpl;
-import com.frdfsnlght.transporter.LocalGateImpl;
-import com.frdfsnlght.transporter.Permissions;
-import com.frdfsnlght.transporter.RemoteGateImpl;
-import com.frdfsnlght.transporter.Server;
-import com.frdfsnlght.transporter.Utils;
-import com.frdfsnlght.transporter.api.ExpandDirection;
-import com.frdfsnlght.transporter.api.GateType;
-import com.frdfsnlght.transporter.api.TransporterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,6 +28,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
+
+import com.frdfsnlght.transporter.Context;
+import com.frdfsnlght.transporter.GateImpl;
+import com.frdfsnlght.transporter.Gates;
+import com.frdfsnlght.transporter.Global;
+import com.frdfsnlght.transporter.LocalAreaGateImpl;
+import com.frdfsnlght.transporter.LocalGateImpl;
+import com.frdfsnlght.transporter.Permissions;
+import com.frdfsnlght.transporter.Utils;
+import com.frdfsnlght.transporter.api.ExpandDirection;
+import com.frdfsnlght.transporter.api.GateType;
+import com.frdfsnlght.transporter.api.TransporterException;
 
 /**
  *
@@ -129,22 +128,6 @@ public class GateCommand extends TrpCommandProcessor {
                 ctx.send("%d local gates:", localGates.size());
                 for (LocalGateImpl gate : localGates)
                     ctx.send("  %s", gate.getLocalName());
-            }
-            List<RemoteGateImpl> remoteGates = new ArrayList<RemoteGateImpl>(Gates.getRemoteGates());
-            if ((! ctx.isConsole()) && (! ctx.isOp()))
-                for (Iterator<RemoteGateImpl> i = remoteGates.iterator(); i.hasNext(); )
-                    if (i.next().getHidden()) i.remove();
-            if (remoteGates.isEmpty())
-                ctx.send("there are no remote gates");
-            else {
-                Collections.sort(remoteGates, new Comparator<RemoteGateImpl>() {
-                    public int compare(RemoteGateImpl a, RemoteGateImpl b) {
-                        return a.getFullName().compareToIgnoreCase(b.getFullName());
-                    }
-                });
-                ctx.send("%d remote gates:", remoteGates.size());
-                for (RemoteGateImpl gate : remoteGates)
-                    ctx.send("  %s", gate.getFullName());
             }
             return;
         }
@@ -255,15 +238,7 @@ public class GateCommand extends TrpCommandProcessor {
             if ("add".startsWith(subCmd)) {
                 fromGate.addLink(ctx, toGateName);
                 if (reverse && (ctx.getSender() != null) && (toGate != null)) {
-                    if (toGate.isSameServer())
-                        Global.plugin.getServer().dispatchCommand(ctx.getSender(), "trp gate link add \"" + toGate.getFullName() + "\" \"" + fromGate.getFullName() + "\"");
-                    else {
-                        Server server = (Server)((RemoteGateImpl)toGate).getRemoteServer();
-                        if (! server.isConnectionConnected())
-                            ctx.send("unable to add reverse link from offline server");
-                        else
-                            server.sendLinkAdd(ctx.getPlayer(), (LocalGateImpl)fromGate, (RemoteGateImpl)toGate);
-                    }
+                    Global.plugin.getServer().dispatchCommand(ctx.getSender(), "trp gate link add \"" + toGate.getFullName() + "\" \"" + fromGate.getFullName() + "\"");
                 }
                 return;
             }
@@ -271,15 +246,7 @@ public class GateCommand extends TrpCommandProcessor {
             if ("remove".startsWith(subCmd)) {
                 fromGate.removeLink(ctx, toGateName);
                 if (reverse && (ctx.getSender() != null) && (toGate != null)) {
-                    if (toGate.isSameServer())
-                        Global.plugin.getServer().dispatchCommand(ctx.getSender(), "trp gate link remove \"" + fromGate.getFullName() + "\" \"" + toGate.getFullName() + "\"");
-                    else {
-                        Server server = (Server)((RemoteGateImpl)toGate).getRemoteServer();
-                        if (! server.isConnectionConnected())
-                            ctx.send("unable to remove reverse link from offline server");
-                        else
-                            server.sendLinkRemove(ctx.getPlayer(), (LocalGateImpl)fromGate, (RemoteGateImpl)toGate);
-                    }
+                    Global.plugin.getServer().dispatchCommand(ctx.getSender(), "trp gate link remove \"" + fromGate.getFullName() + "\" \"" + toGate.getFullName() + "\"");
                 }
                 return;
             }

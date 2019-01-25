@@ -15,6 +15,9 @@
  */
 package com.frdfsnlght.transporter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.frdfsnlght.transporter.command.APICommand;
 import com.frdfsnlght.transporter.command.CommandProcessor;
 import com.frdfsnlght.transporter.command.DebugCommand;
@@ -22,16 +25,11 @@ import com.frdfsnlght.transporter.command.DesignCommand;
 import com.frdfsnlght.transporter.command.GateCommand;
 import com.frdfsnlght.transporter.command.GlobalCommands;
 import com.frdfsnlght.transporter.command.HelpCommand;
-import com.frdfsnlght.transporter.command.NetworkCommand;
 import com.frdfsnlght.transporter.command.PinCommand;
-import com.frdfsnlght.transporter.command.RealmCommand;
 import com.frdfsnlght.transporter.command.ReloadCommand;
 import com.frdfsnlght.transporter.command.SaveCommand;
-import com.frdfsnlght.transporter.command.ServerCommand;
 import com.frdfsnlght.transporter.command.WorldCommand;
 import com.frdfsnlght.transporter.test.TestCommand;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -60,10 +58,7 @@ public final class Global {
         commands.add(new GlobalCommands());
         commands.add(new DesignCommand());
         commands.add(new GateCommand());
-        commands.add(new ServerCommand());
-        commands.add(new NetworkCommand());
         commands.add(new WorldCommand());
-        commands.add(new RealmCommand());
         commands.add(new APICommand());
         commands.add(new DebugCommand());
 

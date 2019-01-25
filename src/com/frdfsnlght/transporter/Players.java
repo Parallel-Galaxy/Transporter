@@ -15,16 +15,14 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.TypeMap;
-import com.frdfsnlght.transporter.api.RemotePlayer;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.frdfsnlght.transporter.api.TypeMap;
 
 /**
  *
@@ -40,22 +38,6 @@ public final class Players {
             if (p.getName().toLowerCase().startsWith(name)) {
                 if (player != null) return null;
                 player = p;
-            }
-        return player;
-    }
-
-    public static RemotePlayerImpl findRemote(String name) {
-        Map<String,RemotePlayerImpl> players = new HashMap<String,RemotePlayerImpl>();
-        for (Server server : Servers.getAll())
-            for (RemotePlayer p : server.getRemotePlayers())
-                players.put(p.getName().toLowerCase(), (RemotePlayerImpl)p);
-        name = name.toLowerCase();
-        if (players.containsKey(name)) return players.get(name);
-        RemotePlayerImpl player = null;
-        for (String pname : players.keySet())
-            if (pname.startsWith(name)) {
-                if (player != null) return null;
-                player = players.get(pname);
             }
         return player;
     }

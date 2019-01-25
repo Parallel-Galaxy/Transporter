@@ -15,6 +15,14 @@
  */
 package com.frdfsnlght.transporter.command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
+
 import com.frdfsnlght.transporter.Chat;
 import com.frdfsnlght.transporter.Config;
 import com.frdfsnlght.transporter.Context;
@@ -23,18 +31,10 @@ import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Global;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.Players;
-import com.frdfsnlght.transporter.RemotePlayerImpl;
 import com.frdfsnlght.transporter.ReservationImpl;
-import com.frdfsnlght.transporter.Server;
 import com.frdfsnlght.transporter.api.ReservationException;
 import com.frdfsnlght.transporter.api.TransporterException;
 import com.frdfsnlght.transporter.api.event.LocalPlayerPMEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import org.bukkit.command.Command;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -79,9 +79,8 @@ public final class GlobalCommands extends TrpCommandProcessor {
             Permissions.require(ctx.getPlayer(), "trp.list");
             List<Player> localPlayers = new ArrayList<Player>();
             Collections.addAll(localPlayers, (Player[])Global.plugin.getServer().getOnlinePlayers().toArray());
-            List<RemotePlayerImpl> remotePlayers = new ArrayList(Global.plugin.getAPI().getRemotePlayers());
 
-            if (localPlayers.isEmpty() && remotePlayers.isEmpty())
+            if (localPlayers.isEmpty())
                 ctx.send("there are no players");
             else {
                 Collections.sort(localPlayers, new Comparator<Player>() {
@@ -89,28 +88,10 @@ public final class GlobalCommands extends TrpCommandProcessor {
                         return a.getName().compareToIgnoreCase(b.getName());
                     }
                 });
-                Collections.sort(remotePlayers, new Comparator<RemotePlayerImpl>() {
-                    public int compare(RemotePlayerImpl a, RemotePlayerImpl b) {
-                        int res = a.getRemoteServer().getName().compareToIgnoreCase(b.getRemoteServer().getName());
-                        if (res == 0)
-                            res = a.getName().compareToIgnoreCase(b.getName());
-                        return res;
-                    }
-                });
 
                 ctx.send("%d local players:", localPlayers.size());
                 for (Player p : localPlayers)
                     ctx.send("  %s (%s)", p.getDisplayName(), p.getWorld().getName());
-
-                ctx.send("%d remote players:", remotePlayers.size());
-                String lastServer = "*";
-                for (RemotePlayerImpl p : remotePlayers) {
-                    if (! lastServer.equals(p.getRemoteServer().getName())) {
-                        ctx.send("  server: %s", p.getRemoteServer().getName());
-                        lastServer = p.getRemoteServer().getName();
-                    }
-                    ctx.send("    %s (%s)", p.getDisplayName(), p.getRemoteWorld().getName());
-                }
             }
             return;
         }
@@ -205,12 +186,6 @@ public final class GlobalCommands extends TrpCommandProcessor {
                     localPlayer.sendMessage(format);
                     ctx.send(ctx.getSender().getName() + " -> " + localPlayer.getName() + ": " + message);
                 }
-                return;
-            }
-            RemotePlayerImpl remotePlayer = Players.findRemote(playerName);
-            if (remotePlayer != null) {
-                ((Server)remotePlayer.getRemoteServer()).sendPrivateMessage(ctx.getPlayer(), remotePlayer, message);
-                ctx.send(ctx.getSender().getName() + " -> " + remotePlayer.getRemoteServer().getName() + "@" + remotePlayer.getName() + ": " + message);
                 return;
             }
             throw new CommandException("unknown or ambiguous player name");

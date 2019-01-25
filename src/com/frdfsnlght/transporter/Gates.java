@@ -142,8 +142,6 @@ public final class Gates {
             LocalGateImpl lg = (LocalGateImpl)gate;
             LocalGateCreateEvent event = new LocalGateCreateEvent(lg);
             Global.plugin.getServer().getPluginManager().callEvent(event);
-            for (Server server : Servers.getAll())
-                server.sendGateAdded(lg);
             World world = lg.getWorld();
             if (Config.getAutoAddWorlds())
                 try {
@@ -166,8 +164,6 @@ public final class Gates {
             LocalGateImpl lg = (LocalGateImpl)gate;
             deselectGate(lg);
             lg.save(false);
-            for (Server server : Servers.getAll())
-                server.sendGateRemoved(lg);
         }
     }
 
@@ -181,8 +177,6 @@ public final class Gates {
             LocalGateDestroyEvent event = new LocalGateDestroyEvent(lg);
             Global.plugin.getServer().getPluginManager().callEvent(event);
             lg.destroy(unbuild);
-            for (Server server : Servers.getAll())
-                server.sendGateDestroyed(lg);
         }
     }
 
@@ -206,8 +200,6 @@ public final class Gates {
         if (gate instanceof LocalGateImpl) {
             LocalGateImpl lg = (LocalGateImpl)gate;
             lg.onRenameComplete();
-            for (Server server : Servers.getAll())
-                server.sendGateRenamed(oldFullName, gate.getName());
         }
     }
 
@@ -220,14 +212,6 @@ public final class Gates {
         }
     }
 
-    public static void removeGatesForServer(Server server) {
-        for (RemoteGateImpl rg : getRemoteGates())
-            if (rg.getRemoteServer() == server)
-                try {
-                    remove(rg);
-                } catch (GateException ee) {}
-    }
-
     public static LocalGateImpl getLocalGate(String name) {
         GateImpl gate = gates.get(name);
         if ((gate == null) || (! (gate instanceof LocalGateImpl))) return null;
@@ -238,13 +222,6 @@ public final class Gates {
         Set<LocalGateImpl> gs = new HashSet<LocalGateImpl>();
         for (GateImpl gate : gates.values())
             if (gate instanceof LocalGateImpl) gs.add((LocalGateImpl)gate);
-        return gs;
-    }
-
-    public static Set<RemoteGateImpl> getRemoteGates() {
-        Set<RemoteGateImpl> gs = new HashSet<RemoteGateImpl>();
-        for (GateImpl gate : gates.values())
-            if (gate instanceof RemoteGateImpl) gs.add((RemoteGateImpl)gate);
         return gs;
     }
 

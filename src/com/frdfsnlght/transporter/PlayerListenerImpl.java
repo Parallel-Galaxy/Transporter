@@ -15,7 +15,6 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.Gate;
 import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.ReservationException;
 import com.frdfsnlght.transporter.api.TransporterException;

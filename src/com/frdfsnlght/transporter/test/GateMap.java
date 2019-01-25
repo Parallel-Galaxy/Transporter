@@ -15,14 +15,9 @@
  */
 package com.frdfsnlght.transporter.test;
 
-import java.util.Random;
 import com.frdfsnlght.transporter.GateMap.Bounds;
 import com.frdfsnlght.transporter.GateMap.Point;
 import com.frdfsnlght.transporter.GateMap.Volume;
-import com.frdfsnlght.transporter.LocalGateImpl;
-import com.frdfsnlght.transporter.api.GateException;
-import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 
 /**
  *

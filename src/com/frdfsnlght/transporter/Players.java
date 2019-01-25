@@ -19,7 +19,6 @@ import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.api.RemotePlayer;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

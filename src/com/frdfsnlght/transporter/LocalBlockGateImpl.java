@@ -35,6 +35,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
@@ -99,8 +100,8 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
     }
 
     // creation from design
-    public LocalBlockGateImpl(World world, String gateName, String playerName, BlockFace direction, Design design, TransformedDesign tDesign) throws GateException {
-        super(world, gateName, playerName, direction);
+    public LocalBlockGateImpl(World world, String gateName, Player player, BlockFace direction, Design design, TransformedDesign tDesign) throws GateException {
+        super(world, gateName, player, direction);
         options = new Options(this, OPTIONS, "trp.gate", this);
 
         designName = design.getName();

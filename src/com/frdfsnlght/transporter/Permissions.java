@@ -21,7 +21,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
+
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -31,17 +32,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
 public final class Permissions {
-
-//    private static final String OPS_FILE = "ops.txt";
-//    private static final String BANNEDPLAYERS_FILE = "banned-players.txt";
-//    private static final String WHITELIST_FILE = "white-list.txt";
-//    private static final String SERVERPROPERTIES_FILE = "server.properties";
-    private static final String PERMISSIONS_FILE = "permissions.properties";
-
-    private static final File permissionsFile =
-            new File(Global.plugin.getDataFolder(), PERMISSIONS_FILE);
-
-//    private static Map<String,ListFile> listFiles = new HashMap<String,ListFile>();
+    private static final File permissionsFile = new File(Global.plugin.getDataFolder(), "permissions.properties");
     private static Map<String,PropertiesFile> propertiesFiles = new HashMap<String,PropertiesFile>();
 
     private static boolean basicPermsInitted = false;
@@ -134,7 +125,7 @@ public final class Permissions {
     public static boolean has(Player player, String perm) {
         if (player == null) return true;
         try {
-            require(player.getWorld().getName(), player.getName(), true, perm);
+            require(player.getWorld().getName(), player, true, perm);
             return true;
         } catch (PermissionsException e) {
             return false;
@@ -143,31 +134,32 @@ public final class Permissions {
 
     public static void require(Player player, String perm) throws PermissionsException {
         if (player == null) return;
-        require(player.getWorld().getName(), player.getName(), true, perm);
+        require(player.getWorld().getName(), player, true, perm);
     }
 
     public static void require(Player player, boolean requireAll, String ... perms) throws PermissionsException {
         if (player == null) return;
-        require(player.getWorld().getName(), player.getName(), requireAll, perms);
+        require(player.getWorld().getName(), player, requireAll, perms);
     }
 
     public static void require(String worldName, String playerName, String perm) throws PermissionsException {
-        require(worldName, playerName, true, perm);
+        Player player = Bukkit.getServer().getPlayer(playerName);
+        require(worldName, player, true, perm);
     }
 
-    private static void require(String worldName, String playerName, boolean requireAll, String ... perms) throws PermissionsException {
-        if (isOp(playerName)) {
-            Utils.debug("player '%s' is op", playerName);
+    private static void require(String worldName, Player player, boolean requireAll, String ... perms) throws PermissionsException {
+        if (player.isOp()) {
+            Utils.debug("player '%s' is op", player.getName());
             return;
         }
 
         if (vaultAvailable()) {
             for (String perm : perms) {
                 if (requireAll) {
-                    if (! vaultPlugin.has(worldName, playerName, perm))
+                    if (! vaultPlugin.playerHas(worldName, player, perm))
                         throw new PermissionsException("not permitted");
                 } else {
-                    if (vaultPlugin.has(worldName, playerName, perm)) return;
+                    if (vaultPlugin.playerHas(worldName, player, perm)) return;
                 }
             }
             if ((! requireAll) && (perms.length > 0))
@@ -178,10 +170,10 @@ public final class Permissions {
         if (basicPermsAvailable()) {
             for (String perm : perms) {
                 if (requireAll) {
-                    if (! hasBasic(playerName, perm))
+                    if (! hasBasic(player.getName(), perm))
                         throw new PermissionsException("not permitted");
                 } else {
-                    if (hasBasic(playerName, perm)) return;
+                    if (hasBasic(player.getName(), perm)) return;
                 }
             }
             if ((! requireAll) && (perms.length > 0))
@@ -212,48 +204,6 @@ public final class Permissions {
          */
     }
 
-    public static boolean isOp(Player player) {
-        if (player == null) return true;
-        return player.isOp();
-//        return isOp(player.getName());
-    }
-
-    public static boolean isOp(String playerName) {
-        Set<OfflinePlayer> ops = Global.plugin.getServer().getOperators();
-        for (OfflinePlayer p : Global.plugin.getServer().getOperators())
-            if (p.getName().equalsIgnoreCase(playerName)) return true;
-        return false;
-//        return getList(new File(OPS_FILE), true).contains(playerName);
-    }
-
-    /*
-    private static Set<String> getList(File file, boolean forceLower) {
-        ListFile listFile = listFiles.get(file.getAbsolutePath());
-        if (listFile == null) {
-            listFile = new ListFile();
-            listFiles.put(file.getAbsolutePath(), listFile);
-        }
-        if ((listFile.data == null) || (listFile.lastRead < file.lastModified())) {
-            listFile.data = new HashSet<String>();
-            try {
-                BufferedReader r = new BufferedReader(new FileReader(file));
-                String line;
-                while ((line = r.readLine()) != null) {
-                    line = line.trim();
-                    if (line.isEmpty()) continue;
-                    if (forceLower) line = line.toLowerCase();
-                    listFile.data.add(line);
-                }
-                r.close();
-                listFile.lastRead = System.currentTimeMillis();
-            } catch (IOException ioe) {
-                Utils.warning("unable to read %s: %s", file.getAbsolutePath(), ioe.getMessage());
-            }
-        }
-        return listFile.data;
-    }
-     */
-
     private static Properties getProperties(File file) {
         PropertiesFile propsFile = propertiesFiles.get(file.getAbsolutePath());
         if (propsFile == null) {
@@ -271,13 +221,6 @@ public final class Permissions {
         }
         return propsFile.data;
     }
-
-    /*
-    private static class ListFile {
-        Set<String> data = null;
-        long lastRead = 0;
-    }
-*/
 
     private static class PropertiesFile {
         Properties data = null;

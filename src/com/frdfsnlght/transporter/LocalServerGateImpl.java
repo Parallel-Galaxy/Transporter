@@ -26,6 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -45,8 +46,8 @@ public final class LocalServerGateImpl extends LocalGateImpl implements LocalSer
     }
 
     // creation in-game
-    public LocalServerGateImpl(World world, String gateName, String playerName) throws GateException {
-        super(world, gateName, playerName, BlockFace.NORTH);
+    public LocalServerGateImpl(World world, String gateName, Player player) throws GateException {
+        super(world, gateName, player, BlockFace.NORTH);
         options = new Options(this, OPTIONS, "trp.gate", this);
         calculateCenter();
         validate();

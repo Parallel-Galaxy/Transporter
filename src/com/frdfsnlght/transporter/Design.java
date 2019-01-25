@@ -35,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -707,7 +708,7 @@ public class Design {
 
     // Builds a gate at the specified location.
     // Location must include a yaw that indicates the gate's direction.
-    public DesignMatch build(Location location, String playerName) throws DesignException {
+    public DesignMatch build(Location location, Player player) throws DesignException {
 
         // must be in a buildable world
         World world = location.getWorld();
@@ -751,6 +752,7 @@ public class Design {
                 translate(location, -insertBlock.getZ(), -insertBlock.getY(), insertBlock.getX());
 //                translate(location, -insertBlock.getX(), -insertBlock.getY(), -insertBlock.getZ());
                 break;
+            default: break;
         }
 
         Utils.debug("new location=%s", Utils.blockCoords(location));
@@ -779,7 +781,7 @@ public class Design {
             savedBlocks.add(new SavedBlock(gb.getLocation()));
             gb.getDetail().getBuildBlock().build(gb.getLocation());
         }
-        Designs.setBuildUndo(playerName, savedBlocks);
+        Designs.setBuildUndo(player, savedBlocks);
         return new DesignMatch(this, tDesign, world, direction);
     }
 
@@ -865,16 +867,16 @@ public class Design {
     }
 
     // Returns a new gate if a match in the surrounding blocks is found, otherwise null.
-    public LocalBlockGateImpl create(DesignMatch match, String playerName, String gateName) throws GateException {
-        LocalBlockGateImpl gate = new LocalBlockGateImpl(match.world, gateName, playerName, match.direction, this, match.tDesign);
+    public LocalBlockGateImpl create(DesignMatch match, Player player, String gateName) throws GateException {
+        LocalBlockGateImpl gate = new LocalBlockGateImpl(match.world, gateName, player, match.direction, this, match.tDesign);
         return gate;
     }
 
     // Builds a gate at the specified location, creates it, and returns it.
     // The location must contain a yaw that indicates the gate direction.
-    public LocalGateImpl create(Location location, String playerName, String gateName) throws TransporterException {
-        DesignMatch match = build(location, playerName);
-        return create(match, playerName, gateName);
+    public LocalGateImpl create(Location location, Player player, String gateName) throws TransporterException {
+        DesignMatch match = build(location, player);
+        return create(match, player, gateName);
     }
 
     private Location translate(Location loc, int dx, int dy, int dz) {

@@ -101,7 +101,7 @@ public class BlockListenerImpl implements Listener {
 
             Permissions.require(ctx.getPlayer(), "trp.create." + match.design.getName());
 
-            gate = match.design.create(match, ctx.getPlayer().getName(), gateName);
+            gate = match.design.create(match, ctx.getPlayer(), gateName);
             Gates.add(gate, true);
             ctx.sendLog("created gate '%s'", gate.getName());
             Gates.setSelectedGate(ctx.getPlayer(), gate);

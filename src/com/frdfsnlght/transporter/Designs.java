@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -85,8 +86,8 @@ public final class Designs {
         return designs.size();
     }
 
-    public static boolean undoBuild(String playerName) {
-        List<SavedBlock> blocks = buildUndos.remove(playerName);
+    public static boolean undoBuild(Player player) {
+        List<SavedBlock> blocks = buildUndos.remove(player.getUniqueId().toString());
         if (blocks == null) return false;
         for (SavedBlock block : blocks)
             block.restore();
@@ -104,13 +105,13 @@ public final class Designs {
         return null;
     }
 
-    static void setBuildUndo(String playerName, List<SavedBlock> savedBlocks) {
-        if (playerName == null) return;
-        buildUndos.put(playerName, savedBlocks);
+    static void setBuildUndo(Player player, List<SavedBlock> savedBlocks) {
+        if (player == null) return;
+        buildUndos.put(player.getUniqueId().toString(), savedBlocks);
     }
 
-    public static void clearBuildUndo(String playerName) {
-        buildUndos.remove(playerName);
+    public static void clearBuildUndo(Player player) {
+        buildUndos.remove(player.getUniqueId().toString());
     }
 
 }

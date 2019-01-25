@@ -28,6 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -42,8 +43,8 @@ public final class TestGate extends LocalGateImpl {
     private Random random;
     private Set<Location> blocks = null;
 
-    public TestGate(World world, String gateName, String playerName, BlockFace direction, Random r) throws GateException {
-        super(world, gateName, playerName, direction);
+    public TestGate(World world, String gateName, Player player, BlockFace direction, Random r) throws GateException {
+        super(world, gateName, player, direction);
         random = r;
     }
 

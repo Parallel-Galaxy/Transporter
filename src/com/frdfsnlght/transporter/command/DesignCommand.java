@@ -100,7 +100,7 @@ public class DesignCommand extends TrpCommandProcessor {
 
             if (designName.toLowerCase().equals("undo")) {
                 Permissions.require(ctx.getPlayer(), "trp.design.build.undo");
-                if (Designs.undoBuild(player.getName()))
+                if (Designs.undoBuild(player))
                     ctx.sendLog("build undone");
                 else
                     throw new CommandException("nothing to undo");
@@ -120,7 +120,7 @@ public class DesignCommand extends TrpCommandProcessor {
             if (design.mustBuildFromInventory())
                 Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
 
-            design.build(player.getLocation(), player.getName());
+            design.build(player.getLocation(), player);
 
             if (design.mustBuildFromInventory())
                 if (Inventory.deductBlocks(ctx.getPlayer(), design.getInventoryBlocks()))
@@ -152,13 +152,13 @@ public class DesignCommand extends TrpCommandProcessor {
 
             if ("area".startsWith(designName)) {
                 Permissions.require(ctx.getPlayer(), "trp.create.area");
-                LocalGateImpl gate = new LocalAreaGateImpl(ctx.getPlayer().getWorld(), gateName, ctx.getPlayer().getName(), Utils.yawToDirection(ctx.getPlayer().getLocation().getYaw()), ctx.getPlayer().getLocation());
+                LocalGateImpl gate = new LocalAreaGateImpl(ctx.getPlayer().getWorld(), gateName, ctx.getPlayer(), Utils.yawToDirection(ctx.getPlayer().getLocation().getYaw()), ctx.getPlayer().getLocation());
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);
             } else if ("server".startsWith(designName)) {
                 Permissions.require(ctx.getPlayer(), "trp.create.server");
-                LocalGateImpl gate = new LocalServerGateImpl(Global.plugin.getServer().getWorlds().get(0), gateName, ctx.getPlayer().getName());
+                LocalGateImpl gate = new LocalServerGateImpl(Global.plugin.getServer().getWorlds().get(0), gateName, ctx.getPlayer());
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);
@@ -175,7 +175,7 @@ public class DesignCommand extends TrpCommandProcessor {
                 if (design.mustBuildFromInventory())
                     Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
 
-                LocalGateImpl gate = design.create(player.getLocation(), player.getName(), gateName);
+                LocalGateImpl gate = design.create(player.getLocation(), player, gateName);
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);

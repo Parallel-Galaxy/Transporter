@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import com.frdfsnlght.transporter.api.LocalWorld;
+
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
@@ -199,7 +201,7 @@ public final class LocalWorldImpl implements OptionsListener, LocalWorld {
 
     
     public World getWorld() {
-        return Global.plugin.getServer().getWorld(name);
+        return Bukkit.getWorld(name);
     }
 
     public World load(Context ctx) {
@@ -234,7 +236,7 @@ public final class LocalWorldImpl implements OptionsListener, LocalWorld {
     public World unload() {
         World world = getWorld();
         if (world != null) {
-            Global.plugin.getServer().unloadWorld(world, true);
+            Bukkit.unloadWorld(world, true);
             // Bukkit onWorldUnloaded event handler should do this, but just to be sure...
             Gates.removeGatesForWorld(world);
         }

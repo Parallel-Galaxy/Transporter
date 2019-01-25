@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -47,7 +46,7 @@ public final class Permissions {
 
     public static boolean vaultAvailable() {
         if (! Config.getUseVaultPermissions()) return false;
-        Plugin p = Global.plugin.getServer().getPluginManager().getPlugin("Vault");
+        Plugin p = Bukkit.getPluginManager().getPlugin("Vault");
         if (p == null) {
             Utils.warning("Vault is not installed!");
             return false;
@@ -58,7 +57,7 @@ public final class Permissions {
         }
         if (vaultPlugin != null) return true;
         RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp =
-                Global.plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+                Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (rsp == null) {
             Utils.warning("Vault didn't return a service provider!");
             return false;
@@ -179,24 +178,6 @@ public final class Permissions {
         // should never get here!
         throw new PermissionsException("not permitted because no permissions system is available?");
 
-    }
-
-    // can't check player's IP because it might not be what it is on the sending side due to NAT
-    public static void connect(String playerName) throws PermissionsException {
-        if (Global.plugin.getServer().getOnlinePlayers().size() >= Global.plugin.getServer().getMaxPlayers())
-            throw new PermissionsException("maximim players already connected");
-        for (OfflinePlayer p : Global.plugin.getServer().getWhitelistedPlayers())
-            if (p.getName().equalsIgnoreCase(playerName)) return;
-        for (OfflinePlayer p : Global.plugin.getServer().getBannedPlayers())
-            if (p.getName().equalsIgnoreCase(playerName))
-                throw new PermissionsException("player is banned");
-        /*
-        if (getProperties(new File(SERVERPROPERTIES_FILE)).getProperty("white-list", "false").equalsIgnoreCase("true"))
-            if (! getList(new File(WHITELIST_FILE), true).contains(playerName.toLowerCase()))
-                throw new PermissionsException("player is not white-listed");
-        if (getList(new File(BANNEDPLAYERS_FILE), false).contains(playerName))
-            throw new PermissionsException("player is banned");
-         */
     }
 
     private static Properties getProperties(File file) {

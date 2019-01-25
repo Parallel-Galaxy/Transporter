@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -601,7 +602,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         onDestinationChanged();
 
         LocalGateOpenedEvent event = new LocalGateOpenedEvent(this);
-        Global.plugin.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
 
         if (duration > 0) {
             final LocalGateImpl myself = this;
@@ -624,7 +625,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         onDestinationChanged();
 
         LocalGateClosedEvent event = new LocalGateClosedEvent(this);
-        Global.plugin.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
 
         // try to detach from our destination
         if (outgoing != null) {

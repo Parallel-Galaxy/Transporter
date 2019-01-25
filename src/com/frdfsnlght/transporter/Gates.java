@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -61,7 +62,7 @@ public final class Gates {
 
     public static void load(Context ctx) {
         clearLocalGates();
-        for (World world : Global.plugin.getServer().getWorlds())
+        for (World world : Bukkit.getWorlds())
             loadGatesForWorld(ctx, world);
     }
 
@@ -141,7 +142,7 @@ public final class Gates {
         if (gate instanceof LocalGateImpl) {
             LocalGateImpl lg = (LocalGateImpl)gate;
             LocalGateCreateEvent event = new LocalGateCreateEvent(lg);
-            Global.plugin.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
             World world = lg.getWorld();
             if (Config.getAutoAddWorlds())
                 try {
@@ -175,7 +176,7 @@ public final class Gates {
             LocalGateImpl lg = (LocalGateImpl)gate;
             deselectGate(lg);
             LocalGateDestroyEvent event = new LocalGateDestroyEvent(lg);
-            Global.plugin.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
             lg.destroy(unbuild);
         }
     }

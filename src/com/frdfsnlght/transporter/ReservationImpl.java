@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -415,7 +417,7 @@ public final class ReservationImpl implements Reservation {
             checkLocalArrivalGate();
 
             EntityDepartEvent event = new EntityDepartEvent(this);
-            Global.plugin.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
 
             arrive();
             completeLocalDepartureGate();
@@ -468,7 +470,7 @@ public final class ReservationImpl implements Reservation {
             entity.remove();
 
         EntityDepartEvent event = new EntityDepartEvent(this);
-        Global.plugin.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
 
     }
 
@@ -489,7 +491,7 @@ public final class ReservationImpl implements Reservation {
         Utils.debug("reservation to send %s to %s was completed", getTraveler(), getDestination());
 
         EntityArriveEvent event = new EntityArriveEvent(this);
-        Global.plugin.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
 
     }
 
@@ -675,7 +677,7 @@ public final class ReservationImpl implements Reservation {
     private void prepareTraveler() throws ReservationException {
         Utils.debug("prepareTraveler %s", getTraveler());
         if ((player == null) && (playerName != null)) {
-            player = Global.plugin.getServer().getPlayer(playerName);
+            player = Bukkit.getPlayer(playerName);
             if (player == null)
                 throw new ReservationException("player '%s' not found", playerName);
         }
@@ -705,7 +707,7 @@ public final class ReservationImpl implements Reservation {
         World theWorld;
         Location theLocation;
         if (toLocation == null) {
-            theWorld = Global.plugin.getServer().getWorlds().get(0);
+            theWorld = Bukkit.getWorlds().get(0);
             theLocation = theWorld.getSpawnLocation();
         } else {
             theWorld = toLocation.getWorld();

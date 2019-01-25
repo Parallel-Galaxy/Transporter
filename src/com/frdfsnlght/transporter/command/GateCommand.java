@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,7 +33,6 @@ import org.bukkit.command.Command;
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.Global;
 import com.frdfsnlght.transporter.LocalAreaGateImpl;
 import com.frdfsnlght.transporter.LocalGateImpl;
 import com.frdfsnlght.transporter.Permissions;
@@ -237,7 +237,7 @@ public class GateCommand extends TrpCommandProcessor {
             if ("add".startsWith(subCmd)) {
                 fromGate.addLink(ctx, toGateName);
                 if (reverse && (ctx.getSender() != null) && (toGate != null)) {
-                    Global.plugin.getServer().dispatchCommand(ctx.getSender(), "trp gate link add \"" + toGate.getFullName() + "\" \"" + fromGate.getFullName() + "\"");
+                    Bukkit.dispatchCommand(ctx.getSender(), "trp gate link add \"" + toGate.getFullName() + "\" \"" + fromGate.getFullName() + "\"");
                 }
                 return;
             }
@@ -245,7 +245,7 @@ public class GateCommand extends TrpCommandProcessor {
             if ("remove".startsWith(subCmd)) {
                 fromGate.removeLink(ctx, toGateName);
                 if (reverse && (ctx.getSender() != null) && (toGate != null)) {
-                    Global.plugin.getServer().dispatchCommand(ctx.getSender(), "trp gate link remove \"" + fromGate.getFullName() + "\" \"" + toGate.getFullName() + "\"");
+                    Bukkit.dispatchCommand(ctx.getSender(), "trp gate link remove \"" + fromGate.getFullName() + "\" \"" + toGate.getFullName() + "\"");
                 }
                 return;
             }

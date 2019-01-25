@@ -20,7 +20,6 @@ import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.Design;
 import com.frdfsnlght.transporter.Designs;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.Global;
 import com.frdfsnlght.transporter.Inventory;
 import com.frdfsnlght.transporter.LocalAreaGateImpl;
 import com.frdfsnlght.transporter.LocalGateImpl;
@@ -32,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -158,7 +159,7 @@ public class DesignCommand extends TrpCommandProcessor {
                 Gates.setSelectedGate(ctx.getPlayer(), gate);
             } else if ("server".startsWith(designName)) {
                 Permissions.require(ctx.getPlayer(), "trp.create.server");
-                LocalGateImpl gate = new LocalServerGateImpl(Global.plugin.getServer().getWorlds().get(0), gateName, ctx.getPlayer());
+                LocalGateImpl gate = new LocalServerGateImpl(Bukkit.getWorlds().get(0), gateName, ctx.getPlayer());
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);

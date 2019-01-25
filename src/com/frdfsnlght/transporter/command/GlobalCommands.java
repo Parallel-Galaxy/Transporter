@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -27,7 +28,6 @@ import com.frdfsnlght.transporter.Config;
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.Global;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.ReservationImpl;
 import com.frdfsnlght.transporter.api.ReservationException;
@@ -72,7 +72,7 @@ public final class GlobalCommands extends TrpCommandProcessor {
         if ("list".startsWith(subCmd)) {
             Permissions.require(ctx.getPlayer(), "trp.list");
             List<Player> localPlayers = new ArrayList<Player>();
-            Collections.addAll(localPlayers, (Player[])Global.plugin.getServer().getOnlinePlayers().toArray());
+            Collections.addAll(localPlayers, (Player[])Bukkit.getOnlinePlayers().toArray());
 
             if (localPlayers.isEmpty())
                 ctx.send("there are no players");
@@ -117,7 +117,7 @@ public final class GlobalCommands extends TrpCommandProcessor {
         if ("send".startsWith(subCmd)) {
             if (args.isEmpty())
                 throw new CommandException("player name required");
-            Player player = Global.plugin.getServer().getPlayer(args.remove(0));
+            Player player = Bukkit.getPlayer(args.remove(0));
             if (player == null)
                 throw new CommandException("unknown player");
             GateImpl gate;

@@ -18,6 +18,7 @@ package com.frdfsnlght.transporter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -35,7 +36,7 @@ public final class Chat {
 
     public static boolean vaultAvailable() {
         if (! Config.getUseVaultChat()) return false;
-        Plugin p = Global.plugin.getServer().getPluginManager().getPlugin("Vault");
+        Plugin p = Bukkit.getPluginManager().getPlugin("Vault");
         if (p == null) {
             Utils.warning("Vault is not installed!");
             return false;
@@ -46,7 +47,7 @@ public final class Chat {
         }
         if (vaultPlugin != null) return true;
         RegisteredServiceProvider<net.milkbowl.vault.chat.Chat> rsp =
-                Global.plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+                Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
         if (rsp == null) {
             Utils.warning("Vault didn't return a service provider!");
             return false;

@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,29 +52,15 @@ public class Transporter extends JavaPlugin {
     @Override
     public void onEnable() {
         Global.mainThread = Thread.currentThread();
-        PluginDescriptionFile pdf = getDescription();
-        Global.plugin = this;
-        Global.pluginName = pdf.getName();
-        Global.pluginVersion = pdf.getVersion();
-        Global.started = false;
+        Global.setPlugin(this);
 
-        /*
-        if (! Compatibility.setup()) {
-            Utils.severe("unable to find compatible server version, plugin is disabled");
-            setEnabled(false);
-            return;
-        }
-        */
-        
+        Global.started = false;
         Global.enabled = true;
 
         final Context ctx = new Context();
 
-        //ctx.sendLog("this is v%s", Global.pluginVersion);
-
         // install/update resources
-
-        File dataFolder = Global.plugin.getDataFolder();
+        File dataFolder = getDataFolder();
         if (! dataFolder.exists()) {
             ctx.sendLog("creating data folder");
             dataFolder.mkdirs();
@@ -125,7 +110,6 @@ public class Transporter extends JavaPlugin {
         Designs.load(ctx);
 
         PluginManager pm = getServer().getPluginManager();
-
         pm.registerEvents(blockListener, this);
         pm.registerEvents(playerListener, this);
         pm.registerEvents(vehicleListener, this);
@@ -160,7 +144,7 @@ public class Transporter extends JavaPlugin {
         Config.save(ctx);
         Gates.save(ctx);
         ctx.sendLog("disabled");
-        Global.plugin = null;
+        Global.setPlugin(null);
     }
 
     @Override

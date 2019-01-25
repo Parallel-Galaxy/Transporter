@@ -18,6 +18,8 @@ package com.frdfsnlght.transporter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.plugin.PluginDescriptionFile;
+
 import com.frdfsnlght.transporter.command.CommandProcessor;
 import com.frdfsnlght.transporter.command.DebugCommand;
 import com.frdfsnlght.transporter.command.DesignCommand;
@@ -36,16 +38,13 @@ import com.frdfsnlght.transporter.test.TestCommand;
  */
 public final class Global {
 
-    public static final int DEFAULT_PLUGIN_PORT = 25555;
-    public static final int DEFAULT_MC_PORT = 25565;
-
-    public static Thread mainThread = null;
-    public static boolean enabled = false;
     public static Transporter plugin = null;
     public static String pluginName;
     public static String pluginVersion;
+
+    public static Thread mainThread = null;
+    public static boolean enabled = false;
     public static boolean started = false;
-    //public static Compatibility compatibility;
 
     public static final List<CommandProcessor> commands = new ArrayList<CommandProcessor>();
 
@@ -68,6 +67,16 @@ public final class Global {
 
     public static boolean isTesting() {
         return System.getenv("TRANSPORTER_TEST") != null;
+    }
+
+    public static void setPlugin(Transporter plugin) {
+        Global.plugin = plugin;
+
+        if (plugin != null) {
+            PluginDescriptionFile pdf = plugin.getDescription();
+            Global.pluginName = pdf.getName();
+            Global.pluginVersion = pdf.getVersion();
+        }
     }
 
 }

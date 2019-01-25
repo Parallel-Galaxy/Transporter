@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -61,12 +62,6 @@ public class Utils {
     private static final int DEBUG_LOG_BYTES = 20 * 1024;
 
     private static Pattern tokenPattern = Pattern.compile("%(\\w+)%");
-
-    private static String currentVersion;
-    private static String latestVersion;
-    private static String updateMessage = ChatColor.RED + "[" + Global.pluginName + "] " + ChatColor.DARK_RED
-            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
-            + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
 
     public static void info(String msg, Object ... args) {
         if (args.length > 0)
@@ -353,43 +348,43 @@ public class Utils {
     public static boolean isWorkerThread() {
         if (isMainThread()) return false;
         Thread t = Thread.currentThread();
-        for (BukkitWorker worker : Global.plugin.getServer().getScheduler().getActiveWorkers())
+        for (BukkitWorker worker : Bukkit.getScheduler().getActiveWorkers())
             if (worker.getThread() == t) return true;
         return false;
     }
 
     public static int fire(Runnable run) {
         if (! Global.enabled) return -1;
-        return Global.plugin.getServer().getScheduler().scheduleSyncDelayedTask(Global.plugin, run);
+        return Bukkit.getScheduler().scheduleSyncDelayedTask(Global.plugin, run);
     }
 
     // delay is millis
     public static int fireDelayed(Runnable run, long delay) {
         if (! Global.enabled) return -1;
         long ticks = delay / 50;
-        return Global.plugin.getServer().getScheduler().scheduleSyncDelayedTask(Global.plugin, run, ticks);
+        return Bukkit.getScheduler().scheduleSyncDelayedTask(Global.plugin, run, ticks);
     }
 
     public static <T> Future<T> call(Callable<T> task) {
         if (! Global.enabled) return null;
-        return Global.plugin.getServer().getScheduler().callSyncMethod(Global.plugin, task);
+        return Bukkit.getScheduler().callSyncMethod(Global.plugin, task);
     }
 
     public static BukkitTask worker(Runnable run) {
         if (! Global.enabled) return null;
-        return Global.plugin.getServer().getScheduler().runTaskAsynchronously(Global.plugin, run);
+        return Bukkit.getScheduler().runTaskAsynchronously(Global.plugin, run);
     }
 
     // delay is millis
     public static BukkitTask workerDelayed(Runnable run, long delay) {
         if (! Global.enabled) return null;
         long ticks = delay / 50;
-        return Global.plugin.getServer().getScheduler().runTaskLaterAsynchronously(Global.plugin, run, ticks);
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(Global.plugin, run, ticks);
     }
 
     public static void cancelTask(int taskId) {
         if (! Global.enabled) return;
-        Global.plugin.getServer().getScheduler().cancelTask(taskId);
+        Bukkit.getScheduler().cancelTask(taskId);
     }
 
     public static <T extends Enum<T>> T valueOf(Class<T> cls, String s) {
@@ -438,7 +433,7 @@ public class Utils {
     }
 
     public static void sendPlayerChannelMessage(Player player, String channel, byte[] payload) {
-        Messenger m = Global.plugin.getServer().getMessenger();
+        Messenger m = Bukkit.getMessenger();
         if (! m.isOutgoingChannelRegistered(Global.plugin, channel)) {
             debug("registering for sending messages on the '%s' channel", channel);
             m.registerOutgoingPluginChannel(Global.plugin, channel);

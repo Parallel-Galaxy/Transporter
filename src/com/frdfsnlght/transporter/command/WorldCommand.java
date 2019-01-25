@@ -170,7 +170,7 @@ public class WorldCommand extends TrpCommandProcessor {
             if (! world.isLoaded())
                 throw new CommandException("world '%s' is not loaded", world.getName());
             ctx.send("unloading world '%s'...", world.getName());
-            World w = world.unload();
+            world.unload();
             ctx.send("unloaded world '%s'", world.getName());
             return;
         }

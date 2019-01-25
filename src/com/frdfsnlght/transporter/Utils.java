@@ -148,7 +148,7 @@ public class Utils {
     }
 
     public static String block(Block b) {
-        return String.format("Block[%s,%d]", b.getType(), b.getData());
+        return String.format("Block[%s,%d]", b.getType(), b.getBlockData());
     }
 
     public static String blockCoords(Location loc) {

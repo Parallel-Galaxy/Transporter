@@ -16,6 +16,8 @@
 package com.frdfsnlght.transporter;
 
 import com.frdfsnlght.transporter.api.ReservationException;
+
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
@@ -43,11 +45,13 @@ public class VehicleListenerImpl implements Listener {
             ReservationImpl r = new ReservationImpl(vehicle, fromGate);
             r.depart();
         } catch (ReservationException re) {
-            if (vehicle.getPassenger() instanceof Player) {
-                Context ctx = new Context((Player)vehicle.getPassenger());
-                ctx.warnLog(re.getMessage());
-            } else
-                Utils.warning(re.getMessage());
+        	for (Entity passenger : vehicle.getPassengers()) {
+	            if (passenger instanceof Player) {
+	                Context ctx = new Context((Player)passenger);
+	                ctx.warnLog(re.getMessage());
+	            } else
+	                Utils.warning(re.getMessage());
+        	}
         }
     }
 

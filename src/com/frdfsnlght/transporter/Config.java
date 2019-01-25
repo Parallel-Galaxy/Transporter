@@ -93,14 +93,12 @@ public final class Config {
 
         ctx.sendLog("loaded configuration");
         Worlds.onConfigLoad(ctx);
-        APIBackend.onConfigLoad(ctx);
         Pins.onConfigLoad(ctx);
     }
 
     public static void save(Context ctx) {
         if (config == null) return;
         Worlds.onConfigSave();
-        APIBackend.onConfigSave();
         Pins.onConfigSave();
         File configDir = Global.plugin.getDataFolder();
         if (! configDir.exists()) configDir.mkdirs();

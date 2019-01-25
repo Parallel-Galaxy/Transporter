@@ -18,7 +18,6 @@ package com.frdfsnlght.transporter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.frdfsnlght.transporter.command.APICommand;
 import com.frdfsnlght.transporter.command.CommandProcessor;
 import com.frdfsnlght.transporter.command.DebugCommand;
 import com.frdfsnlght.transporter.command.DesignCommand;
@@ -59,7 +58,6 @@ public final class Global {
         commands.add(new DesignCommand());
         commands.add(new GateCommand());
         commands.add(new WorldCommand());
-        commands.add(new APICommand());
         commands.add(new DebugCommand());
 
         if (isTesting()) {

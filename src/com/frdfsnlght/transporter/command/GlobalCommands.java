@@ -68,7 +68,6 @@ public final class GlobalCommands extends TrpCommandProcessor {
         return cmds;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void process(Context ctx, Command cmd, List<String> args) throws TransporterException {
         if (args.isEmpty())

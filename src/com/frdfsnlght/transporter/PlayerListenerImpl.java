@@ -15,28 +15,23 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.ReservationException;
-import com.frdfsnlght.transporter.api.TransporterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+
+import com.frdfsnlght.transporter.api.GateException;
+import com.frdfsnlght.transporter.api.ReservationException;
+import com.frdfsnlght.transporter.api.TransporterException;
 
 /**
  *

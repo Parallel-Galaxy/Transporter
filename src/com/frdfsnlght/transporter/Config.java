@@ -15,12 +15,12 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.TypeMap;
 import java.io.File;
-import java.net.Proxy;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.frdfsnlght.transporter.api.TypeMap;
 
 /**
  *

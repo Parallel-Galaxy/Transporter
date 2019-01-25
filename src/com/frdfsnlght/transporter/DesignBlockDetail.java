@@ -234,7 +234,7 @@ public final class DesignBlockDetail {
     }
 
     public boolean isInventory() {
-        return (buildBlock != null) && (buildBlock.getType() != Material.AIR.getId());
+        return (buildBlock != null) && (buildBlock.getMaterial() != Material.AIR);
     }
 
     public boolean isBuildable() {

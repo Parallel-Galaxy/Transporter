@@ -13,8 +13,8 @@ blockKey:
   x: NONE
   X: AIR
   S: STONE
-  W: { build: STONE, open: 30, portal: true }
-  R: { build: REDSTONE_ORE, open: 30, portal: true }
+  W: { build: STONE, open: WEB, portal: true }
+  R: { build: REDSTONE_ORE, open: WEB, portal: true }
   V: { build: AIR, spawn: PLAYER }
   n: { build: {type: SIGN_POST, facing: NORTH }, screen: true, trigger: true, switch: true }
   s: { build: {type: SIGN_POST, facing: SOUTH }, screen: true, trigger: true, switch: true }

@@ -29,6 +29,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -288,7 +289,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             for (GateBlock gb : blocks) {
                 if (! gb.getDetail().isBuildable()) continue;
                 Block b = gb.getLocation().getBlock();
-                b.setTypeIdAndData(0, (byte)0, false);
+                b.setType(Material.AIR);
             }
         }
     }
@@ -508,7 +509,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
                 if (gb.getDetail().isBuildable())
                     gb.getDetail().getBuildBlock().build(gb.getLocation());
                 else
-                gb.getLocation().getBlock().setTypeIdAndData(0, (byte)0, false);
+                gb.getLocation().getBlock().setType(Material.AIR);
             }
         }
         Gates.removePortalVolume(this);

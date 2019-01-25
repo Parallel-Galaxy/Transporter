@@ -53,7 +53,7 @@ public final class Inventory {
     public static TypeMap encodeItemStack(ItemStack stack) {
         if (stack == null) return null;
         TypeMap s = new TypeMap();
-        s.put("type", stack.getTypeId());
+        s.put("type", stack.getType());
         s.put("amount", stack.getAmount());
         s.put("durability", stack.getDurability());
         MaterialData data = stack.getData();
@@ -70,7 +70,7 @@ public final class Inventory {
     public static ItemStack decodeItemStack(TypeMap s) {
         if (s == null) return null;
         ItemStack stack = new ItemStack(
-                Material.getMaterial(s.getInt("type")),
+                (Material)s.get("type"),
                 s.getInt("amount"),
                 (short)s.getInt("durability"));
         if (s.containsKey("data")) {
@@ -98,8 +98,7 @@ public final class Inventory {
         String parts[] = item.split(":");
         if (parts.length > 2) return null;
         try {
-            int typeId = Integer.parseInt(parts[0]);
-            Material material = Material.getMaterial(typeId);
+            Material material = Material.getMaterial(parts[0]);
             if (material == null) return null;
             item = material.toString();
         } catch (NumberFormatException nfe) {

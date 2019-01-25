@@ -57,13 +57,11 @@ public class Design {
     private boolean buildFromInventory;
     private boolean linkLocal;
     private boolean linkWorld;
-    private boolean linkServer;
     private String linkNoneFormat;
     private String linkUnselectedFormat;
     private String linkOfflineFormat;
     private String linkLocalFormat;
     private String linkWorldFormat;
-    private String linkServerFormat;
     private boolean multiLink;
     private boolean restoreOnClose;
     private boolean requirePin;
@@ -104,19 +102,6 @@ public class Design {
     private String countdownIntervalFormat;
     private String countdownCancelFormat;
 
-    // Economy
-    private double buildCost;
-    private double createCost;
-    private double linkLocalCost;
-    private double linkWorldCost;
-    private double linkServerCost;
-    private double sendLocalCost;
-    private double sendWorldCost;
-    private double sendServerCost;
-    private double receiveLocalCost;
-    private double receiveWorldCost;
-    private double receiveServerCost;
-
     private Set<String> bannedItems = new HashSet<String>();
     private Set<String> allowedItems = new HashSet<String>();
     private Map<String,String> replaceItems = new HashMap<String,String>();
@@ -146,13 +131,11 @@ public class Design {
         buildFromInventory = conf.getBoolean("buildFromInventory", false);
         linkLocal = conf.getBoolean("linkLocal", true);
         linkWorld = conf.getBoolean("linkWorld", true);
-        linkServer = conf.getBoolean("linkServer", true);
         linkNoneFormat = conf.getString("linkNoneFormat", "%fromGate%\\n\\n<none>");
         linkUnselectedFormat = conf.getString("linkUnselectedFormat", "%fromGate%\\n\\n<unselected>");
         linkOfflineFormat = conf.getString("linkOfflineFormat", "%fromGate%\\n\\n<offline>");
         linkLocalFormat = conf.getString("linkLocalFormat", "%fromGate%\\n%toGate%");
         linkWorldFormat = conf.getString("linkWorldFormat", "%fromGate%\\n%toWorld%\\n%toGate%");
-        linkServerFormat = conf.getString("linkServerFormat", "%fromGate%\\n%toServer%\\n%toWorld%\\n%toGate%");
         multiLink = conf.getBoolean("multiLink", true);
         restoreOnClose = conf.getBoolean("restoreOnClose", false);
         requirePin = conf.getBoolean("requirePin", false);
@@ -232,19 +215,6 @@ public class Design {
                 replaceItems.put(oi, ni);
             }
         }
-
-        // Economy
-        buildCost = conf.getDouble("buildCost", 0);
-        createCost = conf.getDouble("createCost", 0);
-        linkLocalCost = conf.getDouble("linkLocalCost", 0);
-        linkWorldCost = conf.getDouble("linkWorldCost", 0);
-        linkServerCost = conf.getDouble("linkServerCost", 0);
-        sendLocalCost = conf.getDouble("sendLocalCost", 0);
-        sendWorldCost = conf.getDouble("sendWorldCost", 0);
-        sendServerCost = conf.getDouble("sendServerCost", 0);
-        receiveLocalCost = conf.getDouble("receiveLocalCost", 0);
-        receiveWorldCost = conf.getDouble("receiveWorldCost", 0);
-        receiveServerCost = conf.getDouble("receiveServerCost", 0);
 
         buildWorlds = new ArrayList<Pattern>();
         String pattern = conf.getString("buildWorlds");
@@ -432,10 +402,6 @@ public class Design {
         return linkWorld;
     }
 
-    public boolean getLinkServer() {
-        return linkServer;
-    }
-
     public String getLinkNoneFormat() {
         return linkNoneFormat;
     }
@@ -454,10 +420,6 @@ public class Design {
 
     public String getLinkWorldFormat() {
         return linkWorldFormat;
-    }
-
-    public String getLinkServerFormat() {
-        return linkServerFormat;
     }
 
     public boolean getMultiLink() {
@@ -606,50 +568,6 @@ public class Design {
 
     public int getLinkAddDistance() {
         return linkAddDistance;
-    }
-
-    public double getBuildCost() {
-        return buildCost;
-    }
-
-    public double getCreateCost() {
-        return createCost;
-    }
-
-    public double getLinkLocalCost() {
-        return linkLocalCost;
-    }
-
-    public double getLinkWorldCost() {
-        return linkWorldCost;
-    }
-
-    public double getLinkServerCost() {
-        return linkServerCost;
-    }
-
-    public double getSendLocalCost() {
-        return sendLocalCost;
-    }
-
-    public double getSendWorldCost() {
-        return sendWorldCost;
-    }
-
-    public double getSendServerCost() {
-        return sendServerCost;
-    }
-
-    public double getReceiveLocalCost() {
-        return receiveLocalCost;
-    }
-
-    public double getReceiveWorldCost() {
-        return receiveWorldCost;
-    }
-
-    public double getReceiveServerCost() {
-        return receiveServerCost;
     }
 
     public int getCountdown() {

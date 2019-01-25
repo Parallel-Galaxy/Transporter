@@ -40,7 +40,6 @@ public abstract class GateImpl implements Gate {
 
     public abstract String getName(Context ctx);
     public abstract String getGlobalName();
-    public abstract boolean isSameServer();
     protected abstract void attach(GateImpl origin);
     protected abstract void detach(GateImpl origin);
 

@@ -661,8 +661,6 @@ public class GateCommand extends TrpCommandProcessor {
             gate = Gates.getSelectedGate(ctx.getPlayer());
         if (gate == null)
             throw new CommandException("gate name required");
-        if (! gate.isSameServer())
-            throw new CommandException("this command cannot be used on a remote endpoint");
         return (LocalGateImpl)gate;
     }
 

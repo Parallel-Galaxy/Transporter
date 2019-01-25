@@ -318,20 +318,6 @@ public interface LocalGate extends Gate {
     public void setLinkWorld(boolean b);
 
     /**
-     * Returns the value of the "linkServer" option.
-     *
-     * @return      the option value
-     */
-    public boolean getLinkServer();
-
-    /**
-     * Sets the value of the "linkServer" option.
-     *
-     * @param b      the option value
-     */
-    public void setLinkServer(boolean b);
-
-    /**
      * Returns the value of the "linkNoneFormat" option.
      *
      * @return      the option value
@@ -400,20 +386,6 @@ public interface LocalGate extends Gate {
      * @param s      the option value
      */
     public void setLinkWorldFormat(String s);
-
-    /**
-     * Returns the value of the "linkServerFormat" option.
-     *
-     * @return      the option value
-     */
-    public String getLinkServerFormat();
-
-    /**
-     * Sets the value of the "linkServerFormat" option.
-     *
-     * @param s      the option value
-     */
-    public void setLinkServerFormat(String s);
 
     /**
      * Returns the value of the "multiLink" option.
@@ -920,132 +892,6 @@ public interface LocalGate extends Gate {
      * @param s      the option value
      */
     public void setCountdownCancelFormat(String s);
-
-    /**
-     * Returns the value of the "linkLocalCost" option.
-     *
-     * @return      the option value
-     */
-    public double getLinkLocalCost();
-
-    /**
-     * Sets the value of the "linkLocalCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setLinkLocalCost(double cost);
-
-    /**
-     * Returns the value of the "linkWorldCost" option.
-     *
-     * @return      the option value
-     */
-    public double getLinkWorldCost();
-
-    /**
-     * Sets the value of the "linkWorldCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setLinkWorldCost(double cost);
-
-    /**
-     * Returns the value of the "linkServerCost" option.
-     *
-     * @return      the option value
-     */
-    public double getLinkServerCost();
-
-    /**
-     * Sets the value of the "linkServerCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setLinkServerCost(double cost);
-
-    /**
-     * Returns the value of the "sendLocalCost" option.
-     *
-     * @return      the option value
-     */
-    public double getSendLocalCost();
-
-    /**
-     * Sets the value of the "sendLocalCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setSendLocalCost(double cost);
-
-    /**
-     * Returns the value of the "sendWorldCost" option.
-     *
-     * @return      the option value
-     */
-    public double getSendWorldCost();
-
-    /**
-     * Sets the value of the "sendWorldCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setSendWorldCost(double cost);
-
-    /**
-     * Returns the value of the "sendServerCost" option.
-     *
-     * @return      the option value
-     */
-    public double getSendServerCost();
-
-    /**
-     * Sets the value of the "sendServerCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setSendServerCost(double cost);
-
-    /**
-     * Returns the value of the "receiveLocalCost" option.
-     *
-     * @return      the option value
-     */
-    public double getReceiveLocalCost();
-
-    /**
-     * Sets the value of the "receiveLocalCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setReceiveLocalCost(double cost);
-
-    /**
-     * Returns the value of the "receiveWorldCost" option.
-     *
-     * @return      the option value
-     */
-    public double getReceiveWorldCost();
-
-    /**
-     * Sets the value of the "receiveWorldCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setReceiveWorldCost(double cost);
-
-    /**
-     * Returns the value of the "receiveServerCost" option.
-     *
-     * @return      the option value
-     */
-    public double getReceiveServerCost();
-
-    /**
-     * Sets the value of the "receiveServerCost" option.
-     *
-     * @param cost      the option value
-     */
-    public void setReceiveServerCost(double cost);
 
     /**
      * Returns the value of the "linkAddDistance" option.

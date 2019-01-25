@@ -4,8 +4,7 @@ buildable: true           # can a user build the gate automatically?
 buildFromInventory: false # when building the gate, take the blocks from the user's inventory?
 buildWorlds: .*           # list of world name patterns where this gate can be built and created
 linkLocal: true           # can be linked to another gate in same world?
-linkWorld: true           # can be linked to another gate in a world on the same server?
-linkServer: true          # can be linked to another gate on a different server?
+linkWorld: true           # can be linked to another gate in another world?
 multiLink: true           # can be linked to multiple gates?
 restoreOnClose: false     # restore open blocks when closing the gate?
 requirePin: false         # does the gate require a valid player pin for use?

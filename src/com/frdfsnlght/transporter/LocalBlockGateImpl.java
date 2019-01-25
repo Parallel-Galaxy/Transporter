@@ -147,16 +147,6 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
         countdownIntervalFormat = design.getCountdownIntervalFormat();
         countdownCancelFormat = design.getCountdownCancelFormat();
 
-        linkLocalCost = design.getLinkLocalCost();
-        linkWorldCost = design.getLinkWorldCost();
-        linkServerCost = design.getLinkServerCost();
-        sendLocalCost = design.getSendLocalCost();
-        sendWorldCost = design.getSendWorldCost();
-        sendServerCost = design.getSendServerCost();
-        receiveLocalCost = design.getReceiveLocalCost();
-        receiveWorldCost = design.getReceiveWorldCost();
-        receiveServerCost = design.getReceiveServerCost();
-
         bannedItems.addAll(design.getBannedItems());
         allowedItems.addAll(design.getAllowedItems());
         replaceItems.putAll(design.getReplaceItems());
@@ -436,9 +426,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             if (toGate == null)
                 format = getLinkOfflineFormat();
             else {
-                if (! toGate.isSameServer())
-                    format = getLinkServerFormat();
-                else if (! ((LocalGateImpl)toGate).isSameWorld(world))
+                if (! ((LocalGateImpl)toGate).isSameWorld(world))
                     format = getLinkWorldFormat();
                 else
                     format = getLinkLocalFormat();

@@ -5,7 +5,6 @@ buildFromInventory: false
 buildWorlds: .*
 linkLocal: true
 linkWorld: true
-linkServer: true
 multiLink: true
 restoreOnClose: false
 

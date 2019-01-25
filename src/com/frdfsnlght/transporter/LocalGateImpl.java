@@ -87,13 +87,11 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         BASEOPTIONS.add("direction");
         BASEOPTIONS.add("linkLocal");
         BASEOPTIONS.add("linkWorld");
-        BASEOPTIONS.add("linkServer");
         BASEOPTIONS.add("linkNoneFormat");
         BASEOPTIONS.add("linkUnselectedFormat");
         BASEOPTIONS.add("linkOfflineFormat");
         BASEOPTIONS.add("linkLocalFormat");
         BASEOPTIONS.add("linkWorldFormat");
-        BASEOPTIONS.add("linkServerFormat");
         BASEOPTIONS.add("multiLink");
         BASEOPTIONS.add("protect");
         BASEOPTIONS.add("requirePin");
@@ -129,15 +127,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         BASEOPTIONS.add("countdownFormat");
         BASEOPTIONS.add("countdownIntervalFormat");
         BASEOPTIONS.add("countdownCancelFormat");
-        BASEOPTIONS.add("linkLocalCost");
-        BASEOPTIONS.add("linkWorldCost");
-        BASEOPTIONS.add("linkServerCost");
-        BASEOPTIONS.add("sendLocalCost");
-        BASEOPTIONS.add("sendWorldCost");
-        BASEOPTIONS.add("sendServerCost");
-        BASEOPTIONS.add("receiveLocalCost");
-        BASEOPTIONS.add("receiveWorldCost");
-        BASEOPTIONS.add("receiveServerCost");
         BASEOPTIONS.add("markerFormat");
         BASEOPTIONS.add("hidden");
         BASEOPTIONS.add("linkAddDistance");
@@ -152,13 +141,11 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     protected int duration;
     protected boolean linkLocal;
     protected boolean linkWorld;
-    protected boolean linkServer;
     protected String linkNoneFormat;
     protected String linkUnselectedFormat;
     protected String linkOfflineFormat;
     protected String linkLocalFormat;
     protected String linkWorldFormat;
-    protected String linkServerFormat;
     protected boolean multiLink;
     protected boolean requirePin;
     protected boolean requireValidPin;
@@ -198,16 +185,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     protected String countdownIntervalFormat;
     protected String countdownCancelFormat;
 
-    protected double linkLocalCost;
-    protected double linkWorldCost;
-    protected double linkServerCost;
-    protected double sendLocalCost;
-    protected double sendWorldCost;
-    protected double sendServerCost;
-    protected double receiveLocalCost;
-    protected double receiveWorldCost;
-    protected double receiveServerCost;
-
     protected final List<String> links = new ArrayList<String>();
     protected final Set<String> pins = new HashSet<String>();
     protected final Set<String> bannedItems = new HashSet<String>();
@@ -244,14 +221,12 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         duration = conf.getInt("duration", -1);
         linkLocal = conf.getBoolean("linkLocal", true);
         linkWorld = conf.getBoolean("linkWorld", true);
-        linkServer = conf.getBoolean("linkServer", true);
 
         linkNoneFormat = conf.getString("linkNoneFormat", "%fromGate%\\n\\n<none>");
         linkUnselectedFormat = conf.getString("linkUnselectedFormat", "%fromGate%\\n\\n<unselected>");
         linkOfflineFormat = conf.getString("linkOfflineFormat", "%fromGate%\\n\\n<offline>");
         linkLocalFormat = conf.getString("linkLocalFormat", "%fromGate%\\n%toGate%");
         linkWorldFormat = conf.getString("linkWorldFormat", "%fromGate%\\n%toWorld%\\n%toGate%");
-        linkServerFormat = conf.getString("linkServerFormat", "%fromGate%\\n%toServer%\\n%toWorld%\\n%toGate%");
 
         multiLink = conf.getBoolean("multiLink", true);
         links.addAll(conf.getStringList("links", new ArrayList<String>()));
@@ -368,16 +343,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
 
         incoming.addAll(conf.getStringList("incoming", new ArrayList<String>()));
         outgoing = conf.getString("outgoing");
-
-        linkLocalCost = conf.getDouble("linkLocalCost", 0);
-        linkWorldCost = conf.getDouble("linkWorldCost", 0);
-        linkServerCost = conf.getDouble("linkServerCost", 0);
-        sendLocalCost = conf.getDouble("sendLocalCost", 0);
-        sendWorldCost = conf.getDouble("sendWorldCost", 0);
-        sendServerCost = conf.getDouble("sendServerCost", 0);
-        receiveLocalCost = conf.getDouble("receiveLocalCost", 0);
-        receiveWorldCost = conf.getDouble("receiveWorldCost", 0);
-        receiveServerCost = conf.getDouble("receiveServerCost", 0);
     }
 
     protected LocalGateImpl(World world, String gateName, Player creator, BlockFace direction) throws GateException {
@@ -392,13 +357,11 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         setDuration(-1);
         setLinkLocal(true);
         setLinkWorld(true);
-        setLinkServer(true);
         setLinkNoneFormat(null);
         setLinkUnselectedFormat(null);
         setLinkOfflineFormat(null);
         setLinkLocalFormat(null);
         setLinkWorldFormat(null);
-        setLinkServerFormat(null);
         setMultiLink(true);
         setRequirePin(false);
         setRequireValidPin(true);
@@ -437,16 +400,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         setCountdownFormat(null);
         setCountdownIntervalFormat(null);
         setCountdownCancelFormat(null);
-
-        setLinkLocalCost(0);
-        setLinkWorldCost(0);
-        setLinkServerCost(0);
-        setSendLocalCost(0);
-        setSendWorldCost(0);
-        setSendServerCost(0);
-        setReceiveLocalCost(0);
-        setReceiveWorldCost(0);
-        setReceiveServerCost(0);
     }
 
     
@@ -490,11 +443,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     
     public String getGlobalName() {
         return "local." + getLocalName();
-    }
-
-    
-    public boolean isSameServer() {
-        return true;
     }
 
     
@@ -711,14 +659,12 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         conf.set("duration", duration);
         conf.set("linkLocal", linkLocal);
         conf.set("linkWorld", linkWorld);
-        conf.set("linkServer", linkServer);
 
         conf.set("linkNoneFormat", linkNoneFormat);
         conf.set("linkUnselectedFormat", linkUnselectedFormat);
         conf.set("linkOfflineFormat", linkOfflineFormat);
         conf.set("linkLocalFormat", linkLocalFormat);
         conf.set("linkWorldFormat", linkWorldFormat);
-        conf.set("linkServerFormat", linkServerFormat);
 
         conf.set("multiLink", multiLink);
         conf.set("links", links);
@@ -771,16 +717,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
 
         if (! incoming.isEmpty()) conf.set("incoming", new ArrayList<String>(incoming));
         if (outgoing != null) conf.set("outgoing", outgoing);
-
-        conf.set("linkLocalCost", linkLocalCost);
-        conf.set("linkWorldCost", linkWorldCost);
-        conf.set("linkServerCost", linkServerCost);
-        conf.set("sendLocalCost", sendLocalCost);
-        conf.set("sendWorldCost", sendWorldCost);
-        conf.set("sendServerCost", sendServerCost);
-        conf.set("receiveLocalCost", receiveLocalCost);
-        conf.set("receiveWorldCost", receiveWorldCost);
-        conf.set("receiveServerCost", receiveServerCost);
 
         onSave(conf);
 
@@ -852,17 +788,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     
     public void setLinkWorld(boolean b) {
         linkWorld = b;
-        dirty = true;
-    }
-
-    
-    public boolean getLinkServer() {
-        return linkServer;
-    }
-
-    
-    public void setLinkServer(boolean b) {
-        linkServer = b;
         dirty = true;
     }
 
@@ -943,22 +868,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         }
         if (s == null) s = "%fromGate%\\n%toWorld%\\n%toGate%";
         linkWorldFormat = s;
-        dirty = true;
-    }
-
-    
-    public String getLinkServerFormat() {
-        return linkServerFormat;
-    }
-
-    
-    public void setLinkServerFormat(String s) {
-        if (s != null) {
-            if (s.equals("-")) s = "";
-            else if (s.equals("*")) s = null;
-        }
-        if (s == null) s = "%fromGate%\\n%toServer%\\n%toWorld%\\n%toGate%";
-        linkServerFormat = s;
         dirty = true;
     }
 
@@ -1472,123 +1381,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         dirty = true;
     }
 
-    
-    public double getLinkLocalCost() {
-        return linkLocalCost;
-    }
-
-    
-    public void setLinkLocalCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("linkLocalCost must be at least 0");
-        linkLocalCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getLinkWorldCost() {
-        return linkWorldCost;
-    }
-
-    
-    public void setLinkWorldCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("linkWorldCost must be at least 0");
-        linkWorldCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getLinkServerCost() {
-        return linkServerCost;
-    }
-
-    
-    public void setLinkServerCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("linkServerCost must be at least 0");
-        linkServerCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getSendLocalCost() {
-        return sendLocalCost;
-    }
-
-    
-    public void setSendLocalCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("sendLocalCost must be at least 0");
-        sendLocalCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getSendWorldCost() {
-        return sendWorldCost;
-    }
-
-    
-    public void setSendWorldCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("sendWorldCost must be at least 0");
-        sendWorldCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getSendServerCost() {
-        return sendServerCost;
-    }
-
-    
-    public void setSendServerCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("sendServerCost must be at least 0");
-        sendServerCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getReceiveLocalCost() {
-        return receiveLocalCost;
-    }
-
-    
-    public void setReceiveLocalCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("receiveLocalCost must be at least 0");
-        receiveLocalCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getReceiveWorldCost() {
-        return receiveWorldCost;
-    }
-
-    
-    public void setReceiveWorldCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("receiveWorldCost must be at least 0");
-        receiveWorldCost = cost;
-        dirty = true;
-    }
-
-    
-    public double getReceiveServerCost() {
-        return receiveServerCost;
-    }
-
-    
-    public void setReceiveServerCost(double cost) {
-        if (cost < 0)
-            throw new IllegalArgumentException("receiveServerCost must be at least 0");
-        receiveServerCost = cost;
-        dirty = true;
-    }
-
 
 
     public void getOptions(Context ctx, String name) throws OptionsException, PermissionsException {
@@ -1630,21 +1422,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         if ((! receiveChat) || (message == null)) return false;
         if (receiveChatFilter == null) return true;
         return Pattern.compile(receiveChatFilter).matcher(message).find();
-    }
-
-
-    public double getSendCost(GateImpl toGate) {
-        if (toGate == null) return 0;
-        if (! toGate.isSameServer()) return sendServerCost;
-        if (((LocalGateImpl)toGate).isSameWorld(world)) return sendLocalCost;
-        return sendWorldCost;
-    }
-
-    public double getReceiveCost(GateImpl fromGate) {
-        if (fromGate == null) return 0;
-        if (! fromGate.isSameServer()) return receiveServerCost;
-        if (((LocalGateImpl)fromGate).isSameWorld(world)) return receiveLocalCost;
-        return receiveWorldCost;
     }
 
     public List<String> getLinks() {

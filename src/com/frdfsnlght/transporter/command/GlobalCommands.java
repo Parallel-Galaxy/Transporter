@@ -23,18 +23,15 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-import com.frdfsnlght.transporter.Chat;
 import com.frdfsnlght.transporter.Config;
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Global;
 import com.frdfsnlght.transporter.Permissions;
-import com.frdfsnlght.transporter.Players;
 import com.frdfsnlght.transporter.ReservationImpl;
 import com.frdfsnlght.transporter.api.ReservationException;
 import com.frdfsnlght.transporter.api.TransporterException;
-import com.frdfsnlght.transporter.api.event.LocalPlayerPMEvent;
 
 /**
  *
@@ -49,8 +46,7 @@ public final class GlobalCommands extends TrpCommandProcessor {
                ("get".startsWith(args.get(0).toLowerCase())) ||
                ("set".startsWith(args.get(0).toLowerCase())) ||
                ("go".startsWith(args.get(0).toLowerCase())) ||
-               ("send".startsWith(args.get(0).toLowerCase())) ||
-               ("pm".startsWith(args.get(0).toLowerCase()))
+               ("send".startsWith(args.get(0).toLowerCase()))
             );
 
     }
@@ -64,7 +60,6 @@ public final class GlobalCommands extends TrpCommandProcessor {
         if (ctx.isPlayer())
             cmds.add(getPrefix(ctx) + "go [<gate>]");
         cmds.add(getPrefix(ctx) + "send <player> [<gate>]");
-        cmds.add(getPrefix(ctx) + "pm <player> <message>");
         return cmds;
     }
 
@@ -145,49 +140,6 @@ public final class GlobalCommands extends TrpCommandProcessor {
                 throw new CommandException(re.getMessage());
             }
             return;
-        }
-
-        if ("pm".startsWith(subCmd)) {
-            if (args.isEmpty())
-                throw new CommandException("player name required");
-            String playerName = args.remove(0);
-            if (args.isEmpty())
-                throw new CommandException("message required");
-            String message = "";
-            for (String arg : args) {
-                if (message.length() > 0) message += " ";
-                message += arg;
-            }
-            Permissions.require(ctx.getPlayer(), "trp.pm");
-            Player localPlayer = Players.findLocal(playerName);
-            if (localPlayer != null) {
-                LocalPlayerPMEvent event = new LocalPlayerPMEvent(ctx.getPlayer(), localPlayer, message);
-                Global.plugin.getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) return;
-                String format;
-                if (ctx.isConsole()) {
-                    format = Config.getConsolePMFormat();
-                    if (format == null) return;
-                } else {
-                    if (ctx.getPlayer().getWorld() == localPlayer.getWorld())
-                        format = Config.getLocalPMFormat();
-                    else
-                        format = Config.getWorldPMFormat();
-                    if (format == null) return;
-                    format = format.replaceAll("%fromPlayer%", ctx.getPlayer().getDisplayName());
-                    format = format.replaceAll("%fromWorld%", ctx.getPlayer().getWorld().getName());
-                    format = format.replaceAll("%toPlayer%", localPlayer.getDisplayName());
-                    format = format.replaceAll("%toWorld%", localPlayer.getWorld().getName());
-                }
-                format = format.replaceAll("%message%", message);
-                format = Chat.colorize(format);
-                if (! format.isEmpty()) {
-                    localPlayer.sendMessage(format);
-                    ctx.send(ctx.getSender().getName() + " -> " + localPlayer.getName() + ": " + message);
-                }
-                return;
-            }
-            throw new CommandException("unknown or ambiguous player name");
         }
 
         if ("set".startsWith(subCmd)) {

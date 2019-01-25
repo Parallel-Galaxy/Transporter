@@ -21,7 +21,6 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 
 import com.frdfsnlght.transporter.Config;
-import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.LocalGateImpl;
 import com.frdfsnlght.transporter.ReservationImpl;
@@ -78,34 +77,18 @@ public final class API {
     }
 
     /**
-     * Teleports the specified player as if they stepped into the specified gate.
+     * Teleport the specified player as if they stepped into the specified gate.
      * <p>
      * This method will return before the teleportation is complete and may
      * not throw an exception even if the teleportation fails, under some
      * circumstances.
      *
      * @param player    the player to teleport
-     * @param fromGate  the gate from which to teleport the player
+     * @param gate  the gate from which to teleport the player
      * @throws ReservationException if the teleportation cannot be completed
      */
-    public void teleportPlayer(Player player, LocalGate fromGate) throws ReservationException {
-        ReservationImpl res = new ReservationImpl(player, (LocalGateImpl)fromGate);
-        res.depart();
-    }
-
-    /**
-     * Teleports the specified player to the specified gate.
-     * <p>
-     * This method will return before the teleportation is complete and may
-     * not throw an exception even if the teleportation fails, under some
-     * circumstances.
-     *
-     * @param player    the player to teleport
-     * @param toGate    the destination gate
-     * @throws ReservationException if the teleportation cannot be completed
-     */
-    public void teleportPlayer(Player player, Gate toGate) throws ReservationException {
-        ReservationImpl res = new ReservationImpl(player, (GateImpl)toGate);
+    public void teleportPlayer(Player player, LocalGateImpl gate) throws ReservationException {
+        ReservationImpl res = new ReservationImpl(player, gate);
         res.depart();
     }
 

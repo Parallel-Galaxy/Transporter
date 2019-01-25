@@ -56,7 +56,7 @@ public final class Gates {
     public static final GateMap triggerMap = new GateMap();
 
     // Indexed by full name
-    private static final Map<String,GateImpl> gates = new HashMap<String,GateImpl>();
+    private static final Map<String,LocalGateImpl> gates = new HashMap<String,LocalGateImpl>();
 
     private static Map<Integer,LocalGateImpl> selectedGates = new HashMap<Integer,LocalGateImpl>();
 
@@ -106,7 +106,7 @@ public final class Gates {
             ctx.sendLog("saved %s gates", lgates.size());
     }
 
-    public static GateImpl find(Context ctx, String name) {
+    public static LocalGateImpl find(Context ctx, String name) {
         int pos = name.indexOf('.');
         if (pos == -1) {
             // asking for a local gate in the player's current world
@@ -116,10 +116,10 @@ public final class Gates {
         return find(name);
     }
 
-    public static GateImpl find(String name) {
+    public static LocalGateImpl find(String name) {
         if (gates.containsKey(name)) return gates.get(name);
         String lname = name.toLowerCase();
-        GateImpl gate = null;
+        LocalGateImpl gate = null;
         for (String key : gates.keySet()) {
             if (key.toLowerCase().startsWith(lname)) {
                 if (gate == null) gate = gates.get(key);
@@ -129,11 +129,11 @@ public final class Gates {
         return gate;
     }
 
-    public static GateImpl get(String name) {
+    public static LocalGateImpl get(String name) {
         return gates.get(name);
     }
 
-    public static void add(GateImpl gate, boolean created) throws GateException {
+    public static void add(LocalGateImpl gate, boolean created) throws GateException {
         if (gates.containsKey(gate.getFullName()))
             throw new GateException("a gate with the same name already exists here");
         gates.put(gate.getFullName(), gate);
@@ -181,27 +181,20 @@ public final class Gates {
         }
     }
 
-    public static void rename(LocalGateImpl lg, String newName) throws GateException {
-        String oldName = lg.getName();
-        String oldFullName = lg.getFullName();
-        lg.setName(newName);
-        String newFullName = lg.getFullName();
+    public static void rename(LocalGateImpl gate, String newName) throws GateException {
+        String oldName = gate.getName();
+        String oldFullName = gate.getFullName();
+        gate.setName(newName);
+        String newFullName = gate.getFullName();
         if (gates.containsKey(newFullName)) {
-            lg.setName(oldName);
+            gate.setName(oldName);
             throw new GateException("gate name already exists");
         }
-        rename((GateImpl)lg, oldFullName);
-    }
-
-    public static void rename(GateImpl gate, String oldFullName) {
         gates.remove(oldFullName);
-        gates.put(gate.getFullName(), gate);
+        gates.put(newFullName, gate);
         for (LocalGateImpl lg : getLocalGates())
             lg.onGateRenamed(gate, oldFullName);
-        if (gate instanceof LocalGateImpl) {
-            LocalGateImpl lg = (LocalGateImpl)gate;
-            lg.onRenameComplete();
-        }
+        gate.onRenameComplete();
     }
 
     public static void removeGatesForWorld(World world) {

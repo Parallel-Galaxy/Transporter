@@ -1558,7 +1558,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         return outgoing;
     }
 
-    public GateImpl getDestinationGate() throws GateException {
+    public LocalGateImpl getDestinationGate() throws GateException {
         if (outgoing == null) {
             if (! isLinked())
                 throw new GateException(getNoLinksFormat());
@@ -1566,7 +1566,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
                 throw new GateException(getNoLinkSelectedFormat());
         } else if (! hasLink(outgoing))
             throw new GateException(getInvalidLinkFormat());
-        GateImpl gate = Gates.get(outgoing);
+        LocalGateImpl gate = Gates.get(outgoing);
         if (gate == null)
             throw new GateException(getUnknownLinkFormat());
         return gate;

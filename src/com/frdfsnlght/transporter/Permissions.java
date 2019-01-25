@@ -142,11 +142,6 @@ public final class Permissions {
         require(player.getWorld().getName(), player, requireAll, perms);
     }
 
-    public static void require(String worldName, String playerName, String perm) throws PermissionsException {
-        Player player = Bukkit.getServer().getPlayer(playerName);
-        require(worldName, player, true, perm);
-    }
-
     private static void require(String worldName, Player player, boolean requireAll, String ... perms) throws PermissionsException {
         if (player.isOp()) {
             Utils.debug("player '%s' is op", player.getName());

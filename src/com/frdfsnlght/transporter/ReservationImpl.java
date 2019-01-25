@@ -531,15 +531,6 @@ public final class ReservationImpl implements Reservation {
                     throw new ReservationException("this gate requires you to be level %s or above", fromGateLocal.getRequireLevel());
             }
         }
-
-        // check gate permission
-        if ((toGate != null) && Config.getUseGatePermissions()) {
-            try {
-                Permissions.require(fromGateLocal.getWorld().getName(), fromGateLocal.getName(), "trp.send." + toGate.getGlobalName());
-            } catch (PermissionsException e) {
-                throw new ReservationException("this gate is not permitted to send to the remote gate");
-            }
-        }
     }
 
     private void checkLocalArrivalGate() throws ReservationException {
@@ -582,16 +573,6 @@ public final class ReservationImpl implements Reservation {
         // this is only checked on the arrival side
         if (toGateLocal.getReceivePotions() && (! toGateLocal.isAcceptablePotions(potionEffects)))
             throw new ReservationException("remote gate won't allow some potion effects");
-
-        // check gate permission
-        if ((fromGate != null) && Config.getUseGatePermissions()) {
-            try {
-                Permissions.require(toGateLocal.getWorld().getName(), toGateLocal.getName(), "trp.receive." + fromGateLocal.getGlobalName());
-            } catch (PermissionsException e) {
-                throw new ReservationException("the remote gate is not permitted to receive from this gate");
-            }
-        }
-
     }
 
     private void completeLocalDepartureGate() {

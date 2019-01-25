@@ -45,7 +45,6 @@ public final class Config {
         OPTIONS.add("autoLoadWorlds");
         OPTIONS.add("gateLockExpiration");
         OPTIONS.add("arrivalWindow");
-        OPTIONS.add("useGatePermissions");
         OPTIONS.add("consolePMFormat");
         OPTIONS.add("localPMFormat");
         OPTIONS.add("worldPMFormat");
@@ -229,14 +228,6 @@ public final class Config {
         if (i < 1000)
             throw new IllegalArgumentException("arrivalWindow must be at least 1000");
         config.set("global.arrivalWindow", i);
-    }
-
-    public static boolean getUseGatePermissions() {
-        return config.getBoolean("global.useGatePermissions", false);
-    }
-
-    public static void setUseGatePermissions(boolean b) {
-        config.set("global.useGatePermissions", b);
     }
 
     public static String getConsolePMFormat() {

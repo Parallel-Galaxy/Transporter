@@ -30,15 +30,6 @@ public abstract class CommandProcessor {
     public abstract void process(Context ctx, Command cmd, List<String> args) throws TransporterException;
     public abstract List<String> getUsage(Context ctx);
 
-    /*
-    public boolean isHidden() { return false; }
-    public boolean requiresPlayer() { return false; }
-    public boolean requiresOp() { return false; }
-    public boolean requiresConsole() { return false; }
-    public abstract String getUsage(Context ctx);
-     *
-     */
-
     protected String rebuildCommandArgs(List<String> args) {
         StringBuilder b = new StringBuilder();
         for (String arg : args) {

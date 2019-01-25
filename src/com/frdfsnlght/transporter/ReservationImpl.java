@@ -381,8 +381,9 @@ public final class ReservationImpl implements Reservation {
     }
 
     private void extractVehicle(Vehicle vehicle) {
-        if (vehicle.getPassenger() instanceof Player)
-            extractPlayer((Player)vehicle.getPassenger());
+        for (Entity passenger : vehicle.getPassengers())
+	        if (passenger instanceof Player)
+	            extractPlayer((Player)passenger);
 
         if ((vehicle instanceof Minecart) || (vehicle instanceof Boat))
             entityType = vehicle.getType();
@@ -941,7 +942,7 @@ public final class ReservationImpl implements Reservation {
                     entity = theWorld.spawn(theLocation, org.bukkit.entity.minecart.RideableMinecart.class);
                     createdEntity = true;
                     if (player != null)
-                        ((RideableMinecart)entity).setPassenger(player);
+                        ((RideableMinecart)entity).addPassenger(player);
                     break;
                 case MINECART_CHEST:
                     entity = theWorld.spawn(theLocation, org.bukkit.entity.minecart.StorageMinecart.class);
@@ -976,13 +977,14 @@ public final class ReservationImpl implements Reservation {
                 case MINECART:
                     entity.remove();
                     entity = theWorld.spawn(theLocation, org.bukkit.entity.minecart.RideableMinecart.class);
-                    ((RideableMinecart)entity).setPassenger(player);
+                    ((RideableMinecart)entity).addPassenger(player);
                     break;
                 case BOAT:
                     entity.remove();
                     entity = theWorld.spawn(theLocation, Boat.class);
-                    ((Boat)entity).setPassenger(player);
+                    ((Boat)entity).addPassenger(player);
                     break;
+                default: break;
             }
         }
         if (player != null) {

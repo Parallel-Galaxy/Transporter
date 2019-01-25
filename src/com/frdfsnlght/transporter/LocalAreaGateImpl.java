@@ -35,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
@@ -126,8 +127,8 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
     }
 
     // creation in-game
-    public LocalAreaGateImpl(World world, String gateName, String playerName, BlockFace direction, Location location) throws GateException {
-        super(world, gateName, playerName, direction);
+    public LocalAreaGateImpl(World world, String gateName, Player player, BlockFace direction, Location location) throws GateException {
+        super(world, gateName, player, direction);
         options = new Options(this, OPTIONS, "trp.gate", this);
 
         Location l1 = new Location(world, location.getBlockX(), location.getBlockY(), location.getBlockZ());

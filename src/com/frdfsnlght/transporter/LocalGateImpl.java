@@ -31,13 +31,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
@@ -142,7 +146,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     protected File file;
     protected World world;
     protected Vector center;
-    protected String creatorName;
+    protected Player creator;
     protected BlockFace direction;
 
     protected int duration;
@@ -225,24 +229,17 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         this.file = conf.getFile();
         this.world = world;
         name = conf.getString("name");
-        creatorName = conf.getString("creatorName");
+        String creatorRef = conf.getString("creatorUUID");
+        if (creatorRef == null) {
+            creator = Bukkit.getPlayer(UUID.fromString(conf.getString("creatorUUID")));
+        } else {
+            creator = Bukkit.getPlayer(conf.getString("creatorName"));
+        }
         try {
             direction = Utils.valueOf(BlockFace.class, conf.getString("direction", "NORTH"));
         } catch (IllegalArgumentException iae) {
             throw new GateException(iae.getMessage() + " direction");
         }
-
-        // fix for Bukkit direction changes
-//        if (! conf.getBoolean("directionFixed", false)) {
-//            Utils.debug("fixed direction from: %s", direction);
-//            switch (direction) {
-//                case NORTH: direction = BlockFace.WEST; break;
-//                case SOUTH: direction = BlockFace.EAST; break;
-//                case EAST: direction = BlockFace.NORTH; break;
-//                case WEST: direction = BlockFace.SOUTH; break;
-//            }
-//            Utils.debug("to: %s", direction);
-//        }
 
         duration = conf.getInt("duration", -1);
         linkLocal = conf.getBoolean("linkLocal", true);
@@ -383,10 +380,10 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         receiveServerCost = conf.getDouble("receiveServerCost", 0);
     }
 
-    protected LocalGateImpl(World world, String gateName, String creatorName, BlockFace direction) throws GateException {
+    protected LocalGateImpl(World world, String gateName, Player creator, BlockFace direction) throws GateException {
         this.world = world;
         name = gateName;
-        this.creatorName = creatorName;
+        this.creator = creator;
         this.direction = direction;
         setDefaults();
     }
@@ -708,7 +705,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         TypeMap conf = new TypeMap(file);
         conf.set("name", name);
         conf.set("type", getType().toString());
-        conf.set("creatorName", creatorName);
+        conf.set("creatorUUID", creator.getUniqueId().toString());
         conf.set("direction", direction.toString());
 //        conf.set("directionFixed", true);
         conf.set("duration", duration);
@@ -798,8 +795,8 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
             throw new GateException("name is required");
         if (! isValidName(name))
             throw new GateException("name is not valid");
-        if (creatorName == null)
-            throw new GateException("creatorName is required");
+        if (creator == null)
+            throw new GateException("creator is required");
         onValidate();
     }
 
@@ -807,8 +804,8 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         return center;
     }
 
-    public String getCreatorName() {
-        return creatorName;
+    public Player getCreator() {
+        return creator;
     }
 
     /* Begin options */

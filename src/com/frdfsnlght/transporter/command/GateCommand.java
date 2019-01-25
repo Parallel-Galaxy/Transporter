@@ -162,7 +162,7 @@ public class GateCommand extends TrpCommandProcessor {
             Permissions.require(ctx.getPlayer(), "trp.gate.info." + gate.getFullName());
             ctx.send("Full name: %s", gate.getFullName());
             ctx.send("Type: %s", gate.getType().toString());
-            ctx.send("Creator: %s", gate.getCreatorName());
+            ctx.send("Creator: %s", gate.getCreator().getName());
             List<String> links = gate.getLinks();
             ctx.send("Links: %d", links.size());
             for (String link : links)

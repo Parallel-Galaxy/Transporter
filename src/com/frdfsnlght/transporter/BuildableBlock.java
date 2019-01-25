@@ -197,6 +197,7 @@ public final class BuildableBlock {
                     if ((type == Material.LAVA.getId()) ||
                         (type == Material.STATIONARY_LAVA.getId())) return true;
                     break;
+                default: break;
             }
             return false;
         }

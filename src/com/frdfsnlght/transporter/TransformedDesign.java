@@ -99,26 +99,7 @@ public final class TransformedDesign {
                         loc.getBlockX() + offZ,
                         loc.getBlockY() + offY,
                         loc.getBlockZ() - offX);
-//            case NORTH:
-//                return new Location(loc.getWorld(),
-//                        loc.getBlockX() - offZ,
-//                        loc.getBlockY() + offY,
-//                        loc.getBlockZ() + offX);
-//            case EAST:
-//                return new Location(loc.getWorld(),
-//                        loc.getBlockX() - offX,
-//                        loc.getBlockY() + offY,
-//                        loc.getBlockZ() - offZ);
-//            case SOUTH:
-//                return new Location(loc.getWorld(),
-//                        loc.getBlockX() + offZ,
-//                        loc.getBlockY() + offY,
-//                        loc.getBlockZ() - offX);
-//            case WEST:
-//                return new Location(loc.getWorld(),
-//                        loc.getBlockX() + offX,
-//                        loc.getBlockY() + offY,
-//                        loc.getBlockZ() + offZ);
+            default: break;
         }
         return null;
     }

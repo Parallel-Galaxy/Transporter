@@ -1073,6 +1073,7 @@ public final class ReservationImpl implements Reservation {
                         inv.setItem(slot, inventory[slot]);
                 }
                 break;
+            default: break;
         }
     }
 

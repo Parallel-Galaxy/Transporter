@@ -167,9 +167,6 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
             if (y > bounds.max.y) y--;
             else if (y < bounds.min.y) y++;
 
-            SpawnSearch dir = spawnSearch;
-            if (dir == SpawnSearch.DOWNUP) dir = SpawnSearch.DOWN;
-            else if (dir == SpawnSearch.UPDOWN) dir = SpawnSearch.UP;
             boolean goodLocation = false;
             boolean endLoop = false;
 
@@ -198,22 +195,24 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
                 if (goodLocation)
                     endLoop = true;
                 else {
-                    switch (dir) {
+                    switch (spawnSearch) {
                         case UP:
+                        case UPDOWN:
                             y++;
                             if (y > bounds.max.y) {
                                 if (spawnSearch == SpawnSearch.UPDOWN) {
-                                    dir = SpawnSearch.DOWN;
+                                    spawnSearch = SpawnSearch.DOWN;
                                     y = y - 2;
                                 } else
                                     endLoop = true;
                             }
                             break;
                         case DOWN:
+                        case DOWNUP:
                             y--;
                             if (y < bounds.min.y) {
                                 if (spawnSearch == SpawnSearch.DOWNUP) {
-                                    dir = SpawnSearch.UP;
+                                    spawnSearch = SpawnSearch.UP;
                                     y = y + 2;
                                 } else
                                     endLoop = true;

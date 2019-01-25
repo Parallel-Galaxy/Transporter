@@ -231,6 +231,7 @@ public final class Inventory {
                 case SIGN_POST:
                     material = Material.SIGN;
                     break;
+                default: break;
             }
             HashMap<Integer,? extends ItemStack> slots = inv.all(material);
             for (int slotNum : slots.keySet()) {
@@ -254,6 +255,7 @@ public final class Inventory {
                 case SIGN_POST:
                     material = Material.SIGN;
                     break;
+                default: break;
             }
             HashMap<Integer,? extends ItemStack> slots = inv.all(material);
             for (int slotNum : slots.keySet()) {

@@ -135,11 +135,12 @@ public class BlockListenerImpl implements Listener {
             Utils.debug("newCurrent=%s", event.getNewCurrent());
             Utils.debug("oldCurrent=%s", event.getOldCurrent());
 
-            if (gate.isClosed() && (block.getTriggerOpenMode() != RedstoneMode.NONE) && gate.hasValidDestination()) {
-                boolean openIt = false;
+            if (gate.isClosed() && gate.hasValidDestination()) {
+                boolean openIt;
                 switch (block.getTriggerOpenMode()) {
                     case HIGH: openIt = (event.getNewCurrent() > 0) && (event.getOldCurrent() == 0); break;
                     case LOW: openIt = (event.getNewCurrent() == 0) && (event.getOldCurrent() > 0); break;
+                    default: openIt = false;
                 }
                 if (openIt) {
                     try {
@@ -151,11 +152,12 @@ public class BlockListenerImpl implements Listener {
                 }
             }
 
-            else if (gate.isOpen() && (block.getTriggerCloseMode() != RedstoneMode.NONE)) {
-                boolean closeIt = false;
+            else if (gate.isOpen()) {
+                boolean closeIt;
                 switch (block.getTriggerCloseMode()) {
                     case HIGH: closeIt = (event.getNewCurrent() > 0) && (event.getOldCurrent() == 0); break;
                     case LOW: closeIt = (event.getNewCurrent() == 0) && (event.getOldCurrent() > 0); break;
+                    default: closeIt = false;
                 }
                 if (closeIt) {
                     gate.close();
@@ -171,10 +173,11 @@ public class BlockListenerImpl implements Listener {
 
         if (gate != null) {
             DesignBlockDetail block = gate.getGateBlock(event.getBlock().getLocation()).getDetail();
-            boolean nextLink = false;
+            boolean nextLink;
             switch (block.getSwitchMode()) {
                 case HIGH: nextLink = (event.getNewCurrent() > 0) && (event.getOldCurrent() == 0); break;
                 case LOW: nextLink = (event.getNewCurrent() == 0) && (event.getOldCurrent() > 0); break;
+                default: nextLink = false;
             }
             if (nextLink) {
                 try {

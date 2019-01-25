@@ -203,6 +203,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             case SAFE:
                 world.strikeLightningEffect(block.getLocation());
                 break;
+            default: break;
         }
     }
 
@@ -222,6 +223,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             case SAFE:
                 world.strikeLightningEffect(block.getLocation());
                 break;
+            default: break;
         }
     }
 

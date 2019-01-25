@@ -31,11 +31,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -135,7 +133,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     protected File file;
     protected World world;
     protected Vector center;
-    protected Player creator;
     protected BlockFace direction;
 
     protected int duration;
@@ -206,12 +203,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         this.file = conf.getFile();
         this.world = world;
         name = conf.getString("name");
-        String creatorRef = conf.getString("creatorUUID");
-        if (creatorRef == null) {
-            creator = Bukkit.getPlayer(UUID.fromString(conf.getString("creatorUUID")));
-        } else {
-            creator = Bukkit.getPlayer(conf.getString("creatorName"));
-        }
         try {
             direction = Utils.valueOf(BlockFace.class, conf.getString("direction", "NORTH"));
         } catch (IllegalArgumentException iae) {
@@ -348,7 +339,6 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     protected LocalGateImpl(World world, String gateName, Player creator, BlockFace direction) throws GateException {
         this.world = world;
         name = gateName;
-        this.creator = creator;
         this.direction = direction;
         setDefaults();
     }
@@ -653,9 +643,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         TypeMap conf = new TypeMap(file);
         conf.set("name", name);
         conf.set("type", getType().toString());
-        conf.set("creatorUUID", creator.getUniqueId().toString());
         conf.set("direction", direction.toString());
-//        conf.set("directionFixed", true);
         conf.set("duration", duration);
         conf.set("linkLocal", linkLocal);
         conf.set("linkWorld", linkWorld);
@@ -731,17 +719,11 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
             throw new GateException("name is required");
         if (! isValidName(name))
             throw new GateException("name is not valid");
-        if (creator == null)
-            throw new GateException("creator is required");
         onValidate();
     }
 
     public Vector getCenter() {
         return center;
-    }
-
-    public Player getCreator() {
-        return creator;
     }
 
     /* Begin options */

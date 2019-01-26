@@ -331,16 +331,16 @@ public class Design {
             if (d.isSpawn()) spawnCount++;
         }
 
-//        if (screenCount == 0)
-//            throw new DesignException("must have at least one screen block");
+        if (screenCount == 0)
+            throw new DesignException("must have at least one screen block");
+        if (triggerCount == 0)
+            throw new DesignException("must have at least one trigger block");
+        if (multiLink && (switchCount == 0))
+            throw new DesignException("must have at least one switch block because multiLink is true");
         if (insertCount != 1)
             throw new DesignException("must have exactly one insert block");
-//        if (triggerCount == 0)
-//            throw new DesignException("must have at least one trigger block");
         if (portalCount == 0)
             throw new DesignException("must have at least one portal block");
-//        if (multiLink && (switchCount == 0))
-//            throw new DesignException("must have at least one switch block because multiLink is true");
         if (spawnCount == 0)
             throw new DesignException("must have at least one spawn block");
     }

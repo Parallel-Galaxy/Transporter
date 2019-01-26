@@ -73,6 +73,7 @@ public final class Config {
         if (version < CONFIG_VERSION) {
             // do conversion here
             config.remove("network");
+            config.remove("pins");
             config.remove("servers");
             for (String key : config.getMap("global").getKeys()) {
                 if (! OPTIONS.contains(key)) {
@@ -93,13 +94,11 @@ public final class Config {
 
         ctx.sendLog("loaded configuration");
         Worlds.onConfigLoad(ctx);
-        Pins.onConfigLoad(ctx);
     }
 
     public static void save(Context ctx) {
         if (config == null) return;
         Worlds.onConfigSave();
-        Pins.onConfigSave();
         File configDir = Global.plugin.getDataFolder();
         if (! configDir.exists()) configDir.mkdirs();
         config.save();

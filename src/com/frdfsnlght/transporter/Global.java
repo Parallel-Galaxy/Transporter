@@ -26,7 +26,6 @@ import com.frdfsnlght.transporter.command.DesignCommand;
 import com.frdfsnlght.transporter.command.GateCommand;
 import com.frdfsnlght.transporter.command.GlobalCommands;
 import com.frdfsnlght.transporter.command.HelpCommand;
-import com.frdfsnlght.transporter.command.PinCommand;
 import com.frdfsnlght.transporter.command.ReloadCommand;
 import com.frdfsnlght.transporter.command.SaveCommand;
 import com.frdfsnlght.transporter.command.WorldCommand;
@@ -52,7 +51,6 @@ public final class Global {
         commands.add(new HelpCommand());
         commands.add(new ReloadCommand());
         commands.add(new SaveCommand());
-        commands.add(new PinCommand());
         commands.add(new GlobalCommands());
         commands.add(new DesignCommand());
         commands.add(new GateCommand());

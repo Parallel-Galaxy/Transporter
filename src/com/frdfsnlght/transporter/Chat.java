@@ -18,11 +18,7 @@ package com.frdfsnlght.transporter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 /**
  *
@@ -30,36 +26,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public final class Chat {
 
-    private static net.milkbowl.vault.chat.Chat vaultPlugin = null;
-
     private static Pattern colorPattern = Pattern.compile("%(\\w+)%");
-
-    public static boolean vaultAvailable() {
-        if (! Config.getUseVaultChat()) return false;
-        Plugin p = Bukkit.getPluginManager().getPlugin("Vault");
-        if (p == null) {
-            Utils.warning("Vault is not installed!");
-            return false;
-        }
-        if (! p.isEnabled()) {
-            Utils.warning("Vault is not enabled!");
-            return false;
-        }
-        if (vaultPlugin != null) return true;
-        RegisteredServiceProvider<net.milkbowl.vault.chat.Chat> rsp =
-                Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
-        if (rsp == null) {
-            Utils.warning("Vault didn't return a service provider!");
-            return false;
-        }
-        vaultPlugin = rsp.getProvider();
-        if (vaultPlugin == null) {
-            Utils.warning("Vault didn't return a chat provider!");
-            return false;
-        }
-        Utils.info("Initialized Vault for Chat");
-        return true;
-    }
 
     public static String colorize(String msg) {
         if (msg == null) return null;
@@ -76,18 +43,6 @@ public final class Chat {
         }
         matcher.appendTail(b);
         return b.toString();
-    }
-
-    public static String getPrefix(Player player) {
-        if (vaultAvailable())
-            return vaultPlugin.getPlayerPrefix(player);
-        return null;
-    }
-
-    public static String getSuffix(Player player) {
-        if (vaultAvailable())
-            return vaultPlugin.getPlayerSuffix(player);
-        return null;
     }
 
 }

@@ -58,9 +58,6 @@ public class Utils {
 
     public static final Logger logger = Logger.getLogger("Minecraft");
 
-    private static final String DEBUG_BOUNDARY = "*****";
-    private static final int DEBUG_LOG_BYTES = 20 * 1024;
-
     private static Pattern tokenPattern = Pattern.compile("%(\\w+)%");
 
     public static void info(String msg, Object ... args) {

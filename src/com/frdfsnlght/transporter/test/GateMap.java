@@ -26,11 +26,8 @@ import com.frdfsnlght.transporter.GateMap.Volume;
 public class GateMap {
 
     public static void main(String[] args) {
-
-        //testBounds();
-        //testVolume();
-        //benchmark();
-
+        testBounds();
+        testVolume();
     }
 
     private static void testBounds() {
@@ -87,60 +84,4 @@ public class GateMap {
             System.out.println(" i=" + i + ": " + vols[i]);
 
     }
-
-    /*
-    private static void benchmark() {
-        int numGates = 1000;
-        OldGateMap ogm = new OldGateMap();
-        org.bennedum.transporter.GateMap gm = new org.bennedum.transporter.GateMap();
-        for (int i = 0; i < numGates; i++) {
-            if ((i % (numGates / 100)) == 0)
-                System.out.println("Gate " + i + "...");
-            try {
-                TestGate gate = new TestGate(null, "Gate" + i, "tab", BlockFace.NORTH, new Random(i));
-                ogm.putAll(gate.getOldGateMap());
-                gm.put(gate.getVolume());
-            } catch (GateException ge) {}
-        }
-        System.out.println("Old gate map has " + ogm.size() + " locations");
-        System.out.println("New gate map has " + gm.size() + " volumes");
-        System.out.println("New gate map has " + gm.nodeCount() + " nodes");
-
-        int numTests = 100000;
-        int foundCount = 0;
-        Random r = new Random(1);
-        long startTime = System.currentTimeMillis();
-        for (int i = 0 ; i < numTests; i++) {
-            if ((i % (numTests / 10)) == 0) System.out.print(".");
-            int x = r.nextInt(TestGate.MAX_RANGE * 2) - TestGate.MAX_RANGE;
-            int y = r.nextInt(256);
-            int z = r.nextInt(TestGate.MAX_RANGE * 2) - TestGate.MAX_RANGE;
-            LocalGateImpl gate = ogm.getGate(new Location(null, x, y, z));
-            if (gate != null)
-                foundCount++;
-        }
-        long endTime = System.currentTimeMillis();
-
-        System.out.println();
-        System.out.println(numTests + " tests, " + foundCount + " found, " + (endTime - startTime) + "ms");
-
-        foundCount = 0;
-        r = new Random(1);
-        startTime = System.currentTimeMillis();
-        for (int i = 0 ; i < numTests; i++) {
-            if ((i % (numTests / 10)) == 0) System.out.print(".");
-            int x = r.nextInt(TestGate.MAX_RANGE * 2) - TestGate.MAX_RANGE;
-            int y = r.nextInt(256);
-            int z = r.nextInt(TestGate.MAX_RANGE * 2) - TestGate.MAX_RANGE;
-            LocalGateImpl gate = gm.getGate(new Location(null, x, y, z));
-            if (gate != null)
-                foundCount++;
-        }
-        endTime = System.currentTimeMillis();
-
-        System.out.println();
-        System.out.println(numTests + " tests, " + foundCount + " found, " + (endTime - startTime) + "ms");
-
-    }
-    */
 }

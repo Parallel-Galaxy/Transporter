@@ -110,6 +110,6 @@ public abstract class Callback<T> {
      *
      * @param e the exception
      */
-    public void onFailure(RemoteException e) {}
+    public void onFailure(TransporterException e) {}
 
 }

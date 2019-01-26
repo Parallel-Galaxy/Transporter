@@ -36,7 +36,6 @@ public final class Config {
 
     static {
         OPTIONS.add("debug");
-        OPTIONS.add("deleteDebugFile");
         OPTIONS.add("allowBuild");
         OPTIONS.add("allowLinkLocal");
         OPTIONS.add("allowLinkWorld");
@@ -44,14 +43,7 @@ public final class Config {
         OPTIONS.add("autoAddWorlds");
         OPTIONS.add("autoLoadWorlds");
         OPTIONS.add("gateLockExpiration");
-        OPTIONS.add("arrivalWindow");
-        OPTIONS.add("consolePMFormat");
-        OPTIONS.add("localPMFormat");
-        OPTIONS.add("worldPMFormat");
-        OPTIONS.add("serverPMFormat");
         OPTIONS.add("useVaultPermissions");
-        OPTIONS.add("useVaultChat");
-        OPTIONS.add("hideLocalLoginLeaveMessage");
         OPTIONS.add("exportedGatesFile");
         OPTIONS.add("worldLoadDelay");
         OPTIONS.add("showGatesSavedMessage");
@@ -154,14 +146,6 @@ public final class Config {
         config.set("global.debug", b);
     }
 
-    public static boolean getDeleteDebugFile() {
-        return config.getBoolean("global.deleteDebugFile", true);
-    }
-
-    public static void setDeleteDebugFile(boolean b) {
-        config.set("global.deleteDebugFile", b);
-    }
-
     public static boolean getAllowBuild() {
         return config.getBoolean("global.allowBuild", true);
     }
@@ -220,86 +204,12 @@ public final class Config {
         config.set("global.gateLockExpiration", i);
     }
 
-    public static int getArrivalWindow() {
-        return config.getInt("global.arrivalWindow", 20000);
-    }
-
-    public static void setArrivalWindow(int i) {
-        if (i < 1000)
-            throw new IllegalArgumentException("arrivalWindow must be at least 1000");
-        config.set("global.arrivalWindow", i);
-    }
-
-    public static String getConsolePMFormat() {
-        return config.getString("global.consolePMFormat", "[console] %GREEN%%message%");
-    }
-
-    public static void setConsolePMFormat(String s) {
-        if (s != null) {
-            if (s.equals("-")) s = "";
-            else if (s.equals("*")) s = null;
-        }
-        setPropertyDirect("global.consolePMFormat", s);
-    }
-
-    public static String getLocalPMFormat() {
-        return config.getString("global.localPMFormat", "[%fromPlayer%] %GREEN%%message%");
-    }
-
-    public static void setLocalPMFormat(String s) {
-        if (s != null) {
-            if (s.equals("-")) s = "";
-            else if (s.equals("*")) s = null;
-        }
-        setPropertyDirect("global.localPMFormat", s);
-    }
-
-    public static String getWorldPMFormat() {
-        return config.getString("global.worldPMFormat", "[%fromPlayer%/%fromWorld%] %GREEN%%message%");
-    }
-
-    public static void setWorldPMFormat(String s) {
-        if (s != null) {
-            if (s.equals("-")) s = "";
-            else if (s.equals("*")) s = null;
-        }
-        setPropertyDirect("global.worldPMFormat", s);
-    }
-
-    public static String getServerPMFormat() {
-        return config.getString("global.serverPMFormat", "[%fromPlayer%/%fromWorld%@%fromServer%] %GREEN%%message%");
-    }
-
-    public static void setServerPMFormat(String s) {
-        if (s != null) {
-            if (s.equals("-")) s = "";
-            else if (s.equals("*")) s = null;
-        }
-        setPropertyDirect("global.serverPMFormat", s);
-    }
-
     public static boolean getUseVaultPermissions() {
         return config.getBoolean("global.useVaultPermissions", false);
     }
 
     public static void setUseVaultPermissions(boolean b) {
         config.set("global.useVaultPermissions", b);
-    }
-
-    public static boolean getUseVaultChat() {
-        return config.getBoolean("global.useVaultChat", false);
-    }
-
-    public static void setUseVaultChat(boolean b) {
-        config.set("global.useVaultChat", b);
-    }
-    
-    public static boolean getHideLocalLoginLeaveMessage() {
-        return config.getBoolean("global.hideLocalLoginLeaveMessage", true);
-    }
-
-    public static void setHideLocalLoginLeaveMessage(boolean b) {
-        config.set("global.hideLocalLoginLeaveMessage", b);
     }
 
     public static String getExportedGatesFile() {

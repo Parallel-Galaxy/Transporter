@@ -182,16 +182,12 @@ public final class ReservationImpl implements Reservation {
     private Vector fromVelocity = null;
     private BlockFace fromDirection = null;
     private GateImpl fromGate = null;
-    private String fromWorldName = null;
-    private String fromGateName = null;
     private World fromWorld = null;
 
     private Location toLocation = null;
     private Vector toVelocity = null;
     private BlockFace toDirection = null;
     private GateImpl toGate = null;
-    private String toWorldName = null;
-    private String toGateName = null;
     private World toWorld = null;
 
     private boolean createdEntity = false;
@@ -227,14 +223,12 @@ public final class ReservationImpl implements Reservation {
     public ReservationImpl(Player player, String worldName) throws ReservationException {
         addGateLock(player);
         extractPlayer(player);
-        toWorldName = worldName;
     }
 
     // player direct to remote server, specified world, specified location
     public ReservationImpl(Player player, String worldName, double x, double y, double z) throws ReservationException {
         addGateLock(player);
         extractPlayer(player);
-        toWorldName = worldName;
         toLocation = new Location(null, x, y, z);
     }
 
@@ -278,10 +272,6 @@ public final class ReservationImpl implements Reservation {
         potionEffects = player.getActivePotionEffects().toArray(new PotionEffect[] {});
         fromLocation = player.getLocation();
         fromVelocity = player.getVelocity();
-        fromWorldName = player.getWorld().getName();
-
-//        Utils.debug("player location: %s", fromLocation);
-//        Utils.debug("player velocity: %s", fromVelocity);
     }
 
     private void extractVehicle(Vehicle vehicle) {
@@ -303,17 +293,14 @@ public final class ReservationImpl implements Reservation {
         localEntityId = vehicle.getEntityId();
         fromLocation = vehicle.getLocation();
         fromVelocity = vehicle.getVelocity();
-        fromWorldName = vehicle.getWorld().getName();
         Utils.debug("vehicle location: %s", fromLocation);
         Utils.debug("vehicle velocity: %s", fromVelocity);
     }
 
     private void extractFromGate(GateImpl fromGate) throws ReservationException {
         this.fromGate = fromGate;
-        fromGateName = fromGate.getFullName();
         fromDirection = fromGate.getDirection();
         fromWorld = fromGate.getWorld();
-        fromWorldName = fromGate.getWorld().getName();
 
         if (fromGate.getSendNextLink())
             try {
@@ -328,7 +315,6 @@ public final class ReservationImpl implements Reservation {
             throw new ReservationException(ge.getMessage());
         }
 
-        toGateName = toGate.getFullName();
         toWorld = toGate.getWorld();
     }
 
@@ -348,7 +334,7 @@ public final class ReservationImpl implements Reservation {
         out.put("fromZ", fromLocation.getZ());
         out.put("fromPitch", fromLocation.getPitch());
         out.put("fromYaw", fromLocation.getYaw());
-        out.put("fromWorld", fromWorldName);
+        out.put("fromWorld", fromWorld.getName());
         out.put("inventory", Inventory.encodeItemStackArray(inventory));
         out.put("health", health);
         out.put("remainingAir", remainingAir);
@@ -362,11 +348,11 @@ public final class ReservationImpl implements Reservation {
         out.put("level", level);
         out.put("xp", xp);
         out.put("potionEffects", PotionEffects.encodePotionEffects(potionEffects));
-        out.put("fromGate", fromGateName);
+        out.put("fromGate", fromGate.getName());
         if (fromDirection != null)
             out.put("fromGateDirection", fromDirection.toString());
-        out.put("toGate", toGateName);
-        out.put("toWorldName", toWorldName);
+        out.put("toGate", toGate.getName());
+        out.put("toWorldName", toWorld.getName());
         if (toLocation != null) {
             out.put("toX", toLocation.getX());
             out.put("toY", toLocation.getY());
@@ -581,7 +567,7 @@ public final class ReservationImpl implements Reservation {
                 format = format.replace("%toWorld%", toGate.getWorld().getName());
                 format = format.replace("%fromGateCtx%", (fromGate == null) ? "" : fromGate.getName(ctx));
                 format = format.replace("%fromGate%", (fromGate == null) ? "" : fromGate.getName());
-                format = format.replace("%fromWorld%", fromWorldName);
+                format = format.replace("%fromWorld%", fromWorld.getName());
                 if (! format.isEmpty())
                     ctx.send(format);
             }
@@ -853,8 +839,8 @@ public final class ReservationImpl implements Reservation {
     }
 
     public String getDestination() {
-        if (toGateName != null)
-            return "'" + toGateName + "'";
+        if (toGate != null)
+            return "'" + toGate.getName() + "'";
         String dst;
         if (toWorld != null)
             dst = String.format("world '%s'", toWorld.getName());

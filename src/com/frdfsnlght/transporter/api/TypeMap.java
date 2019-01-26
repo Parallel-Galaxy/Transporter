@@ -15,7 +15,6 @@
  */
 package com.frdfsnlght.transporter.api;
 
-import com.frdfsnlght.transporter.JSON;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,14 +40,6 @@ import org.yaml.snakeyaml.Yaml;
  */
 public final class TypeMap extends HashMap<String,Object> implements Cloneable {
 
-    public static TypeMap decode(String encoded) {
-        return (TypeMap)decodeObject(new StringBuilder(encoded));
-    }
-
-    public static TypeMap decodeJSON(String encoded) {
-        return (TypeMap)JSON.decode(encoded);
-    }
-
     private static String encodeObject(Object v) {
         if (v == null) return "n:0:";
         if (v instanceof String) return encodeString((String)v);
@@ -65,16 +56,13 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
     }
 
     private static Object decodeObject(StringBuilder b) {
-        //if (b.length() == 0) return null;   // to fix StringIndexOutOfBoundsException?
         char type = b.charAt(0);
         b.delete(0, 2);
         int pos = b.indexOf(":");
         int len = Integer.parseInt(b.substring(0, pos));
         b.delete(0, pos + 1);
         switch (type) {
-            case 'n':
-//System.out.println("decoded null");
-                return null;
+            case 'n': return null;
             case 's': return decodeString(b, len);
             case 'b': return decodeBoolean(b, len);
             case 'l': return decodeLong(b, len);
@@ -109,15 +97,12 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
     }
 
     private static String decodeString(StringBuilder b, int len) {
-//System.out.print("decode string (" + len + "): ");
         String str = b.substring(0, len);
         b.delete(0, len);
         try {
             String s = URLDecoder.decode(str, "UTF-8");
-//System.out.println(s);
             return s;
         } catch (UnsupportedEncodingException e) {
-//System.out.println("unsupported encoding!!!!!");
             return null;
         }
     }
@@ -135,7 +120,6 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
         String str = b.substring(0, len);
         b.delete(0, len);
         Boolean bool = Boolean.parseBoolean(str);
-//System.out.println("decode boolean: " + bool);
         return bool;
     }
 
@@ -152,7 +136,6 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
         String str = b.substring(0, len);
         b.delete(0, len);
         Long l = Long.parseLong(str);
-//System.out.println("decode long: " + l);
         return l;
     }
 
@@ -169,7 +152,6 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
         String str = b.substring(0, len);
         b.delete(0, len);
         Double d = Double.parseDouble(str);
-//System.out.println("decode double: " + d);
         return d;
     }
 
@@ -188,10 +170,8 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
     }
 
     private static TypeMap decodeMap(StringBuilder b, int len) {
-//System.out.println("decode message (" + len + ")");
         TypeMap m = new TypeMap();
         for (int i = 0; i < len; i++) {
-//System.out.print(" message item " + i + ": ");
             String key = (String)decodeObject(b);
             Object value = decodeObject(b);
             m.put(key, value);
@@ -217,10 +197,8 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
     }
 
     private static List<Object> decodeList(StringBuilder b, int len) {
-//System.out.println("decode list (" + len + ")");
         List<Object> l = new ArrayList<Object>();
         for (int i = 0; i < len; i++) {
-//System.out.print(" list item " + i + ": ");
             l.add(decodeObject(b));
         }
         return l;
@@ -374,14 +352,6 @@ public final class TypeMap extends HashMap<String,Object> implements Cloneable {
                 if (writer != null) writer.close();
             } catch (IOException e) {}
         }
-    }
-
-    public String encode() {
-        return encodeMap(this);
-    }
-
-    public String encodeJSON() {
-        return JSON.encode(this);
     }
 
     public void set(String key, Object val) {

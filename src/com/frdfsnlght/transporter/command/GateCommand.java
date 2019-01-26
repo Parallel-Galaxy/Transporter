@@ -22,22 +22,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.AreaGateImpl;
 import com.frdfsnlght.transporter.Permissions;
-import com.frdfsnlght.transporter.Utils;
-import com.frdfsnlght.transporter.api.ExpandDirection;
-import com.frdfsnlght.transporter.api.GateType;
 import com.frdfsnlght.transporter.api.TransporterException;
 
 /**
@@ -91,12 +83,6 @@ public class GateCommand extends TrpCommandProcessor {
         cmds.add(getPrefix(ctx) + GROUP + "replace potion add <old> <new> [<gate>]");
         cmds.add(getPrefix(ctx) + GROUP + "replace potion remove <old>|* [<gate>]");
 
-        cmds.add(getPrefix(ctx) + GROUP + "resize <num>[,<direction>] [<gate>]");
-        if (ctx.isPlayer()) {
-            cmds.add(getPrefix(ctx) + GROUP + "corner 1|2 [pick] [<gate>]");
-            cmds.add(getPrefix(ctx) + GROUP + "create <designname>|area|server <gatename> [<to> [rev]]");
-        }
-
         cmds.add(getPrefix(ctx) + GROUP + "get <option>|* [<gate>]");
         cmds.add(getPrefix(ctx) + GROUP + "set <option> <value> [<gate>]");
         return cmds;
@@ -143,7 +129,6 @@ public class GateCommand extends TrpCommandProcessor {
             GateImpl gate = getGate(ctx, args);
             Permissions.require(ctx.getPlayer(), "trp.gate.info." + gate.getFullName());
             ctx.send("Full name: %s", gate.getFullName());
-            ctx.send("Type: %s", gate.getType().toString());
             List<String> links = gate.getLinks();
             ctx.send("Links: %d", links.size());
             for (String link : links)
@@ -550,71 +535,6 @@ public class GateCommand extends TrpCommandProcessor {
             }
 
             throw new CommandException("do what with a replace?");
-        }
-
-        if ("resize".startsWith(subCmd)) {
-            if (args.isEmpty())
-                throw new CommandException("number and direction required");
-            String numDir = args.remove(0);
-            String[] numDirParts = numDir.split(",");
-            int num;
-            ExpandDirection dir = ExpandDirection.ALL;
-            try {
-                num = Integer.parseInt(numDirParts[0]);
-            } catch (NumberFormatException nfe) {
-                throw new CommandException("invalid number");
-            }
-            if (numDirParts.length > 1)
-                try {
-                    dir = Utils.valueOf(ExpandDirection.class, numDirParts[1]);
-                } catch (IllegalArgumentException iae) {
-                    throw new CommandException(iae.getMessage() + " direction");
-                }
-            GateImpl gate = getGate(ctx, args);
-            if (gate.getType() != GateType.AREA)
-                throw new CommandException("this command is only valid for %s gates", GateType.AREA);
-            Permissions.require(ctx.getPlayer(), "trp.gate.resize." + gate.getFullName());
-            ((AreaGateImpl)gate).resize(num, dir);
-            return;
-        }
-
-        if ("corner".startsWith(subCmd)) {
-            if (! ctx.isPlayer())
-                throw new CommandException("must be a player to use this command");
-            if (args.isEmpty())
-                throw new CommandException("corner number required");
-            String numStr = args.remove(0);
-            int num;
-            boolean pick = false;
-            if ((! args.isEmpty()) && ("pick".startsWith(args.get(0).toLowerCase()))) {
-                pick = true;
-                args.remove(0);
-            }
-            try {
-                num = Integer.parseInt(numStr);
-            } catch (NumberFormatException nfe) {
-                throw new CommandException("invalid corner number");
-            }
-            if ((num < 1) || (num > 2))
-                throw new CommandException("number must be 1 or 2");
-            Location loc;
-
-            if (pick) {
-                Block block = ctx.getPlayer().getTargetBlock((Set<Material>)null, 1000);
-                if ((block == null) || (block.getType() == Material.AIR))
-                    throw new CommandException("no block found");
-                loc = block.getLocation();
-            } else
-                loc = ctx.getPlayer().getLocation().getBlock().getLocation();
-            GateImpl gate = getGate(ctx, args);
-            if (gate.getType() != GateType.AREA)
-                throw new CommandException("this command is only valid for %s gates", GateType.AREA);
-            Permissions.require(ctx.getPlayer(), "trp.gate.corner." + gate.getFullName());
-            if (num == 1)
-                ((AreaGateImpl)gate).setP1Location(loc);
-            else if (num == 2)
-                ((AreaGateImpl)gate).setP2Location(loc);
-            return;
         }
 
         if ("create".startsWith(subCmd)) {

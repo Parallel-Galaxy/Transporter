@@ -21,18 +21,14 @@ import com.frdfsnlght.transporter.Design;
 import com.frdfsnlght.transporter.Designs;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Inventory;
-import com.frdfsnlght.transporter.AreaGateImpl;
 import com.frdfsnlght.transporter.GateImpl;
-import com.frdfsnlght.transporter.ServerGateImpl;
 import com.frdfsnlght.transporter.Permissions;
-import com.frdfsnlght.transporter.Utils;
 import com.frdfsnlght.transporter.api.TransporterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -151,40 +147,26 @@ public class DesignCommand extends TrpCommandProcessor {
             Player player = ctx.getPlayer();
             World world = player.getWorld();
 
-            if ("area".startsWith(designName)) {
-                Permissions.require(ctx.getPlayer(), "trp.create.area");
-                GateImpl gate = new AreaGateImpl(ctx.getPlayer().getWorld(), gateName, ctx.getPlayer(), Utils.yawToDirection(ctx.getPlayer().getLocation().getYaw()), ctx.getPlayer().getLocation());
-                Gates.add(gate, true);
-                ctx.sendLog("created gate '%s'", gate.getName());
-                Gates.setSelectedGate(ctx.getPlayer(), gate);
-            } else if ("server".startsWith(designName)) {
-                Permissions.require(ctx.getPlayer(), "trp.create.server");
-                GateImpl gate = new ServerGateImpl(Bukkit.getWorlds().get(0), gateName, ctx.getPlayer());
-                Gates.add(gate, true);
-                ctx.sendLog("created gate '%s'", gate.getName());
-                Gates.setSelectedGate(ctx.getPlayer(), gate);
-            } else {
-                Design design = Designs.get(designName);
-                if (design == null)
-                    throw new CommandException("unknown design '%s'", designName);
-                if (! design.isBuildable())
-                    throw new CommandException("design '%s' is not buildable", design.getName());
-                if (! design.isBuildableInWorld(world))
-                    throw new CommandException("gate type '%s' is not buildable in this world", design.getName());
-                Permissions.require(ctx.getPlayer(), "trp.design.build." + design.getName());
-                Permissions.require(ctx.getPlayer(), "trp.create." + design.getName());
-                if (design.mustBuildFromInventory())
-                    Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
+            Design design = Designs.get(designName);
+            if (design == null)
+                throw new CommandException("unknown design '%s'", designName);
+            if (! design.isBuildable())
+                throw new CommandException("design '%s' is not buildable", design.getName());
+            if (! design.isBuildableInWorld(world))
+                throw new CommandException("gate type '%s' is not buildable in this world", design.getName());
+            Permissions.require(ctx.getPlayer(), "trp.design.build." + design.getName());
+            Permissions.require(ctx.getPlayer(), "trp.create." + design.getName());
+            if (design.mustBuildFromInventory())
+                Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
 
-                GateImpl gate = design.create(player.getLocation(), player, gateName);
-                Gates.add(gate, true);
-                ctx.sendLog("created gate '%s'", gate.getName());
-                Gates.setSelectedGate(ctx.getPlayer(), gate);
+            GateImpl gate = design.create(player.getLocation(), player, gateName);
+            Gates.add(gate, true);
+            ctx.sendLog("created gate '%s'", gate.getName());
+            Gates.setSelectedGate(ctx.getPlayer(), gate);
 
-                if (design.mustBuildFromInventory())
-                    if (Inventory.deductBlocks(ctx.getPlayer(), design.getInventoryBlocks()))
-                        ctx.sendLog("debited inventory");
-            }
+            if (design.mustBuildFromInventory())
+                if (Inventory.deductBlocks(ctx.getPlayer(), design.getInventoryBlocks()))
+                    ctx.sendLog("debited inventory");
 
             if (link == null) return;
             ctx.getPlayer().performCommand("trp gate link add \"" + link + "\"" + (rev ? " rev" : ""));

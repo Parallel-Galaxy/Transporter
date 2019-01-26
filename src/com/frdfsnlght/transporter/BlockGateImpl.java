@@ -19,7 +19,6 @@ import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.GateMap.Point;
 import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.GateType;
 import com.frdfsnlght.transporter.api.BlockGate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,11 +158,6 @@ public final class BlockGateImpl extends GateImpl implements BlockGate {
         updateScreens();
         dirty = true;
     }
-
-    // Abstract implementations
-
-    @Override
-    public GateType getType() { return GateType.BLOCK; }
 
     @Override
     public Location getSpawnLocation(Location fromLocation, BlockFace fromDirection) {

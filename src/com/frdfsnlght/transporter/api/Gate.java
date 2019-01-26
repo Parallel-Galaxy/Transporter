@@ -55,13 +55,6 @@ public interface Gate {
     public String getFullName();
 
     /**
-     * Returns the type of the gate.
-     *
-     * @return the type of the gate
-     */
-    public GateType getType();
-
-    /**
      * Saves the gate's configuration to disk.
      *
      * @param force     true to force the save even if no changes have been made

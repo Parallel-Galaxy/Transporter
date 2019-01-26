@@ -18,7 +18,6 @@ package com.frdfsnlght.transporter;
 import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.api.Gate;
 import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.GateType;
 import com.frdfsnlght.transporter.api.TransporterException;
 import com.frdfsnlght.transporter.api.event.GateClosedEvent;
 import com.frdfsnlght.transporter.api.event.GateOpenedEvent;
@@ -60,23 +59,8 @@ public abstract class GateImpl implements Gate, OptionsListener {
             throw new GateException("unable to read %s", file.getAbsoluteFile());
         TypeMap conf = new TypeMap(file);
         conf.load();
-        String typeStr = conf.getString("type", "BLOCK");
-        GateType type;
-        try {
-            type = Utils.valueOf(GateType.class, typeStr);
-        } catch (IllegalArgumentException iae) {
-            throw new GateException(iae.getMessage() + " gate type '%s'", typeStr);
-        }
 
-        switch (type) {
-            case BLOCK:
-                return new BlockGateImpl(world, conf);
-            case AREA:
-                return new AreaGateImpl(world, conf);
-            case SERVER:
-                return new ServerGateImpl(world, conf);
-        }
-        throw new GateException("unknown gate type '%s'", type.toString());
+        return new BlockGateImpl(world, conf);
     }
 
     protected static final Set<String> BASEOPTIONS = new HashSet<String>();
@@ -393,8 +377,7 @@ public abstract class GateImpl implements Gate, OptionsListener {
         setCountdownIntervalFormat(null);
         setCountdownCancelFormat(null);
     }
-    
-    public abstract GateType getType();
+
     public abstract Location getSpawnLocation(Location fromLoc, BlockFace fromDirection);
 
     public abstract void onSend(Entity entity);
@@ -636,7 +619,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
 
         TypeMap conf = new TypeMap(file);
         conf.set("name", name);
-        conf.set("type", getType().toString());
         conf.set("direction", direction.toString());
         conf.set("duration", duration);
         conf.set("linkLocal", linkLocal);

@@ -23,7 +23,6 @@ import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.GateType;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -47,9 +46,6 @@ public final class TestGate extends GateImpl {
         super(world, gateName, player, direction);
         random = r;
     }
-
-    @Override
-    public GateType getType() { return null; }
 
     @Override
     public Location getSpawnLocation(Location fromLoc, BlockFace fromDirection) { return null; }

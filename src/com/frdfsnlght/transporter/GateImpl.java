@@ -15,34 +15,27 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.TypeMap;
-import com.frdfsnlght.transporter.api.Gate;
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.TransporterException;
-import com.frdfsnlght.transporter.api.event.GateClosedEvent;
-import com.frdfsnlght.transporter.api.event.GateOpenedEvent;
-import com.frdfsnlght.transporter.command.CommandException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+
+import com.frdfsnlght.transporter.api.Gate;
+import com.frdfsnlght.transporter.api.GateException;
+import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.api.TypeMap;
+import com.frdfsnlght.transporter.api.event.GateClosedEvent;
+import com.frdfsnlght.transporter.api.event.GateOpenedEvent;
+import com.frdfsnlght.transporter.command.CommandException;
 
 /**
  *
@@ -75,31 +68,7 @@ public abstract class GateImpl implements Gate, OptionsListener {
         BASEOPTIONS.add("linkOfflineFormat");
         BASEOPTIONS.add("linkLocalFormat");
         BASEOPTIONS.add("linkWorldFormat");
-        BASEOPTIONS.add("multiLink");
         BASEOPTIONS.add("protect");
-        BASEOPTIONS.add("requirePin");
-        BASEOPTIONS.add("requireValidPin");
-        BASEOPTIONS.add("requireLevel");
-        BASEOPTIONS.add("invalidPinDamage");
-        BASEOPTIONS.add("sendChat");
-        BASEOPTIONS.add("sendChatFilter");
-        BASEOPTIONS.add("sendChatFormatFilter");
-        BASEOPTIONS.add("sendChatDistance");
-        BASEOPTIONS.add("receiveChat");
-        BASEOPTIONS.add("receiveChatFilter");
-        BASEOPTIONS.add("receiveChatDistance");
-        BASEOPTIONS.add("requireAllowedItems");
-        BASEOPTIONS.add("receiveInventory");
-        BASEOPTIONS.add("deleteInventory");
-        BASEOPTIONS.add("receiveGameMode");
-        BASEOPTIONS.add("allowGameModes");
-        BASEOPTIONS.add("gameMode");
-        BASEOPTIONS.add("receiveXP");
-        BASEOPTIONS.add("receivePotions");
-        BASEOPTIONS.add("requireAllowedPotions");
-        BASEOPTIONS.add("receiveStats");
-        BASEOPTIONS.add("randomNextLink");
-        BASEOPTIONS.add("sendNextLink");
         BASEOPTIONS.add("teleportFormat");
         BASEOPTIONS.add("noLinksFormat");
         BASEOPTIONS.add("noLinkSelectedFormat");
@@ -110,9 +79,7 @@ public abstract class GateImpl implements Gate, OptionsListener {
         BASEOPTIONS.add("countdownFormat");
         BASEOPTIONS.add("countdownIntervalFormat");
         BASEOPTIONS.add("countdownCancelFormat");
-        BASEOPTIONS.add("markerFormat");
         BASEOPTIONS.add("hidden");
-        BASEOPTIONS.add("linkAddDistance");
     }
 
     protected File file;
@@ -129,39 +96,13 @@ public abstract class GateImpl implements Gate, OptionsListener {
     protected String linkOfflineFormat;
     protected String linkLocalFormat;
     protected String linkWorldFormat;
-    protected boolean multiLink;
-    protected boolean requirePin;
-    protected boolean requireValidPin;
-    protected int requireLevel;
-    protected int invalidPinDamage;
     protected boolean protect;
-    protected boolean sendChat;
-    protected String sendChatFilter;
-    protected String sendChatFormatFilter;
-    protected int sendChatDistance;
-    protected boolean receiveChat;
-    protected String receiveChatFilter;
-    protected int receiveChatDistance;
-    protected boolean requireAllowedItems;
-    protected boolean receiveInventory;
-    protected boolean deleteInventory;
-    protected boolean receiveGameMode;
-    protected String allowGameModes;
-    protected GameMode gameMode;
-    protected boolean receiveXP;
-    protected boolean receivePotions;
-    protected boolean requireAllowedPotions;
-    protected boolean receiveStats;
-    protected boolean randomNextLink;
-    protected boolean sendNextLink;
     protected String teleportFormat;
     protected String noLinksFormat;
     protected String noLinkSelectedFormat;
     protected String invalidLinkFormat;
     protected String unknownLinkFormat;
-    protected String markerFormat;
     protected boolean hidden;
-    protected int linkAddDistance;
     protected int countdown;
     protected int countdownInterval;
     protected String countdownFormat;
@@ -169,13 +110,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
     protected String countdownCancelFormat;
 
     protected final List<String> links = new ArrayList<String>();
-    protected final Set<String> pins = new HashSet<String>();
-    protected final Set<String> bannedItems = new HashSet<String>();
-    protected final Set<String> allowedItems = new HashSet<String>();
-    protected final Map<String,String> replaceItems = new HashMap<String,String>();
-    protected final Set<String> bannedPotions = new HashSet<String>();
-    protected final Set<String> allowedPotions = new HashSet<String>();
-    protected final Map<String,String> replacePotions = new HashMap<String,String>();
 
     protected Set<String> incoming = new HashSet<String>();
     protected String outgoing = null;
@@ -205,113 +139,15 @@ public abstract class GateImpl implements Gate, OptionsListener {
         linkLocalFormat = conf.getString("linkLocalFormat", "%fromGate%\\n%toGate%");
         linkWorldFormat = conf.getString("linkWorldFormat", "%fromGate%\\n%toWorld%\\n%toGate%");
 
-        multiLink = conf.getBoolean("multiLink", true);
         links.addAll(conf.getStringList("links", new ArrayList<String>()));
-        pins.addAll(conf.getStringList("pins", new ArrayList<String>()));
         portalOpen = conf.getBoolean("portalOpen", false);
-
-        String gameModeStr = conf.getString("gameMode", null);
-        if (gameModeStr == null)
-            gameMode = null;
-        else {
-            try {
-                gameMode = Utils.valueOf(GameMode.class, gameModeStr);
-            } catch (IllegalArgumentException iae) {
-                throw new GateException(iae.getMessage() + " game mode '%s'", gameModeStr);
-            }
-        }
-
-        List<String> items = conf.getStringList("bannedItems", new ArrayList<String>());
-        for (String item : items) {
-            String i = Inventory.normalizeItem(item);
-            if (i == null)
-                throw new GateException("invalid banned item '%s'", item);
-            bannedItems.add(i);
-        }
-
-        items = conf.getStringList("allowedItems", new ArrayList<String>());
-        for (String item : items) {
-            String i = Inventory.normalizeItem(item);
-            if (i == null)
-                throw new GateException("invalid allowed item '%s'", item);
-            allowedItems.add(i);
-        }
-
-        items = conf.getKeys("replaceItems");
-        if (items != null) {
-            for (String oldItem : items) {
-                String oi = Inventory.normalizeItem(oldItem);
-                if (oi == null)
-                    throw new GateException("invalid replace item '%s'", oldItem);
-                String newItem = conf.getString("replaceItems." + oldItem);
-                String ni = Inventory.normalizeItem(newItem);
-                if (ni == null)
-                    throw new GateException("invalid replace item '%s'", newItem);
-                replaceItems.put(oi, ni);
-            }
-        }
-
-        List<String> potions = conf.getStringList("bannedPotions", new ArrayList<String>());
-        for (String potion : potions) {
-            String p = PotionEffects.normalizePotion(potion);
-            if (p == null)
-                throw new GateException("invalid banned potion effect '%s'", potion);
-            bannedPotions.add(p);
-        }
-
-        potions = conf.getStringList("allowedPotions", new ArrayList<String>());
-        for (String potion : potions) {
-            String p = PotionEffects.normalizePotion(potion);
-            if (p == null)
-                throw new GateException("invalid allowed potion effect '%s'", potion);
-            allowedPotions.add(p);
-        }
-
-        potions = conf.getKeys("replacePotions");
-        if (potions != null) {
-            for (String oldPotion : potions) {
-                String op = PotionEffects.normalizePotion(oldPotion);
-                if (op == null)
-                    throw new GateException("invalid replace potion effect '%s'", oldPotion);
-                String newPotion = conf.getString("replacePotions." + oldPotion);
-                String np = PotionEffects.normalizePotion(newPotion);
-                if (np == null)
-                    throw new GateException("invalid replace potion effect '%s'", newPotion);
-                replacePotions.put(op, np);
-            }
-        }
-
-        requirePin = conf.getBoolean("requirePin", false);
-        requireValidPin = conf.getBoolean("requireValidPin", true);
-        requireLevel = conf.getInt("requireLevel", 0);
-        invalidPinDamage = conf.getInt("invalidPinDamage", 0);
         protect = conf.getBoolean("protect", false);
-        sendChat = conf.getBoolean("sendChat", false);
-        sendChatFilter = conf.getString("sendChatFilter");
-        sendChatFormatFilter = conf.getString("sendChatFormatFilter");
-        sendChatDistance = conf.getInt("sendChatDistance", 1000);
-        receiveChat = conf.getBoolean("receiveChat", false);
-        receiveChatFilter = conf.getString("receiveChatFilter");
-        receiveChatDistance = conf.getInt("receiveChatDistance", 1000);
-        requireAllowedItems = conf.getBoolean("requireAllowedItems", true);
-        receiveInventory = conf.getBoolean("receiveInventory", true);
-        deleteInventory = conf.getBoolean("deleteInventory", false);
-        receiveGameMode = conf.getBoolean("receiveGameMode", false);
-        allowGameModes = conf.getString("allowGameModes", "*");
-        receiveXP = conf.getBoolean("receiveXP", false);
-        receivePotions = conf.getBoolean("receivePotions", false);
-        requireAllowedPotions = conf.getBoolean("requireAllowedPotions", true);
-        receiveStats = conf.getBoolean("receiveStats", true);
-        randomNextLink = conf.getBoolean("randomNextLink", false);
-        sendNextLink = conf.getBoolean("sendNextLink", false);
         teleportFormat = conf.getString("teleportFormat", "%GOLD%teleported to '%toGateCtx%'");
         noLinksFormat = conf.getString("noLinksFormat", "this gate has no links");
         noLinkSelectedFormat = conf.getString("noLinkSelectedFormat", "no link is selected");
         invalidLinkFormat = conf.getString("invalidLinkFormat", "invalid link selected");
         unknownLinkFormat = conf.getString("unknownLinkFormat", "unknown or offline destination gate");
-        markerFormat = conf.getString("markerFormat", "%name%");
         hidden = conf.getBoolean("hidden", false);
-        linkAddDistance = conf.getInt("linkAddDistance", -1);
         countdown = conf.getInt("countdown", -1);
         countdownInterval = conf.getInt("countdownInterval", 1000);
         countdownFormat = conf.getString("countdownFormat", "%RED%Teleport countdown started...");
@@ -338,39 +174,13 @@ public abstract class GateImpl implements Gate, OptionsListener {
         setLinkOfflineFormat(null);
         setLinkLocalFormat(null);
         setLinkWorldFormat(null);
-        setMultiLink(true);
-        setRequirePin(false);
-        setRequireValidPin(true);
-        setRequireLevel(0);
-        setInvalidPinDamage(0);
         setProtect(false);
-        setSendChat(false);
-        setSendChatFilter(null);
-        setSendChatFormatFilter(null);
-        setSendChatDistance(1000);
-        setReceiveChat(false);
-        setReceiveChatFilter(null);
-        setReceiveChatDistance(1000);
-        setRequireAllowedItems(true);
-        setReceiveInventory(true);
-        setDeleteInventory(false);
-        setReceiveGameMode(false);
-        setAllowGameModes("*");
-        setGameMode(null);
-        setReceiveXP(false);
-        setReceivePotions(false);
-        setRequireAllowedPotions(true);
-        setReceiveStats(true);
-        setRandomNextLink(false);
-        setSendNextLink(false);
         setTeleportFormat(null);
         setNoLinksFormat(null);
         setNoLinkSelectedFormat(null);
         setInvalidLinkFormat(null);
         setUnknownLinkFormat(null);
-        setMarkerFormat(null);
         setHidden(false);
-        setLinkAddDistance(-1);
         setCountdown(-1);
         setCountdownInterval(1000);
         setCountdownFormat(null);
@@ -630,47 +440,14 @@ public abstract class GateImpl implements Gate, OptionsListener {
         conf.set("linkLocalFormat", linkLocalFormat);
         conf.set("linkWorldFormat", linkWorldFormat);
 
-        conf.set("multiLink", multiLink);
         conf.set("links", links);
-        conf.set("pins", new ArrayList<String>(pins));
-        conf.set("bannedItems", new ArrayList<String>(bannedItems));
-        conf.set("allowedItems", new ArrayList<String>(allowedItems));
-        conf.set("replaceItems", replaceItems);
-        conf.set("requirePin", requirePin);
-        conf.set("requireValidPin", requireValidPin);
-        conf.set("requireLevel", requireLevel);
-        conf.set("invalidPinDamage", invalidPinDamage);
         conf.set("protect", protect);
-        conf.set("sendChat", sendChat);
-        conf.set("sendChatFilter", sendChatFilter);
-        conf.set("sendChatFormatFilter", sendChatFormatFilter);
-        conf.set("sendChatDistance", sendChatDistance);
-        conf.set("receiveChat", receiveChat);
-        conf.set("receiveChatFilter", receiveChatFilter);
-        conf.set("receiveChatDistance", receiveChatDistance);
-        conf.set("requireAllowedItems", requireAllowedItems);
-        conf.set("receiveInventory", receiveInventory);
-        conf.set("deleteInventory", deleteInventory);
-        conf.set("receiveGameMode", receiveGameMode);
-        conf.set("allowGameModes", allowGameModes);
-        conf.set("gameMode", gameMode);
-        conf.set("receiveXP", receiveXP);
-        conf.set("receivePotions", receivePotions);
-        conf.set("requireAllowedPotions", requireAllowedPotions);
-        conf.set("receiveStats", receiveStats);
-        conf.set("bannedPotions", new ArrayList<String>(bannedPotions));
-        conf.set("allowedPotions", new ArrayList<String>(allowedPotions));
-        conf.set("replacePotions", replacePotions);
-        conf.set("randomNextLink", randomNextLink);
-        conf.set("sendNextLink", sendNextLink);
         conf.set("teleportFormat", teleportFormat);
         conf.set("noLinksFormat", noLinksFormat);
         conf.set("noLinkSelectedFormat", noLinkSelectedFormat);
         conf.set("invalidLinkFormat", invalidLinkFormat);
         conf.set("unknownLinkFormat", unknownLinkFormat);
-        conf.set("markerFormat", markerFormat);
         conf.set("hidden", hidden);
-        conf.set("linkAddDistance", linkAddDistance);
         conf.set("countdown", countdown);
         conf.set("countdownInterval", countdownInterval);
         conf.set("countdownFormat", countdownFormat);
@@ -837,17 +614,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
     }
 
     
-    public boolean getMultiLink() {
-        return multiLink;
-    }
-
-    
-    public void setMultiLink(boolean b) {
-        multiLink = b;
-        dirty = true;
-    }
-
-    
     public boolean getProtect() {
         return protect;
     }
@@ -855,303 +621,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
     
     public void setProtect(boolean b) {
         protect = b;
-        dirty = true;
-    }
-
-    
-    public boolean getRequirePin() {
-        return requirePin;
-    }
-
-    
-    public void setRequirePin(boolean b) {
-        requirePin = b;
-        dirty = true;
-    }
-
-    
-    public boolean getRequireValidPin() {
-        return requireValidPin;
-    }
-
-    
-    public void setRequireValidPin(boolean b) {
-        requireValidPin = b;
-        dirty = true;
-    }
-
-    
-    public int getRequireLevel() {
-        return requireLevel;
-    }
-
-    
-    public void setRequireLevel(int i) {
-        requireLevel = i;
-        dirty = true;
-    }
-
-    
-    public int getInvalidPinDamage() {
-        return invalidPinDamage;
-    }
-
-    
-    public void setInvalidPinDamage(int i) {
-        if (i < 0)
-            throw new IllegalArgumentException("invalidPinDamage must be at least 0");
-        invalidPinDamage = i;
-        dirty = true;
-    }
-
-    
-    public boolean getSendChat() {
-        return sendChat;
-    }
-
-    
-    public void setSendChat(boolean b) {
-        sendChat = b;
-        dirty = true;
-    }
-
-    
-    public String getSendChatFilter() {
-        return sendChatFilter;
-    }
-
-    
-    public void setSendChatFilter(String s) {
-        if (s != null) {
-            if (s.isEmpty() || s.equals("-")) s = null;
-            else
-                try {
-                    Pattern.compile(s);
-                } catch (PatternSyntaxException e) {
-                    throw new IllegalArgumentException("invalid regular expression");
-                }
-        }
-        sendChatFilter = s;
-    }
-
-    
-    public String getSendChatFormatFilter() {
-        return sendChatFormatFilter;
-    }
-
-    
-    public void setSendChatFormatFilter(String s) {
-        if (s != null) {
-            if (s.isEmpty() || s.equals("-")) s = null;
-            else
-                try {
-                    Pattern.compile(s);
-                } catch (PatternSyntaxException e) {
-                    throw new IllegalArgumentException("invalid regular expression");
-                }
-        }
-        sendChatFormatFilter = s;
-    }
-
-    
-    public int getSendChatDistance() {
-        return sendChatDistance;
-    }
-
-    
-    public void setSendChatDistance(int i) {
-        sendChatDistance = i;
-        dirty = true;
-    }
-
-    
-    public boolean getReceiveChat() {
-        return receiveChat;
-    }
-
-    
-    public void setReceiveChat(boolean b) {
-        receiveChat = b;
-        dirty = true;
-    }
-
-    
-    public String getReceiveChatFilter() {
-        return receiveChatFilter;
-    }
-
-    
-    public void setReceiveChatFilter(String s) {
-        if (s != null) {
-            if (s.isEmpty() || s.equals("-")) s = null;
-            else
-                try {
-                    Pattern.compile(s);
-                } catch (PatternSyntaxException e) {
-                    throw new IllegalArgumentException("invalid regular expression");
-                }
-        }
-        receiveChatFilter = s;
-    }
-
-    
-    public int getReceiveChatDistance() {
-        return receiveChatDistance;
-    }
-
-    
-    public void setReceiveChatDistance(int i) {
-        receiveChatDistance = i;
-        dirty = true;
-    }
-
-    
-    public boolean getRequireAllowedItems() {
-        return requireAllowedItems;
-    }
-
-    
-    public void setRequireAllowedItems(boolean b) {
-        requireAllowedItems = b;
-        dirty = true;
-    }
-
-    
-    public boolean getReceiveInventory() {
-        return receiveInventory;
-    }
-
-    
-    public void setReceiveInventory(boolean b) {
-        receiveInventory = b;
-        dirty = true;
-    }
-
-    
-    public boolean getDeleteInventory() {
-        return deleteInventory;
-    }
-
-    
-    public void setDeleteInventory(boolean b) {
-        deleteInventory = b;
-        dirty = true;
-    }
-
-    
-    public boolean getReceiveGameMode() {
-        return receiveGameMode;
-    }
-
-    
-    public void setReceiveGameMode(boolean b) {
-        receiveGameMode = b;
-        dirty = true;
-    }
-
-    
-    public String getAllowGameModes() {
-        return allowGameModes;
-    }
-
-    
-    public void setAllowGameModes(String s) {
-        if (s != null) {
-            if (s.equals("*")) s = null;
-        }
-        if (s == null) s = "*";
-        String[] parts = s.split(",");
-        String modes = "";
-        for (String part : parts) {
-            if (part.equals("*")) {
-                modes = "*,";
-                break;
-            }
-            try {
-                GameMode mode = Utils.valueOf(GameMode.class, part);
-                modes += mode.toString() + ",";
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException(e.getMessage() + " game mode '" + part + "'");
-            }
-        }
-        allowGameModes = modes.substring(0, modes.length() - 1);
-        dirty = true;
-    }
-
-    
-    public GameMode getGameMode() {
-        return gameMode;
-    }
-
-    
-    public void setGameMode(GameMode m) {
-        gameMode = m;
-        dirty = true;
-    }
-
-    
-    public boolean getReceiveXP() {
-        return receiveXP;
-    }
-
-    
-    public void setReceiveXP(boolean b) {
-        receiveXP = b;
-        dirty = true;
-    }
-
-    
-    public boolean getReceivePotions() {
-        return receivePotions;
-    }
-
-    
-    public void setReceivePotions(boolean b) {
-        receivePotions = b;
-        dirty = true;
-    }
-
-    
-    public boolean getRequireAllowedPotions() {
-        return requireAllowedPotions;
-    }
-
-    
-    public void setRequireAllowedPotions(boolean b) {
-        requireAllowedPotions = b;
-        dirty = true;
-    }
-
-    
-    public boolean getReceiveStats() {
-        return receiveStats;
-    }
-
-    
-    public void setReceiveStats(boolean b) {
-        receiveStats = b;
-        dirty = true;
-    }
-
-    
-    public boolean getRandomNextLink() {
-        return randomNextLink;
-    }
-
-    
-    public void setRandomNextLink(boolean b) {
-        randomNextLink = b;
-        dirty = true;
-    }
-
-    
-    public boolean getSendNextLink() {
-        return sendNextLink;
-    }
-
-    
-    public void setSendNextLink(boolean b) {
-        sendNextLink = b;
         dirty = true;
     }
 
@@ -1236,22 +705,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
     }
 
     
-    public String getMarkerFormat() {
-        return markerFormat;
-    }
-
-    
-    public void setMarkerFormat(String s) {
-        if (s != null) {
-            if (s.equals("-")) s = "";
-            else if (s.equals("*")) s = null;
-        }
-        if (s == null) s = "%name%";
-        markerFormat = s;
-        dirty = true;
-    }
-
-    
     public boolean getHidden() {
         return hidden;
     }
@@ -1261,18 +714,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
         boolean old = hidden;
         hidden = b;
         dirty = dirty || (old != hidden);
-    }
-
-    
-    public int getLinkAddDistance() {
-        return linkAddDistance;
-    }
-
-    
-    public void setLinkAddDistance(int i) {
-        if (i <= 0) i = -1;
-        linkAddDistance = i;
-        dirty = true;
     }
 
     
@@ -1372,23 +813,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
 
     /* End options */
 
-    public boolean canSendChat(String message, String format) {
-        if ((! sendChat) || (message == null)) return false;
-        if (sendChatFilter != null)
-            if (! Pattern.compile(sendChatFilter).matcher(message).find()) return false;
-        if (sendChatFormatFilter != null) {
-            if (format == null) return false;
-            if (! Pattern.compile(sendChatFormatFilter).matcher(format).find()) return false;
-        }
-        return true;
-    }
-
-    public boolean canReceiveChat(String message) {
-        if ((! receiveChat) || (message == null)) return false;
-        if (receiveChatFilter == null) return true;
-        return Pattern.compile(receiveChatFilter).matcher(message).find();
-    }
-
     public List<String> getLinks() {
         return new ArrayList<String>(links);
     }
@@ -1404,17 +828,8 @@ public abstract class GateImpl implements Gate, OptionsListener {
     public void addLink(Context ctx, String toGateName) throws TransporterException {
         Permissions.require(ctx.getPlayer(), "trp.gate.link.add." + getFullName());
 
-        if (isLinked() && (! getMultiLink()))
-            throw new GateException("gate '%s' cannot accept multiple links", getName(ctx));
-
-        if (ctx.isPlayer() && (linkAddDistance > 0)) {
-            Location location = ctx.getPlayer().getLocation();
-            if (location.getWorld() != world)
-                throw new GateException("gate '%s' is too far away", getName(ctx));
-            Vector there = new Vector(location.getX(), location.getY(), location.getZ());
-            if (there.distance(center) > linkAddDistance)
-                throw new GateException("gate '%s' is too far away", getName(ctx));
-        }
+        if (isLinked())
+            throw new GateException("gates cannot accept multiple links", getName(ctx));
 
         GateImpl toGate = Gates.find(ctx, toGateName);
         if (toGate == null)
@@ -1488,16 +903,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
                 dirty = true;
             }
 
-        } else if (randomNextLink) {
-            List<String> candidateLinks = new ArrayList<String>(links);
-            candidateLinks.remove(outgoing);
-            if (candidateLinks.size() > 1)
-                Collections.shuffle(candidateLinks);
-            if (! candidateLinks.isEmpty()) {
-                outgoing = candidateLinks.get(0);
-                dirty = true;
-            }
-
         } else {
             int i = links.indexOf(outgoing) + 1;
             if (i >= links.size()) i = 0;
@@ -1553,314 +958,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
         return gate;
     }
 
-    
-    public boolean addPin(String pin) throws GateException {
-        if (! Pins.isValidPin(pin))
-            throw new GateException("invalid pin");
-        if (pins.contains(pin)) return false;
-        pins.add(pin);
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removePin(String pin) {
-        if (pins.contains(pin)) return false;
-        pins.remove(pin);
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllPins() {
-        pins.clear();
-        dirty = true;
-    }
-
-    
-    public boolean hasPin(String pin) {
-        return pins.contains(pin);
-    }
-
-    
-    public Set<String> getBannedItems() {
-        return bannedItems;
-    }
-
-    
-    public boolean addBannedItem(String item) throws GateException {
-        try {
-            if (! Inventory.appendItemList(bannedItems, item)) return false;
-        } catch (InventoryException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removeBannedItem(String item) throws GateException {
-        try {
-            if (! Inventory.removeItemList(bannedItems, item)) return false;
-        } catch (InventoryException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllBannedItems() {
-        bannedItems.clear();
-        dirty = true;
-    }
-
-    
-    public Set<String> getAllowedItems() {
-        return allowedItems;
-    }
-
-    
-    public boolean addAllowedItem(String item) throws GateException {
-        try {
-            if (! Inventory.appendItemList(allowedItems, item)) return false;
-        } catch (InventoryException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removeAllowedItem(String item) throws GateException {
-        try {
-            if (! Inventory.removeItemList(allowedItems, item)) return false;
-        } catch (InventoryException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllAllowedItems() {
-        allowedItems.clear();
-        dirty = true;
-    }
-
-    
-    public Map<String,String> getReplaceItems() {
-        return replaceItems;
-    }
-
-    
-    public boolean addReplaceItem(String fromItem, String toItem) throws GateException {
-        try {
-            if (! Inventory.appendItemMap(replaceItems, fromItem, toItem)) return false;
-        } catch (InventoryException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removeReplaceItem(String item) throws GateException {
-        try {
-            if (! Inventory.removeItemMap(replaceItems, item)) return false;
-        } catch (InventoryException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllReplaceItems() {
-        replaceItems.clear();
-        dirty = true;
-    }
-
-    public boolean isAllowedGameMode(String mode) {
-        if (allowGameModes == null) return false;
-        if (allowGameModes.equals("*")) return true;
-        for (String part : allowGameModes.split(","))
-            if (part.equals(mode)) return true;
-        return false;
-    }
-
-    public boolean isAcceptableInventory(ItemStack[] stacks) {
-        if (stacks == null) return true;
-        if (! requireAllowedItems) return true;
-        for (int i = 0; i < stacks.length; i++) {
-            ItemStack stack = stacks[i];
-            if (stack == null) continue;
-            if (Inventory.filterItemStack(stack, replaceItems, allowedItems, bannedItems) == null) return false;
-        }
-        return true;
-    }
-
-    public boolean filterInventory(ItemStack[] stacks) {
-        if (stacks == null) return false;
-        boolean filtered = false;
-        for (int i = 0; i < stacks.length; i++) {
-            ItemStack newStack = Inventory.filterItemStack(stacks[i], replaceItems, allowedItems, bannedItems);
-            if (newStack != stacks[i]) {
-                stacks[i] = newStack;
-                filtered = true;
-            }
-        }
-        return filtered;
-    }
-
-    
-    public Set<String> getBannedPotions() {
-        return bannedPotions;
-    }
-
-    
-    public boolean addBannedPotion(String potion) throws GateException {
-        try {
-            if (! PotionEffects.appendPotionList(bannedPotions, potion)) return false;
-        } catch (PotionEffectException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removeBannedPotion(String potion) throws GateException {
-        try {
-            if (! PotionEffects.removePotionList(bannedPotions, potion)) return false;
-        } catch (PotionEffectException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllBannedPotions() {
-        bannedPotions.clear();
-        dirty = true;
-    }
-
-    
-    public Set<String> getAllowedPotions() {
-        return allowedPotions;
-    }
-
-    
-    public boolean addAllowedPotion(String potion) throws GateException {
-        try {
-            if (! PotionEffects.appendPotionList(allowedPotions, potion)) return false;
-        } catch (PotionEffectException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removeAllowedPotion(String potion) throws GateException {
-        try {
-            if (! PotionEffects.removePotionList(allowedPotions, potion)) return false;
-        } catch (PotionEffectException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllAllowedPotions() {
-        allowedPotions.clear();
-        dirty = true;
-    }
-
-    
-    public Map<String,String> getReplacePotions() {
-        return replacePotions;
-    }
-
-    
-    public boolean addReplacePotion(String fromPotion, String toPotion) throws GateException {
-        try {
-            if (! PotionEffects.appendPotionMap(replacePotions, fromPotion, toPotion)) return false;
-        } catch (PotionEffectException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public boolean removeReplacePotion(String potion) throws GateException {
-        try {
-            if (! PotionEffects.removePotionMap(replacePotions, potion)) return false;
-        } catch (PotionEffectException e) {
-            throw new GateException(e.getMessage());
-        }
-        dirty = true;
-        return true;
-    }
-
-    
-    public void removeAllReplacePotions() {
-        replacePotions.clear();
-        dirty = true;
-    }
-
-    public boolean isAcceptablePotions(PotionEffect[] effects) {
-        if (effects == null) return true;
-        if (! requireAllowedPotions) return true;
-        for (int i = 0; i < effects.length; i++) {
-            PotionEffect effect = effects[i];
-            if (effect == null) continue;
-            try {
-                PotionEffects.filterPotionEffect(effect, replacePotions, allowedPotions, bannedPotions);
-            } catch (PotionEffectException pee) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean filterPotions(PotionEffect[] effects) {
-        if (effects == null) return false;
-        boolean filtered = false;
-        PotionEffect newEffect;
-        for (int i = 0; i < effects.length; i++) {
-            try {
-                newEffect = PotionEffects.filterPotionEffect(effects[i], replacePotions, allowedPotions, bannedPotions);
-            } catch (PotionEffectException pee) {
-                newEffect = null;
-            }
-            if (newEffect != effects[i]) {
-                effects[i] = newEffect;
-                filtered = true;
-            }
-        }
-        return filtered;
-    }
-
-    public boolean isInChatSendProximity(Location location) {
-        if (! sendChat) return false;
-        if (location.getWorld() != world) return false;
-        if (sendChatDistance <= 0) return true;
-        Vector there = new Vector(location.getX(), location.getY(), location.getZ());
-        return (there.distance(center) <= sendChatDistance);
-    }
-
-    public boolean isInChatReceiveProximity(Location location) {
-        if (! receiveChat) return false;
-        if (location.getWorld() != world) return false;
-        if (receiveChatDistance <= 0) return true;
-        Vector there = new Vector(location.getX(), location.getY(), location.getZ());
-        return (there.distance(center) <= receiveChatDistance);
-    }
-
     protected void generateFile() {
         File worldFolder = Worlds.worldPluginFolder(world);
         File gatesFolder = new File(worldFolder, "gates");
@@ -1877,26 +974,15 @@ public abstract class GateImpl implements Gate, OptionsListener {
     }
 
     private boolean canClose() {
-//Utils.debug("duration < 1: %s", duration < 1);
-//Utils.debug("! hasValidDestination: %s", ! hasValidDestination());
-//Utils.debug("incoming.isEmpty(): %s", incoming.isEmpty());
 
         if (duration < 1)
             return (! hasValidDestination()) && incoming.isEmpty();
 
         // temporary gate
         boolean expired = ((System.currentTimeMillis() - portalOpenTime) + 50) > duration;
-//Utils.debug("expired: %s", expired);
-//Utils.debug("outgoing != null: %s", outgoing != null);
-//Utils.debug("hasValidDestination: %s", hasValidDestination());
-//Utils.debug("incoming.contains(outgoing): %s", incoming.contains(outgoing));
-//Utils.debug("incoming.size() == 1: %s", incoming.size() == 1);
 
         // handle mutually paired gates
         if ((outgoing != null) && hasValidDestination() && incoming.contains(outgoing) && (incoming.size() == 1)) return expired;
-
-//Utils.debug("incoming.isEmpty(): %s", incoming.isEmpty());
-//Utils.debug("outgoing == null: %s", outgoing == null);
 
         if (incoming.isEmpty())
             return (outgoing == null) || expired;

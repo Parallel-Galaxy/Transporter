@@ -15,20 +15,12 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.TypeMap;
-import com.frdfsnlght.transporter.api.Gate;
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.Reservation;
-import com.frdfsnlght.transporter.api.ReservationException;
-import com.frdfsnlght.transporter.api.event.EntityArriveEvent;
-import com.frdfsnlght.transporter.api.event.EntityDepartEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -46,6 +38,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import com.frdfsnlght.transporter.api.Gate;
+import com.frdfsnlght.transporter.api.GateException;
+import com.frdfsnlght.transporter.api.Reservation;
+import com.frdfsnlght.transporter.api.ReservationException;
+import com.frdfsnlght.transporter.api.event.EntityArriveEvent;
+import com.frdfsnlght.transporter.api.event.EntityDepartEvent;
 
 /**
  *
@@ -65,7 +64,7 @@ public final class ReservationImpl implements Reservation {
 
     public static ReservationImpl get(String playerName) {
         for (ReservationImpl r : reservations.values())
-            if (playerName.equals(r.playerName)) return r;
+            if (playerName.equals(r.player.getName())) return r;
         return null;
     }
 
@@ -157,12 +156,7 @@ public final class ReservationImpl implements Reservation {
 
     private EntityType entityType = null;
     private Entity entity = null;
-    private int localEntityId = 0;
-
     private Player player = null;
-    private String playerName = null;
-    private String playerPin = null;
-    private String clientAddress = null;
 
     private ItemStack[] inventory = null;
     private double health = 0;
@@ -251,11 +245,7 @@ public final class ReservationImpl implements Reservation {
     private void extractPlayer(Player player) {
         entityType = EntityType.PLAYER;
         entity = player;
-        localEntityId = player.getEntityId();
         this.player = player;
-        playerName = player.getName();
-        playerPin = Pins.get(player);
-        clientAddress = player.getAddress().getAddress().getHostAddress();
         health = player.getHealth();
         remainingAir = player.getRemainingAir();
         fireTicks = player.getFireTicks();
@@ -290,7 +280,6 @@ public final class ReservationImpl implements Reservation {
         }
 
         entity = vehicle;
-        localEntityId = vehicle.getEntityId();
         fromLocation = vehicle.getLocation();
         fromVelocity = vehicle.getVelocity();
         Utils.debug("vehicle location: %s", fromLocation);
@@ -302,13 +291,6 @@ public final class ReservationImpl implements Reservation {
         fromDirection = fromGate.getDirection();
         fromWorld = fromGate.getWorld();
 
-        if (fromGate.getSendNextLink())
-            try {
-                fromGate.nextLink();
-            } catch (GateException ge) {
-                throw new ReservationException(ge.getMessage());
-            }
-
         try {
             toGate = fromGate.getDestinationGate();
         } catch (GateException ge) {
@@ -316,49 +298,6 @@ public final class ReservationImpl implements Reservation {
         }
 
         toWorld = toGate.getWorld();
-    }
-
-    public TypeMap encode() {
-        TypeMap out = new TypeMap();
-        out.put("id", localId);
-        out.put("entityType", entityType.toString());
-        out.put("entityId", localEntityId);
-        out.put("playerName", playerName);
-        out.put("playerPin", playerPin);
-        out.put("clientAddress", clientAddress);
-        out.put("velX", fromVelocity.getX());
-        out.put("velY", fromVelocity.getY());
-        out.put("velZ", fromVelocity.getZ());
-        out.put("fromX", fromLocation.getX());
-        out.put("fromY", fromLocation.getY());
-        out.put("fromZ", fromLocation.getZ());
-        out.put("fromPitch", fromLocation.getPitch());
-        out.put("fromYaw", fromLocation.getYaw());
-        out.put("fromWorld", fromWorld.getName());
-        out.put("inventory", Inventory.encodeItemStackArray(inventory));
-        out.put("health", health);
-        out.put("remainingAir", remainingAir);
-        out.put("fireTicks", fireTicks);
-        out.put("foodLevel", foodLevel);
-        out.put("exhaustion", exhaustion);
-        out.put("saturation", saturation);
-        out.put("gameMode", gameMode);
-        out.put("heldItemSlot", heldItemSlot);
-        out.put("armor", Inventory.encodeItemStackArray(armor));
-        out.put("level", level);
-        out.put("xp", xp);
-        out.put("potionEffects", PotionEffects.encodePotionEffects(potionEffects));
-        out.put("fromGate", fromGate.getName());
-        if (fromDirection != null)
-            out.put("fromGateDirection", fromDirection.toString());
-        out.put("toGate", toGate.getName());
-        out.put("toWorldName", toWorld.getName());
-        if (toLocation != null) {
-            out.put("toX", toLocation.getX());
-            out.put("toY", toLocation.getY());
-            out.put("toZ", toLocation.getZ());
-        }
-        return out;
     }
 
     public boolean isDeparting() {
@@ -403,8 +342,6 @@ public final class ReservationImpl implements Reservation {
         addGateLock(entity);
         if (entity != player)
             addGateLock(player);
-        if ((player != null) && (playerPin != null))
-            Pins.add(player, playerPin);
         if (toLocation != null) {
             // NEW: Bukkit no longer teleports vehicles with passengers
             if ((entity == player) || (player == null)) {
@@ -484,18 +421,6 @@ public final class ReservationImpl implements Reservation {
             } catch (PermissionsException e) {
                 throw new ReservationException(e.getMessage());
             }
-            // player PIN
-            if (fromGate.getRequirePin()) {
-                if (playerPin == null)
-                    throw new ReservationException("this gate requires a pin");
-                if (! fromGate.hasPin(playerPin))
-                    throw new ReservationException("this gate rejected your pin");
-            }
-            // player level
-            if (fromGate.getRequireLevel() > 0) {
-                if (level < fromGate.getRequireLevel())
-                    throw new ReservationException("this gate requires you to be level %s or above", fromGate.getRequireLevel());
-            }
         }
     }
 
@@ -509,36 +434,7 @@ public final class ReservationImpl implements Reservation {
             } catch (PermissionsException e) {
                 throw new ReservationException(e.getMessage());
             }
-            // player PIN
-            if (toGate.getRequirePin()) {
-                if (playerPin == null)
-                    throw new ReservationException("remote gate requires a pin");
-                if ((! toGate.hasPin(playerPin)) && toGate.getRequireValidPin())
-                    throw new ReservationException("remote gate rejected your pin");
-            }
-            // player level
-            if (toGate.getRequireLevel() > 0) {
-                if (level < toGate.getRequireLevel())
-                    throw new ReservationException("remote gate requires you to be level %s or above", toGate.getRequireLevel());
-            }
-            // player game mode
-            if (toGate.getReceiveGameMode()) {
-                if (! toGate.isAllowedGameMode(gameMode))
-                    throw new ReservationException("remote gate rejected your game mode");
-            }
         }
-
-        // check inventory
-        // this is only checked on the arrival side
-        if (toGate.getReceiveInventory() &&
-                ((! toGate.isAcceptableInventory(inventory)) ||
-                 (! toGate.isAcceptableInventory(armor))))
-            throw new ReservationException("remote gate won't allow some inventory items");
-
-        // check potions
-        // this is only checked on the arrival side
-        if (toGate.getReceivePotions() && (! toGate.isAcceptablePotions(potionEffects)))
-            throw new ReservationException("remote gate won't allow some potion effects");
     }
 
     private void completeDepartureGate() {
@@ -570,15 +466,6 @@ public final class ReservationImpl implements Reservation {
                 format = format.replace("%fromWorld%", fromWorld.getName());
                 if (! format.isEmpty())
                     ctx.send(format);
-            }
-
-            // player PIN
-            if (toGate.getRequirePin() &&
-                (! toGate.hasPin(playerPin)) &&
-                (! toGate.getRequireValidPin()) &&
-                (toGate.getInvalidPinDamage() > 0)) {
-                ctx.send("invalid pin");
-                player.damage(toGate.getInvalidPinDamage());
             }
 
         } else {
@@ -640,32 +527,8 @@ public final class ReservationImpl implements Reservation {
 
     private void prepareTraveler() throws ReservationException {
         Utils.debug("prepareTraveler %s", getTraveler());
-        if ((player == null) && (playerName != null)) {
-            player = Bukkit.getPlayer(playerName);
-            if (player == null)
-                throw new ReservationException("player '%s' not found", playerName);
-        }
-
-        if ((toGate != null) && toGate.getReceiveInventory()) {
-            // filter inventory
-            boolean invFiltered = toGate.filterInventory(inventory);
-            boolean armorFiltered = toGate.filterInventory(armor);
-            if (invFiltered || armorFiltered) {
-                if (player == null)
-                    Utils.debug("some inventory items where filtered by the arrival gate");
-                else
-                    (new Context(player)).send("some inventory items where filtered by the arrival gate");
-            }
-        }
-        if ((toGate != null) && toGate.getReceivePotions()) {
-            // filter potions
-            boolean potionsFiltered = toGate.filterPotions(potionEffects);
-            if (potionsFiltered) {
-                if (player == null)
-                    Utils.debug("some potion effects where filtered by the arrival gate");
-                else
-                    (new Context(player)).send("some potion effects where filtered by the arrival gate");
-            }
+        if ((player == null)) {
+            throw new ReservationException("player not found");
         }
 
         World theWorld;
@@ -748,29 +611,6 @@ public final class ReservationImpl implements Reservation {
                 player.setExhaustion(exhaustion);
                 player.setSaturation(saturation);
                 player.setFireTicks(fireTicks);
-            } else {
-                if (toGate.getReceiveStats()) {
-                    player.setHealth(health);
-                    player.setRemainingAir(remainingAir);
-                    player.setFoodLevel(foodLevel);
-                    player.setExhaustion(exhaustion);
-                    player.setSaturation(saturation);
-                    player.setFireTicks(fireTicks);
-                }
-                if (toGate.getReceiveXP()) {
-                    player.setLevel(level);
-                    player.setExp(xp);
-                }
-                if (toGate.getGameMode() != null)
-                    player.setGameMode(toGate.getGameMode());
-                else if (toGate.getReceiveGameMode())
-                    player.setGameMode(Utils.valueOf(GameMode.class, gameMode));
-                if (! toGate.getReceiveInventory()) {
-                    inventory = null;
-                    armor = null;
-                }
-                if (! toGate.getReceivePotions())
-                    potionEffects = null;
             }
             if (player == entity)
                 player.setVelocity(toVelocity);
@@ -806,19 +646,6 @@ public final class ReservationImpl implements Reservation {
 
         if (player != entity)
             entity.setVelocity(toVelocity);
-
-        switch (entityType) {
-            case MINECART_CHEST:
-            case MINECART_HOPPER:
-                if ((inventory != null) && ((toGate == null) || toGate.getReceiveInventory())) {
-                    InventoryHolder h = (InventoryHolder)entity;
-                    org.bukkit.inventory.Inventory inv = h.getInventory();
-                    for (int slot = 0; slot <  inventory.length; slot++)
-                        inv.setItem(slot, inventory[slot]);
-                }
-                break;
-            default: break;
-        }
     }
 
     private void rollbackTraveler() {
@@ -832,10 +659,8 @@ public final class ReservationImpl implements Reservation {
 
     public String getTraveler() {
         if (entityType == EntityType.PLAYER)
-            return String.format("player '%s'", playerName);
-        if (playerName == null)
-            return entityType.toString();
-        return String.format("player '%s' as a passenger on a %s", playerName, entityType);
+            return String.format("player '%s'", player.getName());
+        return String.format("player '%s' as a passenger on a %s", player.getName(), entityType);
     }
 
     public String getDestination() {

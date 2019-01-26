@@ -108,47 +108,18 @@ public final class BlockGateImpl extends GateImpl implements BlockGate {
         duration = design.getDuration();
         restoreOnClose = design.getRestoreOnClose();
 
-        requirePin = design.getRequirePin();
-        requireValidPin = design.getRequireValidPin();
-        requireLevel = design.getRequireLevel();
-        invalidPinDamage = design.getInvalidPinDamage();
         protect = design.getProtect();
-        sendChat = design.getSendChat();
-        setSendChatFilter(design.getSendChatFilter());
-        setSendChatFormatFilter(design.getSendChatFormatFilter());
-        sendChatDistance = design.getSendChatDistance();
-        receiveChat = design.getReceiveChat();
-        setReceiveChatFilter(design.getReceiveChatFilter());
-        receiveChatDistance = design.getReceiveChatDistance();
-        requireAllowedItems = design.getRequireAllowedItems();
-        receiveInventory = design.getReceiveInventory();
-        deleteInventory = design.getDeleteInventory();
-        receiveGameMode = design.getReceiveGameMode();
-        allowGameModes = design.getAllowGameModes();
-        gameMode = design.getGameMode();
-        receiveXP = design.getReceiveXP();
-        receivePotions = design.getReceivePotions();
-        requireAllowedPotions = design.getRequireAllowedPotions();
-        receiveStats = design.getReceiveStats();
-        randomNextLink = design.getRandomNextLink();
-        sendNextLink = design.getSendNextLink();
         teleportFormat = design.getTeleportFormat();
         noLinksFormat = design.getNoLinksFormat();
         noLinkSelectedFormat = design.getNoLinkSelectedFormat();
         invalidLinkFormat = design.getInvalidLinkFormat();
         unknownLinkFormat = design.getUnknownLinkFormat();
-        markerFormat = design.getMarkerFormat();
         hidden = design.getHidden();
-        linkAddDistance = design.getLinkAddDistance();
         countdown = design.getCountdown();
         countdownInterval = design.getCountdownInterval();
         countdownFormat = design.getCountdownFormat();
         countdownIntervalFormat = design.getCountdownIntervalFormat();
         countdownCancelFormat = design.getCountdownCancelFormat();
-
-        bannedItems.addAll(design.getBannedItems());
-        allowedItems.addAll(design.getAllowedItems());
-        replaceItems.putAll(design.getReplaceItems());
 
         this.blocks = tDesign.getBlocks();
 

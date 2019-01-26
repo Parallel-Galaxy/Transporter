@@ -28,7 +28,7 @@ import com.frdfsnlght.transporter.api.TypeMap;
  */
 public final class Config {
 
-    private static final int CONFIG_VERSION = 2;
+    private static final int CONFIG_VERSION = 3;
 
     private static final Set<String> OPTIONS = new HashSet<String>();
     private static final Options options;
@@ -72,6 +72,15 @@ public final class Config {
 
         if (version < CONFIG_VERSION) {
             // do conversion here
+            config.remove("network");
+            config.remove("servers");
+            for (String key : config.getMap("global").getKeys()) {
+                if (! OPTIONS.contains(key)) {
+                    ctx.warn("removing %s", key);
+                    config.remove(key);
+                }
+            }
+            config.set("configVersion", 3);
 
         } else if (version > CONFIG_VERSION) {
             ctx.warn("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

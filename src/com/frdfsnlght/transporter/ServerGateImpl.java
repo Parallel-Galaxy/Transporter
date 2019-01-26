@@ -18,7 +18,7 @@ package com.frdfsnlght.transporter;
 import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.GateType;
-import com.frdfsnlght.transporter.api.LocalServerGate;
+import com.frdfsnlght.transporter.api.ServerGate;
 import com.frdfsnlght.transporter.api.TransporterException;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,13 +32,13 @@ import org.bukkit.entity.Player;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class LocalServerGateImpl extends LocalGateImpl implements LocalServerGate {
+public final class ServerGateImpl extends GateImpl implements ServerGate {
 
-    private static final Set<String> OPTIONS = new HashSet<String>(LocalGateImpl.BASEOPTIONS);
+    private static final Set<String> OPTIONS = new HashSet<String>(GateImpl.BASEOPTIONS);
 
 
     // creation from file
-    public LocalServerGateImpl(World world, TypeMap conf) throws GateException {
+    public ServerGateImpl(World world, TypeMap conf) throws GateException {
         super(world, conf);
         options = new Options(this, OPTIONS, "trp.gate", this);
         calculateCenter();
@@ -46,7 +46,7 @@ public final class LocalServerGateImpl extends LocalGateImpl implements LocalSer
     }
 
     // creation in-game
-    public LocalServerGateImpl(World world, String gateName, Player player) throws GateException {
+    public ServerGateImpl(World world, String gateName, Player player) throws GateException {
         super(world, gateName, player, BlockFace.NORTH);
         options = new Options(this, OPTIONS, "trp.gate", this);
         calculateCenter();
@@ -122,7 +122,7 @@ public final class LocalServerGateImpl extends LocalGateImpl implements LocalSer
 
     @Override
     public String toString() {
-        return "LocalServerGate[" + getLocalName() + "]";
+        return "ServerGate[" + getFullName() + "]";
     }
 
     /* Begin options */

@@ -18,8 +18,8 @@ package com.frdfsnlght.transporter;
 import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.TransporterException;
-import com.frdfsnlght.transporter.api.event.LocalGateCreateEvent;
-import com.frdfsnlght.transporter.api.event.LocalGateDestroyEvent;
+import com.frdfsnlght.transporter.api.event.GateCreateEvent;
+import com.frdfsnlght.transporter.api.event.GateDestroyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,12 +56,12 @@ public final class Gates {
     public static final GateMap triggerMap = new GateMap();
 
     // Indexed by full name
-    private static final Map<String,LocalGateImpl> gates = new HashMap<String,LocalGateImpl>();
+    private static final Map<String,GateImpl> gates = new HashMap<String,GateImpl>();
 
-    private static Map<Integer,LocalGateImpl> selectedGates = new HashMap<Integer,LocalGateImpl>();
+    private static Map<Integer,GateImpl> selectedGates = new HashMap<Integer,GateImpl>();
 
     public static void load(Context ctx) {
-        clearLocalGates();
+        clearGates();
         for (World world : Bukkit.getWorlds())
             loadGatesForWorld(ctx, world);
     }
@@ -76,7 +76,7 @@ public final class Gates {
         int loadedCount = 0;
         for (File gateFile : Utils.listYAMLFiles(gatesFolder)) {
             try {
-                LocalGateImpl gate = LocalGateImpl.load(world, gateFile);
+                GateImpl gate = GateImpl.load(world, gateFile);
                 if (gates.containsKey(gate.getFullName())) continue;
                 try {
                     add(gate, false);
@@ -96,17 +96,17 @@ public final class Gates {
 
     public static void save(Context ctx) {
         if (gates.isEmpty()) return;
-        Set<LocalGateImpl> lgates = getLocalGates();
-        for (LocalGateImpl gate : lgates) {
+        Set<GateImpl> lgates = getGates();
+        for (GateImpl gate : lgates) {
             gate.save(true);
             if ((ctx != null) && Config.getShowGatesSavedMessage())
-                ctx.sendLog("saved '%s'", gate.getLocalName());
+                ctx.sendLog("saved '%s'", gate.getFullName());
         }
         if ((ctx != null) && (! Config.getShowGatesSavedMessage()))
             ctx.sendLog("saved %s gates", lgates.size());
     }
 
-    public static LocalGateImpl find(Context ctx, String name) {
+    public static GateImpl find(Context ctx, String name) {
         int pos = name.indexOf('.');
         if (pos == -1) {
             // asking for a local gate in the player's current world
@@ -116,10 +116,10 @@ public final class Gates {
         return find(name);
     }
 
-    public static LocalGateImpl find(String name) {
+    public static GateImpl find(String name) {
         if (gates.containsKey(name)) return gates.get(name);
         String lname = name.toLowerCase();
-        LocalGateImpl gate = null;
+        GateImpl gate = null;
         for (String key : gates.keySet()) {
             if (key.toLowerCase().startsWith(lname)) {
                 if (gate == null) gate = gates.get(key);
@@ -129,59 +129,51 @@ public final class Gates {
         return gate;
     }
 
-    public static LocalGateImpl get(String name) {
+    public static GateImpl get(String name) {
         return gates.get(name);
     }
 
-    public static void add(LocalGateImpl gate, boolean created) throws GateException {
+    public static void add(GateImpl gate, boolean created) throws GateException {
         if (gates.containsKey(gate.getFullName()))
             throw new GateException("a gate with the same name already exists here");
         gates.put(gate.getFullName(), gate);
-        for (LocalGateImpl lg : getLocalGates())
+        for (GateImpl lg : getGates())
             lg.onGateAdded(gate);
-        if (gate instanceof LocalGateImpl) {
-            LocalGateImpl lg = (LocalGateImpl)gate;
-            LocalGateCreateEvent event = new LocalGateCreateEvent(lg);
-            Bukkit.getPluginManager().callEvent(event);
-            World world = lg.getWorld();
-            if (Config.getAutoAddWorlds())
-                try {
-                    LocalWorldImpl wp = Worlds.add(world);
-                    if (wp != null)
-                        Utils.info("automatically added world '%s' for new gate '%s'", wp.getName(), gate.getName());
-                } catch (WorldException we) {}
-            else if (Worlds.get(world.getName()) == null)
-                Utils.warning("Gate '%s' has been added to world '%s' but the world has not been added to the plugin's list of worlds!", gate.getName(), world.getName());
-        }
+        
+        GateCreateEvent event = new GateCreateEvent(gate);
+        Bukkit.getPluginManager().callEvent(event);
+        World world = gate.getWorld();
+        if (Config.getAutoAddWorlds())
+            try {
+                WorldImpl wp = Worlds.add(world);
+                if (wp != null)
+                    Utils.info("automatically added world '%s' for new gate '%s'", wp.getName(), gate.getName());
+            } catch (WorldException we) {}
+        else if (Worlds.get(world.getName()) == null)
+            Utils.warning("Gate '%s' has been added to world '%s' but the world has not been added to the plugin's list of worlds!", gate.getName(), world.getName());
     }
 
     public static void remove(GateImpl gate) throws GateException {
         if (! gates.containsKey(gate.getFullName()))
             throw new GateException("gate not found");
-        for (LocalGateImpl lg : getLocalGates())
+        for (GateImpl lg : getGates())
             lg.onGateRemoved(gate);
         gates.remove(gate.getFullName());
-        if (gate instanceof LocalGateImpl) {
-            LocalGateImpl lg = (LocalGateImpl)gate;
-            deselectGate(lg);
-            lg.save(false);
-        }
+        deselectGate(gate);
+        gate.save(false);
     }
 
     public static void destroy(GateImpl gate, boolean unbuild) {
         gates.remove(gate.getFullName());
-        for (LocalGateImpl lg : getLocalGates())
+        for (GateImpl lg : getGates())
             lg.onGateDestroyed(gate);
-        if (gate instanceof LocalGateImpl) {
-            LocalGateImpl lg = (LocalGateImpl)gate;
-            deselectGate(lg);
-            LocalGateDestroyEvent event = new LocalGateDestroyEvent(lg);
-            Bukkit.getPluginManager().callEvent(event);
-            lg.destroy(unbuild);
-        }
+        deselectGate(gate);
+        GateDestroyEvent event = new GateDestroyEvent(gate);
+        Bukkit.getPluginManager().callEvent(event);
+        gate.destroy(unbuild);
     }
 
-    public static void rename(LocalGateImpl gate, String newName) throws GateException {
+    public static void rename(GateImpl gate, String newName) throws GateException {
         String oldName = gate.getName();
         String oldFullName = gate.getFullName();
         gate.setName(newName);
@@ -192,13 +184,13 @@ public final class Gates {
         }
         gates.remove(oldFullName);
         gates.put(newFullName, gate);
-        for (LocalGateImpl lg : getLocalGates())
+        for (GateImpl lg : getGates())
             lg.onGateRenamed(gate, oldFullName);
         gate.onRenameComplete();
     }
 
     public static void removeGatesForWorld(World world) {
-        for (LocalGateImpl lg : getLocalGates()) {
+        for (GateImpl lg : getGates()) {
             if (lg.getWorld() == world)
                 try {
                     remove(lg);
@@ -206,22 +198,17 @@ public final class Gates {
         }
     }
 
-    public static LocalGateImpl getLocalGate(String name) {
-        GateImpl gate = gates.get(name);
-        if ((gate == null) || (! (gate instanceof LocalGateImpl))) return null;
-        return (LocalGateImpl)gate;
+    public static GateImpl getGate(String name) {
+        return gates.get(name);
     }
 
-    public static Set<LocalGateImpl> getLocalGates() {
-        Set<LocalGateImpl> gs = new HashSet<LocalGateImpl>();
-        for (GateImpl gate : gates.values())
-            if (gate instanceof LocalGateImpl) gs.add((LocalGateImpl)gate);
-        return gs;
+    public static Set<GateImpl> getGates() {
+        return new HashSet<GateImpl>(gates.values());
     }
 
 
 
-    public static LocalGateImpl findGateForPortal(Location loc) {
+    public static GateImpl findGateForPortal(Location loc) {
         return portalMap.getGate(loc);
     }
 
@@ -229,11 +216,11 @@ public final class Gates {
         portalMap.put(vol);
     }
 
-    public static void removePortalVolume(LocalGateImpl gate) {
+    public static void removePortalVolume(GateImpl gate) {
         portalMap.removeGate(gate);
     }
 
-    public static LocalGateImpl findGateForProtection(Location loc) {
+    public static GateImpl findGateForProtection(Location loc) {
         return protectionMap.getGate(loc);
     }
 
@@ -241,11 +228,11 @@ public final class Gates {
         protectionMap.put(vol);
     }
 
-    public static void removeProtectionVolume(LocalGateImpl gate) {
+    public static void removeProtectionVolume(GateImpl gate) {
         protectionMap.removeGate(gate);
     }
 
-    public static LocalGateImpl findGateForScreen(Location loc) {
+    public static GateImpl findGateForScreen(Location loc) {
         return screenMap.getGate(loc);
     }
 
@@ -253,11 +240,11 @@ public final class Gates {
         screenMap.put(vol);
     }
 
-    public static void removeScreenVolume(LocalGateImpl gate) {
+    public static void removeScreenVolume(GateImpl gate) {
         screenMap.removeGate(gate);
     }
 
-    public static LocalGateImpl findGateForSwitch(Location loc) {
+    public static GateImpl findGateForSwitch(Location loc) {
         return switchMap.getGate(loc);
     }
 
@@ -265,11 +252,11 @@ public final class Gates {
         switchMap.put(vol);
     }
 
-    public static void removeSwitchVolume(LocalGateImpl gate) {
+    public static void removeSwitchVolume(GateImpl gate) {
         switchMap.removeGate(gate);
     }
 
-    public static LocalGateImpl findGateForTrigger(Location loc) {
+    public static GateImpl findGateForTrigger(Location loc) {
         return triggerMap.getGate(loc);
     }
 
@@ -277,7 +264,7 @@ public final class Gates {
         triggerMap.put(vol);
     }
 
-    public static void removeTriggerVolume(LocalGateImpl gate) {
+    public static void removeTriggerVolume(GateImpl gate) {
         triggerMap.removeGate(gate);
     }
 
@@ -294,24 +281,23 @@ public final class Gates {
     }
 
 
-    public static void setSelectedGate(Player player, LocalGateImpl gate) {
+    public static void setSelectedGate(Player player, GateImpl gate) {
         selectedGates.put((player == null) ? Integer.MAX_VALUE : player.getEntityId(), gate);
     }
 
-    public static LocalGateImpl getSelectedGate(Player player) {
+    public static GateImpl getSelectedGate(Player player) {
         return selectedGates.get((player == null) ? Integer.MAX_VALUE : player.getEntityId());
     }
 
-    public static void deselectGate(LocalGateImpl gate) {
+    public static void deselectGate(GateImpl gate) {
         for (Integer playerId : new ArrayList<Integer>(selectedGates.keySet()))
             if (selectedGates.get(playerId) == gate)
                 selectedGates.remove(playerId);
     }
 
-    private static void clearLocalGates() {
+    private static void clearGates() {
         for (GateImpl gate : new HashSet<GateImpl>(gates.values()))
-            if (gate instanceof GateImpl)
-                gates.remove(gate.getFullName());
+            gates.remove(gate.getFullName());
     }
 
 }

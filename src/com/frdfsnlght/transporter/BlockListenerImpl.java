@@ -31,14 +31,14 @@ public class BlockListenerImpl implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockCanBuild(BlockCanBuildEvent event) {
-        LocalGateImpl gate = Gates.findGateForPortal(event.getBlock().getLocation());
+        GateImpl gate = Gates.findGateForPortal(event.getBlock().getLocation());
         if ((gate != null) && gate.isOpen())
             event.setBuildable(false);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockDamage(BlockDamageEvent event) {
-        LocalGateImpl gate = Gates.findGateForProtection(event.getBlock().getLocation());
+        GateImpl gate = Gates.findGateForProtection(event.getBlock().getLocation());
         if (gate != null) {
             event.setCancelled(true);
             gate.onProtect(event.getBlock().getLocation());
@@ -47,7 +47,7 @@ public class BlockListenerImpl implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        LocalGateImpl gate = Gates.findGateForProtection(event.getBlock().getLocation());
+        GateImpl gate = Gates.findGateForProtection(event.getBlock().getLocation());
         if (gate != null) {
             event.setCancelled(true);
             gate.onProtect(event.getBlock().getLocation());
@@ -74,7 +74,7 @@ public class BlockListenerImpl implements Listener {
         if (! Config.getAllowSignCreation()) return;
 
         Block block = event.getBlock();
-        LocalGateImpl gate = Gates.findGateForScreen(block.getLocation());
+        GateImpl gate = Gates.findGateForScreen(block.getLocation());
         if (gate != null) return;
         Context ctx = new Context(event.getPlayer());
         String gateName = null;
@@ -116,7 +116,7 @@ public class BlockListenerImpl implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockFromTo(BlockFromToEvent event) {
         // This prevents liquid portals from flowing out
-        LocalGateImpl gate = Gates.findGateForPortal(event.getBlock().getLocation());
+        GateImpl gate = Gates.findGateForPortal(event.getBlock().getLocation());
         if (gate != null) {
             event.setCancelled(true);
         }
@@ -124,9 +124,9 @@ public class BlockListenerImpl implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockRedstone(BlockRedstoneEvent event) {
-        LocalGateImpl g = Gates.findGateForTrigger(event.getBlock().getLocation());
-        if (! (g instanceof LocalBlockGateImpl)) return;
-        LocalBlockGateImpl gate = (LocalBlockGateImpl)g;
+        GateImpl g = Gates.findGateForTrigger(event.getBlock().getLocation());
+        if (! (g instanceof BlockGateImpl)) return;
+        BlockGateImpl gate = (BlockGateImpl)g;
         if (gate != null) {
             DesignBlockDetail block = gate.getGateBlock(event.getBlock().getLocation()).getDetail();
             Utils.debug("isOpen=%s", gate.isOpen());
@@ -168,8 +168,8 @@ public class BlockListenerImpl implements Listener {
         }
 
         g = Gates.findGateForSwitch(event.getBlock().getLocation());
-        if (! (g instanceof LocalBlockGateImpl)) return;
-        gate = (LocalBlockGateImpl)g;
+        if (! (g instanceof BlockGateImpl)) return;
+        gate = (BlockGateImpl)g;
 
         if (gate != null) {
             DesignBlockDetail block = gate.getGateBlock(event.getBlock().getLocation()).getDetail();

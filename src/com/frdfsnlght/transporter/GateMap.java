@@ -40,7 +40,7 @@ public final class GateMap {
         worlds.get(world).add(volume);
     }
 
-    public LocalGateImpl getGate(Location location) {
+    public GateImpl getGate(Location location) {
         World world = location.getWorld();
         WorldMap wmap = worlds.get(world);
         if (wmap == null) return null;
@@ -49,7 +49,7 @@ public final class GateMap {
         return node.getGate(location);
     }
 
-    public void removeGate(LocalGateImpl gate) {
+    public void removeGate(GateImpl gate) {
         World world = gate.getWorld();
         if (worlds.containsKey(world))
             worlds.get(world).removeGate(gate);
@@ -210,7 +210,7 @@ public final class GateMap {
             return root.getNode(loc);
         }
 
-        void removeGate(LocalGateImpl gate) {
+        void removeGate(GateImpl gate) {
             for (Iterator<Volume> i = volumes.iterator(); i.hasNext(); )
                 if (i.next().getGate() == gate)
                     i.remove();
@@ -251,15 +251,15 @@ public final class GateMap {
     }
 
     public static final class Volume {
-        protected LocalGateImpl gate;
+        protected GateImpl gate;
         protected Bounds bounds = new Bounds();
         protected Set<Point> points = null;
-        public Volume(LocalGateImpl gate) {
+        public Volume(GateImpl gate) {
             this.gate = gate;
         }
         public World getWorld() { return gate.getWorld(); }
         public Bounds getBounds() { return bounds; }
-        public LocalGateImpl getGate() { return gate; }
+        public GateImpl getGate() { return gate; }
         public void addPoint(Point p) {
             if (points == null) {
                 points = new HashSet<Point>();
@@ -433,7 +433,7 @@ public final class GateMap {
                 if (child != null) count += child.nodeCount();
             return count;
         }
-        LocalGateImpl getGate(Location loc) {
+        GateImpl getGate(Location loc) {
             if ((children != null) || (volumes == null)) return null;
             for (Volume vol : volumes)
                 if (vol.contains(loc)) return vol.gate;

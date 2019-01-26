@@ -31,7 +31,7 @@ import org.bukkit.World;
 public final class Worlds {
 
     //public static final File WorldBaseFolder = Utils.BukkitBaseFolder;
-    private static final Map<String,LocalWorldImpl> worlds = new HashMap<String,LocalWorldImpl>();
+    private static final Map<String,WorldImpl> worlds = new HashMap<String,WorldImpl>();
 
     public static void onConfigLoad(Context ctx) {
         worlds.clear();
@@ -49,7 +49,7 @@ public final class Worlds {
         if (worldMaps != null) {
             for (TypeMap map : worldMaps) {
                 try {
-                    LocalWorldImpl world = new LocalWorldImpl(map);
+                    WorldImpl world = new WorldImpl(map);
                     if (add(world)) {
                         if (Global.started && Config.getAutoLoadWorlds() && world.getAutoLoad())
                             world.load(ctx);
@@ -66,40 +66,40 @@ public final class Worlds {
 
     public static void onConfigSave() {
         List<Map<String,Object>> worldNodes = new ArrayList<Map<String,Object>>();
-        for (LocalWorldImpl world : worlds.values())
+        for (WorldImpl world : worlds.values())
             worldNodes.add(world.encode());
         Config.setPropertyDirect("worlds", worldNodes);
     }
 
     public static void autoLoad(Context ctx) {
         if (! Config.getAutoLoadWorlds()) return;
-        for (LocalWorldImpl world : worlds.values())
+        for (WorldImpl world : worlds.values())
             if (world.getAutoLoad())
                 world.load(ctx);
     }
 
-    public static LocalWorldImpl add(World world) throws WorldException {
+    public static WorldImpl add(World world) throws WorldException {
         if (worlds.containsKey(world.getName())) return null;
-        LocalWorldImpl wp = new LocalWorldImpl(world.getName(), world.getEnvironment(), null, world.getSeed() + "");
+        WorldImpl wp = new WorldImpl(world.getName(), world.getEnvironment(), null, world.getSeed() + "");
         add(wp);
         return wp;
     }
 
-    public static boolean add(LocalWorldImpl world) {
+    public static boolean add(WorldImpl world) {
         return worlds.put(world.getName(), world) == null;
     }
 
-    public static void remove(LocalWorldImpl world) {
+    public static void remove(WorldImpl world) {
         worlds.remove(world.getName());
     }
 
-    public static LocalWorldImpl get(String name) {
+    public static WorldImpl get(String name) {
         return worlds.get(name);
     }
 
-    public static LocalWorldImpl find(String name) {
+    public static WorldImpl find(String name) {
         if (worlds.containsKey(name)) return worlds.get(name);
-        LocalWorldImpl world = null;
+        WorldImpl world = null;
         name = name.toLowerCase();
         for (String key : worlds.keySet()) {
             if (key.toLowerCase().startsWith(name)) {
@@ -110,8 +110,8 @@ public final class Worlds {
         return world;
     }
 
-    public static List<LocalWorldImpl> getAll() {
-        return new ArrayList<LocalWorldImpl>(worlds.values());
+    public static List<WorldImpl> getAll() {
+        return new ArrayList<WorldImpl>(worlds.values());
     }
 
     public static boolean isEmpty() {

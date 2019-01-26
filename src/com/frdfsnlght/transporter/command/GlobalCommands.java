@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 import com.frdfsnlght.transporter.Config;
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.LocalGateImpl;
+import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.ReservationImpl;
 import com.frdfsnlght.transporter.api.ReservationException;
@@ -93,7 +93,7 @@ public final class GlobalCommands extends TrpCommandProcessor {
         if ("go".startsWith(subCmd)) {
             if (! ctx.isPlayer())
                 throw new CommandException("this command can only be used by a player");
-            LocalGateImpl gate;
+            GateImpl gate;
             if (! args.isEmpty()) {
                 String name = args.remove(0);
                 gate = Gates.find(ctx, name);
@@ -120,7 +120,7 @@ public final class GlobalCommands extends TrpCommandProcessor {
             Player player = Bukkit.getPlayer(args.remove(0));
             if (player == null)
                 throw new CommandException("unknown player");
-            LocalGateImpl gate;
+            GateImpl gate;
             if (! args.isEmpty()) {
                 String name = args.remove(0);
                 gate = Gates.find(ctx, name);
@@ -134,7 +134,7 @@ public final class GlobalCommands extends TrpCommandProcessor {
             Permissions.require(ctx.getPlayer(), "trp.send." + gate.getFullName());
             try {
                 ReservationImpl res = new ReservationImpl(player, gate);
-                ctx.send("sending player '%s' to '%s'", player.getName(), gate.getLocalName());
+                ctx.send("sending player '%s' to '%s'", player.getName(), gate.getFullName());
                 res.depart();
             } catch (ReservationException re) {
                 throw new CommandException(re.getMessage());

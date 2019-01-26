@@ -23,7 +23,7 @@ import org.bukkit.Material;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public interface LocalAreaGate extends LocalGate {
+public interface AreaGate extends Gate {
 
     /**
      * Resizes the gate's portal volume by the specified number of blocks in the

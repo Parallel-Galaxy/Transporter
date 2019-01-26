@@ -28,11 +28,11 @@ import org.bukkit.entity.Player;
 public final class Countdown {
 
     private Player player;
-    private LocalGateImpl gate;
+    private GateImpl gate;
     private int timeRemaining;
     private int timer;
 
-    public Countdown(Player player, LocalGateImpl gate) {
+    public Countdown(Player player, GateImpl gate) {
         this.player = player;
         this.gate = gate;
     }
@@ -41,7 +41,7 @@ public final class Countdown {
         return player;
     }
 
-    public LocalGateImpl getGate() {
+    public GateImpl getGate() {
         return gate;
     }
 

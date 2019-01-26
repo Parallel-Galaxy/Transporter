@@ -16,10 +16,10 @@
 package com.frdfsnlght.transporter.api;
 
 /**
- * Specifies directions a {@link LocalAreaGate} will search for a
+ * Specifies directions a {@link AreaGate} will search for a
  * spawn location when a player arrives.
  * <p>
- * When a player teleports to a LocalAreaGate, the gates randomly picks
+ * When a player teleports to a AreaGate, the gates randomly picks
  * a location within the volume defined between its two corners. It then
  * adjusts the y-coordinate (vertical) based on the gate options that
  * allow or disallow spawning into solid or liquid blocks. This enumeration

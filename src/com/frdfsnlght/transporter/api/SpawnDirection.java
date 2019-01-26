@@ -19,7 +19,7 @@ import com.frdfsnlght.transporter.Utils;
 import org.bukkit.block.BlockFace;
 
 /**
- * Specifies directions a {@link LocalAreaGate} will spawn and arriving player.
+ * Specifies directions a {@link AreaGate} will spawn and arriving player.
  * <p>
  * The final direction a player is facing when exiting a gate is determined
  * by a number of factors, spawn direction being one of them. See the wiki

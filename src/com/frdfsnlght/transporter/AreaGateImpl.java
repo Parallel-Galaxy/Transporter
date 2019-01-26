@@ -27,7 +27,7 @@ import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.api.ExpandDirection;
 import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.GateType;
-import com.frdfsnlght.transporter.api.LocalAreaGate;
+import com.frdfsnlght.transporter.api.AreaGate;
 import com.frdfsnlght.transporter.api.SpawnDirection;
 import com.frdfsnlght.transporter.api.SpawnSearch;
 import org.bukkit.Location;
@@ -42,9 +42,9 @@ import org.bukkit.util.Vector;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaGate {
+public final class AreaGateImpl extends GateImpl implements AreaGate {
 
-    private static final Set<String> OPTIONS = new HashSet<String>(LocalGateImpl.BASEOPTIONS);
+    private static final Set<String> OPTIONS = new HashSet<String>(GateImpl.BASEOPTIONS);
 
     static {
         OPTIONS.add("p1");
@@ -72,7 +72,7 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
 
 
     // creation from file
-    public LocalAreaGateImpl(World world, TypeMap conf) throws GateException {
+    public AreaGateImpl(World world, TypeMap conf) throws GateException {
         super(world, conf);
         options = new Options(this, OPTIONS, "trp.gate", this);
 
@@ -127,7 +127,7 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
     }
 
     // creation in-game
-    public LocalAreaGateImpl(World world, String gateName, Player player, BlockFace direction, Location location) throws GateException {
+    public AreaGateImpl(World world, String gateName, Player player, BlockFace direction, Location location) throws GateException {
         super(world, gateName, player, direction);
         options = new Options(this, OPTIONS, "trp.gate", this);
 
@@ -227,7 +227,7 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
                 return toLocation;
             }
         }
-        Utils.warning("Unable to find a suitable spawnlocation for gate '%s'!", getLocalName());
+        Utils.warning("Unable to find a suitable spawnlocation for gate '%s'!", getFullName());
         return p1;
     }
 
@@ -317,7 +317,7 @@ public final class LocalAreaGateImpl extends LocalGateImpl implements LocalAreaG
 
     @Override
     public String toString() {
-        return "LocalAreaGate[" + getLocalName() + "]";
+        return "AreaGate[" + getFullName() + "]";
     }
 
     // Custom methods

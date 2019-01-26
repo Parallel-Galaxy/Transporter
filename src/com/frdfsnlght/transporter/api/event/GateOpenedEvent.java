@@ -15,7 +15,7 @@
  */
 package com.frdfsnlght.transporter.api.event;
 
-import com.frdfsnlght.transporter.api.LocalGate;
+import com.frdfsnlght.transporter.api.Gate;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -24,7 +24,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class LocalGateOpenedEvent extends Event {
+public final class GateOpenedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -37,14 +37,14 @@ public final class LocalGateOpenedEvent extends Event {
         return handlers;
     }
 
-    private LocalGate gate;
+    private Gate gate;
 
     /**
      * Creates the event.
      *
      * @param gate  the gate that was created
      */
-    public LocalGateOpenedEvent(LocalGate gate) {
+    public GateOpenedEvent(Gate gate) {
         this.gate = gate;
     }
 
@@ -53,7 +53,7 @@ public final class LocalGateOpenedEvent extends Event {
      *
      * @return the gate that was created
      */
-    public LocalGate getLocalGate() {
+    public Gate getGate() {
         return gate;
     }
 

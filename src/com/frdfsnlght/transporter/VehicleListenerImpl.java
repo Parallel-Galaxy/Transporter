@@ -34,7 +34,7 @@ public class VehicleListenerImpl implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onVehicleMove(VehicleMoveEvent event) {
         Vehicle vehicle = event.getVehicle();
-        LocalGateImpl fromGate = Gates.findGateForPortal(event.getTo());
+        GateImpl fromGate = Gates.findGateForPortal(event.getTo());
         if (fromGate == null) {
             ReservationImpl.removeGateLock(vehicle);
             return;

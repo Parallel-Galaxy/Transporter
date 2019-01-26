@@ -20,7 +20,7 @@ import java.util.Random;
 import java.util.Set;
 import com.frdfsnlght.transporter.GateMap.Point;
 import com.frdfsnlght.transporter.GateMap.Volume;
-import com.frdfsnlght.transporter.LocalGateImpl;
+import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.GateType;
@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class TestGate extends LocalGateImpl {
+public final class TestGate extends GateImpl {
 
     public static final int MAX_SIZE = 20;
     public static final int MIN_SIZE = 5;

@@ -16,7 +16,7 @@
 package com.frdfsnlght.transporter.api;
 
 /**
- * Specifies directions a {@link LocalAreaGate} can be resized.
+ * Specifies directions a {@link AreaGate} can be resized.
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */

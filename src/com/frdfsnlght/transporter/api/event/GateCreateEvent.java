@@ -15,16 +15,16 @@
  */
 package com.frdfsnlght.transporter.api.event;
 
-import com.frdfsnlght.transporter.api.LocalGate;
+import com.frdfsnlght.transporter.api.Gate;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Fired when a local gate is destroyed.
+ * Fired when a local gate is created.
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class LocalGateDestroyEvent extends Event {
+public final class GateCreateEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -37,23 +37,23 @@ public final class LocalGateDestroyEvent extends Event {
         return handlers;
     }
 
-    private LocalGate gate;
+    private Gate gate;
 
     /**
      * Creates the event.
      *
-     * @param gate  the gate that was destroyed
+     * @param gate  the gate that was created
      */
-    public LocalGateDestroyEvent(LocalGate gate) {
+    public GateCreateEvent(Gate gate) {
         this.gate = gate;
     }
 
     /**
-     * Returns the gate that was destroyed.
+     * Returns the gate that was created.
      *
-     * @return the gate that was destroyed
+     * @return the gate that was created
      */
-    public LocalGate getLocalGate() {
+    public Gate getGate() {
         return gate;
     }
 

@@ -21,9 +21,9 @@ import com.frdfsnlght.transporter.Design;
 import com.frdfsnlght.transporter.Designs;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Inventory;
-import com.frdfsnlght.transporter.LocalAreaGateImpl;
-import com.frdfsnlght.transporter.LocalGateImpl;
-import com.frdfsnlght.transporter.LocalServerGateImpl;
+import com.frdfsnlght.transporter.AreaGateImpl;
+import com.frdfsnlght.transporter.GateImpl;
+import com.frdfsnlght.transporter.ServerGateImpl;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.Utils;
 import com.frdfsnlght.transporter.api.TransporterException;
@@ -153,13 +153,13 @@ public class DesignCommand extends TrpCommandProcessor {
 
             if ("area".startsWith(designName)) {
                 Permissions.require(ctx.getPlayer(), "trp.create.area");
-                LocalGateImpl gate = new LocalAreaGateImpl(ctx.getPlayer().getWorld(), gateName, ctx.getPlayer(), Utils.yawToDirection(ctx.getPlayer().getLocation().getYaw()), ctx.getPlayer().getLocation());
+                GateImpl gate = new AreaGateImpl(ctx.getPlayer().getWorld(), gateName, ctx.getPlayer(), Utils.yawToDirection(ctx.getPlayer().getLocation().getYaw()), ctx.getPlayer().getLocation());
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);
             } else if ("server".startsWith(designName)) {
                 Permissions.require(ctx.getPlayer(), "trp.create.server");
-                LocalGateImpl gate = new LocalServerGateImpl(Bukkit.getWorlds().get(0), gateName, ctx.getPlayer());
+                GateImpl gate = new ServerGateImpl(Bukkit.getWorlds().get(0), gateName, ctx.getPlayer());
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);
@@ -176,7 +176,7 @@ public class DesignCommand extends TrpCommandProcessor {
                 if (design.mustBuildFromInventory())
                     Inventory.requireBlocks(ctx.getPlayer(), design.getInventoryBlocks());
 
-                LocalGateImpl gate = design.create(player.getLocation(), player, gateName);
+                GateImpl gate = design.create(player.getLocation(), player, gateName);
                 Gates.add(gate, true);
                 ctx.sendLog("created gate '%s'", gate.getName());
                 Gates.setSelectedGate(ctx.getPlayer(), gate);

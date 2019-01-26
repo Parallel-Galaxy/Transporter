@@ -16,7 +16,7 @@
 package com.frdfsnlght.transporter.command;
 
 import com.frdfsnlght.transporter.Context;
-import com.frdfsnlght.transporter.LocalWorldImpl;
+import com.frdfsnlght.transporter.WorldImpl;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.Utils;
 import com.frdfsnlght.transporter.Worlds;
@@ -71,14 +71,14 @@ public class WorldCommand extends TrpCommandProcessor {
 
         if ("list".startsWith(subCmd)) {
             Permissions.require(ctx.getPlayer(), "trp.world.list");
-            List<LocalWorldImpl> worlds = Worlds.getAll();
-            Collections.sort(worlds, new Comparator<LocalWorldImpl>() {
-                public int compare(LocalWorldImpl a, LocalWorldImpl b) {
+            List<WorldImpl> worlds = Worlds.getAll();
+            Collections.sort(worlds, new Comparator<WorldImpl>() {
+                public int compare(WorldImpl a, WorldImpl b) {
                     return a.getName().compareToIgnoreCase(b.getName());
                 }
             });
             ctx.send("%d worlds:", worlds.size());
-            for (LocalWorldImpl world : worlds) {
+            for (WorldImpl world : worlds) {
                 ctx.send("  %s (%s/%s) %s %s",
                         world.getName(),
                         world.getEnvironment(),
@@ -119,7 +119,7 @@ public class WorldCommand extends TrpCommandProcessor {
 
             Permissions.require(ctx.getPlayer(), "trp.world.add");
 
-            LocalWorldImpl wp = new LocalWorldImpl(worldName, env, generator, seed);
+            WorldImpl wp = new WorldImpl(worldName, env, generator, seed);
             wp.load(ctx);
             ctx.sendLog("added world '%s'", worldName);
             Worlds.add(wp);
@@ -130,7 +130,7 @@ public class WorldCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("world name required");
             String name = args.remove(0);
-            LocalWorldImpl world = Worlds.find(name);
+            WorldImpl world = Worlds.find(name);
             if (world == null)
                 throw new CommandException("unknown or ambiguous world '%s'", name);
             Permissions.require(ctx.getPlayer(), "trp.world.remove");
@@ -146,7 +146,7 @@ public class WorldCommand extends TrpCommandProcessor {
 
             Permissions.require(ctx.getPlayer(), "trp.world.load");
 
-            LocalWorldImpl world = Worlds.find(name);
+            WorldImpl world = Worlds.find(name);
             if (world == null)
                 throw new CommandException("unknown or ambiguous world '%s'", name);
             if (world.isLoaded())
@@ -164,7 +164,7 @@ public class WorldCommand extends TrpCommandProcessor {
 
             Permissions.require(ctx.getPlayer(), "trp.world.unload");
 
-            LocalWorldImpl world = Worlds.find(name);
+            WorldImpl world = Worlds.find(name);
             if (world == null)
                 throw new CommandException("unknown or ambiguous world '%s'", name);
             if (! world.isLoaded())
@@ -187,7 +187,7 @@ public class WorldCommand extends TrpCommandProcessor {
                 locationString = args.remove(0);
             if (! args.isEmpty()) {
                 String name = args.remove(0);
-                LocalWorldImpl bworld = Worlds.find(name);
+                WorldImpl bworld = Worlds.find(name);
                 if (bworld == null)
                     throw new CommandException("unknown or ambiguous world '%s'", name);
                 if (! bworld.isLoaded()) {
@@ -243,7 +243,7 @@ public class WorldCommand extends TrpCommandProcessor {
                 locationString = args.remove(0);
             if (! args.isEmpty()) {
                 String name = args.remove(0);
-                LocalWorldImpl bworld = Worlds.find(name);
+                WorldImpl bworld = Worlds.find(name);
                 if (bworld == null)
                     throw new CommandException("unknown world '%s'", name);
                 if (! bworld.isLoaded())
@@ -293,7 +293,7 @@ public class WorldCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("world name required");
             String name = args.remove(0);
-            LocalWorldImpl world = Worlds.find(name);
+            WorldImpl world = Worlds.find(name);
             if (world == null)
                 throw new CommandException("unknown world '%s'", name);
             if (args.isEmpty())
@@ -310,7 +310,7 @@ public class WorldCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("world name required");
             String name = args.remove(0);
-            LocalWorldImpl world = Worlds.find(name);
+            WorldImpl world = Worlds.find(name);
             if (world == null)
                 throw new CommandException("unknown world '%s'", name);
             if (args.isEmpty())

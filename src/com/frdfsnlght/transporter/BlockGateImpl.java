@@ -20,7 +20,7 @@ import com.frdfsnlght.transporter.GateMap.Point;
 import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.GateType;
-import com.frdfsnlght.transporter.api.LocalBlockGate;
+import com.frdfsnlght.transporter.api.BlockGate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,11 +43,11 @@ import org.bukkit.util.Vector;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBlockGate {
+public final class BlockGateImpl extends GateImpl implements BlockGate {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\\\n");
 
-    private static final Set<String> OPTIONS = new HashSet<String>(LocalGateImpl.BASEOPTIONS);
+    private static final Set<String> OPTIONS = new HashSet<String>(GateImpl.BASEOPTIONS);
 
     static {
         OPTIONS.add("restoreOnClose");
@@ -60,7 +60,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
     private List<SavedBlock> savedBlocks = null;
 
     // creation from file
-    public LocalBlockGateImpl(World world, TypeMap conf) throws GateException {
+    public BlockGateImpl(World world, TypeMap conf) throws GateException {
         super(world, conf);
         options = new Options(this, OPTIONS, "trp.gate", this);
 
@@ -101,7 +101,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
     }
 
     // creation from design
-    public LocalBlockGateImpl(World world, String gateName, Player player, BlockFace direction, Design design, TransformedDesign tDesign) throws GateException {
+    public BlockGateImpl(World world, String gateName, Player player, BlockFace direction, Design design, TransformedDesign tDesign) throws GateException {
         super(world, gateName, player, direction);
         options = new Options(this, OPTIONS, "trp.gate", this);
 
@@ -341,7 +341,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
 
     @Override
     public String toString() {
-        return "LocalBlockGate[" + getLocalName() + "]";
+        return "BlockGate[" + getFullName() + "]";
     }
 
     // Custom methods
@@ -426,7 +426,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             if (toGate == null)
                 format = getLinkOfflineFormat();
             else {
-                if (! ((LocalGateImpl)toGate).isSameWorld(world))
+                if (! toGate.isSameWorld(world))
                     format = getLinkWorldFormat();
                 else
                     format = getLinkLocalFormat();
@@ -439,7 +439,7 @@ public final class LocalBlockGateImpl extends LocalGateImpl implements LocalBloc
             format = format.replace("%fromWorld%", this.getWorld().getName());
             if (toGate != null) {
                 format = format.replace("%toGate%", toGate.getName());
-                format = format.replace("%toWorld%", ((LocalGateImpl)toGate).getWorld().getName());
+                format = format.replace("%toWorld%", toGate.getWorld().getName());
             } else if (outgoing != null) {
                 String[] parts = outgoing.split("\\.");
                 format = format.replace("%toGate%", parts[parts.length - 1]);

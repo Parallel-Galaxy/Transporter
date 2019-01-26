@@ -116,8 +116,8 @@ public final class PlayerListenerImpl implements Listener {
         Location location = block.getLocation();
         Context ctx = new Context(event.getPlayer());
 
-        LocalGateImpl triggerGate = Gates.findGateForTrigger(location);
-        LocalGateImpl switchGate = Gates.findGateForSwitch(location);
+        GateImpl triggerGate = Gates.findGateForTrigger(location);
+        GateImpl switchGate = Gates.findGateForSwitch(location);
         if (event.getPlayer() == testPlayer) {
             Utils.debug("-Interaction-----------------------------------------");
             Utils.debug("location: %s", Utils.blockCoords(location));
@@ -132,7 +132,7 @@ public final class PlayerListenerImpl implements Listener {
         if ((triggerGate == null) && (switchGate == null)) return;
         if ((triggerGate != null) && (switchGate != null) && (triggerGate != switchGate)) switchGate = null;
 
-        LocalGateImpl testGate = (triggerGate == null) ? switchGate : triggerGate;
+        GateImpl testGate = (triggerGate == null) ? switchGate : triggerGate;
         Player player = event.getPlayer();
         Gates.setSelectedGate(player, testGate);
 
@@ -191,7 +191,7 @@ public final class PlayerListenerImpl implements Listener {
             (event.getFrom().getBlockZ() == event.getTo().getBlockZ())) return;
 
         Player player = event.getPlayer();
-        LocalGateImpl fromGate = Gates.findGateForPortal(event.getTo());
+        GateImpl fromGate = Gates.findGateForPortal(event.getTo());
         if (fromGate == null) {
             ReservationImpl.removeGateLock(player);
             ReservationImpl.removeCountdown(player);

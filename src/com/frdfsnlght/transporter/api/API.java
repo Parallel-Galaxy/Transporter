@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 
 import com.frdfsnlght.transporter.Config;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.LocalGateImpl;
+import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.ReservationImpl;
 import com.frdfsnlght.transporter.Worlds;
 
@@ -36,10 +36,10 @@ public final class API {
     /**
      * Returns a set of all gates on the local server.
      *
-     * @return a set of {@link LocalGate} objects
+     * @return a set of {@link Gate} objects
      */
-    public Set<LocalGate> getLocalGates() {
-        return new HashSet<LocalGate>(Gates.getLocalGates());
+    public Set<Gate> getGates() {
+        return new HashSet<Gate>(Gates.getGates());
     }
 
     /**
@@ -47,7 +47,7 @@ public final class API {
      *
      * @return a set of {@link LocalWorld} objects
      */
-    public Set<LocalWorld> getLocalWorlds() {
+    public Set<LocalWorld> getWorlds() {
         return new HashSet<LocalWorld>(Worlds.getAll());
     }
 
@@ -87,7 +87,7 @@ public final class API {
      * @param gate  the gate from which to teleport the player
      * @throws ReservationException if the teleportation cannot be completed
      */
-    public void teleportPlayer(Player player, LocalGateImpl gate) throws ReservationException {
+    public void teleportPlayer(Player player, GateImpl gate) throws ReservationException {
         ReservationImpl res = new ReservationImpl(player, gate);
         res.depart();
     }

@@ -33,8 +33,7 @@ import org.bukkit.command.Command;
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.LocalAreaGateImpl;
-import com.frdfsnlght.transporter.LocalGateImpl;
+import com.frdfsnlght.transporter.AreaGateImpl;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.Utils;
 import com.frdfsnlght.transporter.api.ExpandDirection;
@@ -113,27 +112,27 @@ public class GateCommand extends TrpCommandProcessor {
         if ("list".startsWith(subCmd)) {
             Permissions.require(ctx.getPlayer(), "trp.gate.list");
 
-            List<LocalGateImpl> localGates = new ArrayList<LocalGateImpl>(Gates.getLocalGates());
+            List<GateImpl> localGates = new ArrayList<GateImpl>(Gates.getGates());
             if ((! ctx.isConsole()) && (! ctx.isOp()))
-                for (Iterator<LocalGateImpl> i = localGates.iterator(); i.hasNext(); )
+                for (Iterator<GateImpl> i = localGates.iterator(); i.hasNext(); )
                     if (i.next().getHidden()) i.remove();
             if (localGates.isEmpty())
                 ctx.send("there are no local gates");
             else {
-                Collections.sort(localGates, new Comparator<LocalGateImpl>() {
-                    public int compare(LocalGateImpl a, LocalGateImpl b) {
-                        return a.getLocalName().compareToIgnoreCase(b.getLocalName());
+                Collections.sort(localGates, new Comparator<GateImpl>() {
+                    public int compare(GateImpl a, GateImpl b) {
+                        return a.getFullName().compareToIgnoreCase(b.getFullName());
                     }
                 });
                 ctx.send("%d local gates:", localGates.size());
-                for (LocalGateImpl gate : localGates)
-                    ctx.send("  %s", gate.getLocalName());
+                for (GateImpl gate : localGates)
+                    ctx.send("  %s", gate.getFullName());
             }
             return;
         }
 
         if ("select".startsWith(subCmd)) {
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             Permissions.require(ctx.getPlayer(), "trp.gate.select." + gate.getFullName());
             Gates.setSelectedGate(ctx.getPlayer(), gate);
             ctx.send("selected gate '%s'", gate.getFullName());
@@ -141,7 +140,7 @@ public class GateCommand extends TrpCommandProcessor {
         }
 
         if ("info".startsWith(subCmd)) {
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             Permissions.require(ctx.getPlayer(), "trp.gate.info." + gate.getFullName());
             ctx.send("Full name: %s", gate.getFullName());
             ctx.send("Type: %s", gate.getType().toString());
@@ -153,7 +152,7 @@ public class GateCommand extends TrpCommandProcessor {
         }
 
         if ("open".startsWith(subCmd)) {
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             if (gate.isOpen())
                 ctx.warn("gate '%s' is already open", gate.getName(ctx));
             else {
@@ -165,7 +164,7 @@ public class GateCommand extends TrpCommandProcessor {
         }
 
         if ("close".startsWith(subCmd)) {
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             if (gate.isOpen()) {
                 Permissions.require(ctx.getPlayer(), "trp.gate.close." + gate.getFullName());
                 gate.close();
@@ -176,7 +175,7 @@ public class GateCommand extends TrpCommandProcessor {
         }
 
         if ("rebuild".startsWith(subCmd)) {
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             Permissions.require(ctx.getPlayer(), "trp.gate.rebuild." + gate.getFullName());
             gate.rebuild();
             ctx.sendLog("rebuilt gate '%s'", gate.getName(ctx));
@@ -189,7 +188,7 @@ public class GateCommand extends TrpCommandProcessor {
                 unbuild = true;
                 args.remove(args.size() - 1);
             }
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             Permissions.require(ctx.getPlayer(), "trp.gate.destroy." + gate.getFullName());
             Gates.destroy(gate, unbuild);
             ctx.sendLog("destroyed gate '%s'", gate.getName(ctx));
@@ -200,7 +199,7 @@ public class GateCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("new name required");
             String newName = args.remove(0);
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             String oldName = gate.getName(ctx);
             Permissions.require(ctx.getPlayer(), "trp.gate.rename");
             Gates.rename(gate, newName);
@@ -214,7 +213,7 @@ public class GateCommand extends TrpCommandProcessor {
             subCmd = args.remove(0).toLowerCase();
 
             if ("next".startsWith(subCmd)) {
-                LocalGateImpl fromGate = getGate(ctx, args);
+                GateImpl fromGate = getGate(ctx, args);
                 fromGate.nextLink();
                 return;
             }
@@ -230,7 +229,7 @@ public class GateCommand extends TrpCommandProcessor {
                 throw new CommandException("destination endpoint required");
 
             String toGateName = args.remove(args.size() - 1);
-            LocalGateImpl fromGate = getGate(ctx, args);
+            GateImpl fromGate = getGate(ctx, args);
 
             GateImpl toGate = Gates.find(ctx, toGateName);
 
@@ -259,7 +258,7 @@ public class GateCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("pin required");
             String pin = args.remove(0);
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
 
             if ("add".startsWith(subCmd)) {
                 Permissions.require(ctx.getPlayer(), "trp.gate.pin.add." + gate.getFullName());
@@ -292,7 +291,7 @@ public class GateCommand extends TrpCommandProcessor {
                 throw new CommandException("do what with a ban?");
             subCmd = args.remove(0).toLowerCase();
 
-            LocalGateImpl gate;
+            GateImpl gate;
 
             if ("item".startsWith(type)) {
                 if ("list".startsWith(subCmd)) {
@@ -379,7 +378,7 @@ public class GateCommand extends TrpCommandProcessor {
                 throw new CommandException("do what with an allow?");
             subCmd = args.remove(0).toLowerCase();
 
-            LocalGateImpl gate;
+            GateImpl gate;
 
             if ("item".startsWith(type)) {
                 if ("list".startsWith(subCmd)) {
@@ -465,7 +464,7 @@ public class GateCommand extends TrpCommandProcessor {
                 throw new CommandException("do what with a replace?");
             subCmd = args.remove(0).toLowerCase();
 
-            LocalGateImpl gate;
+            GateImpl gate;
 
             if ("item".startsWith(type)) {
                 if ("list".startsWith(subCmd)) {
@@ -571,11 +570,11 @@ public class GateCommand extends TrpCommandProcessor {
                 } catch (IllegalArgumentException iae) {
                     throw new CommandException(iae.getMessage() + " direction");
                 }
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             if (gate.getType() != GateType.AREA)
                 throw new CommandException("this command is only valid for %s gates", GateType.AREA);
             Permissions.require(ctx.getPlayer(), "trp.gate.resize." + gate.getFullName());
-            ((LocalAreaGateImpl)gate).resize(num, dir);
+            ((AreaGateImpl)gate).resize(num, dir);
             return;
         }
 
@@ -607,14 +606,14 @@ public class GateCommand extends TrpCommandProcessor {
                 loc = block.getLocation();
             } else
                 loc = ctx.getPlayer().getLocation().getBlock().getLocation();
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             if (gate.getType() != GateType.AREA)
                 throw new CommandException("this command is only valid for %s gates", GateType.AREA);
             Permissions.require(ctx.getPlayer(), "trp.gate.corner." + gate.getFullName());
             if (num == 1)
-                ((LocalAreaGateImpl)gate).setP1Location(loc);
+                ((AreaGateImpl)gate).setP1Location(loc);
             else if (num == 2)
-                ((LocalAreaGateImpl)gate).setP2Location(loc);
+                ((AreaGateImpl)gate).setP2Location(loc);
             return;
         }
 
@@ -632,7 +631,7 @@ public class GateCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("option value required");
             String value = args.remove(0);
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             gate.setOption(ctx, option, value);
             return;
         }
@@ -641,7 +640,7 @@ public class GateCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("option name required");
             String option = args.remove(0);
-            LocalGateImpl gate = getGate(ctx, args);
+            GateImpl gate = getGate(ctx, args);
             gate.getOptions(ctx, option);
             return;
         }
@@ -649,18 +648,18 @@ public class GateCommand extends TrpCommandProcessor {
         throw new CommandException("do what with a gate?");
     }
 
-    private LocalGateImpl getGate(Context ctx, List<String> args) throws CommandException {
+    private GateImpl getGate(Context ctx, List<String> args) throws CommandException {
         GateImpl gate;
         if (! args.isEmpty()) {
             gate = Gates.find(ctx, args.get(0));
-            if ((gate == null) || (! (gate instanceof LocalGateImpl)))
+            if (gate == null)
                 throw new CommandException("unknown gate '%s'", args.get(0));
             args.remove(0);
         } else
             gate = Gates.getSelectedGate(ctx.getPlayer());
         if (gate == null)
             throw new CommandException("gate name required");
-        return (LocalGateImpl)gate;
+        return gate;
     }
 
 }

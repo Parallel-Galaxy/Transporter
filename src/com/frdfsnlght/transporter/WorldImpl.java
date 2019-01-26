@@ -31,7 +31,7 @@ import org.bukkit.WorldCreator;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class LocalWorldImpl implements OptionsListener, LocalWorld {
+public final class WorldImpl implements OptionsListener, LocalWorld {
 
     private static final Set<String> OPTIONS = new HashSet<String>();
 
@@ -54,7 +54,7 @@ public final class LocalWorldImpl implements OptionsListener, LocalWorld {
     private String seed;
     private boolean autoLoad;
 
-    public LocalWorldImpl(String name, Environment environment, String generator, String seed) throws WorldException {
+    public WorldImpl(String name, Environment environment, String generator, String seed) throws WorldException {
         try {
             setName(name);
             setEnvironment(environment);
@@ -66,7 +66,7 @@ public final class LocalWorldImpl implements OptionsListener, LocalWorld {
         }
     }
 
-    public LocalWorldImpl(TypeMap map) throws WorldException {
+    public WorldImpl(TypeMap map) throws WorldException {
         try {
             setName(map.getString("name"));
 

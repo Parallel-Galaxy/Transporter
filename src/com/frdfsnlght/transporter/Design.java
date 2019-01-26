@@ -785,14 +785,14 @@ public class Design {
     }
 
     // Returns a new gate if a match in the surrounding blocks is found, otherwise null.
-    public LocalBlockGateImpl create(DesignMatch match, Player player, String gateName) throws GateException {
-        LocalBlockGateImpl gate = new LocalBlockGateImpl(match.world, gateName, player, match.direction, this, match.tDesign);
+    public BlockGateImpl create(DesignMatch match, Player player, String gateName) throws GateException {
+        BlockGateImpl gate = new BlockGateImpl(match.world, gateName, player, match.direction, this, match.tDesign);
         return gate;
     }
 
     // Builds a gate at the specified location, creates it, and returns it.
     // The location must contain a yaw that indicates the gate direction.
-    public LocalGateImpl create(Location location, Player player, String gateName) throws TransporterException {
+    public GateImpl create(Location location, Player player, String gateName) throws TransporterException {
         DesignMatch match = build(location, player);
         return create(match, player, gateName);
     }

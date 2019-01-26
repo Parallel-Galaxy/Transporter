@@ -130,7 +130,7 @@ public final class ReservationImpl implements Reservation {
         }
     }
 
-    public static void removeCountdowns(LocalGateImpl gate) {
+    public static void removeCountdowns(GateImpl gate) {
         for (Iterator<Integer> i = countdowns.keySet().iterator(); i.hasNext(); ) {
             int id = i.next();
             Countdown countdown = countdowns.get(id);
@@ -153,13 +153,11 @@ public final class ReservationImpl implements Reservation {
     }
 
     private long localId = nextId++;
-    private long remoteId = 0;
     private boolean departing = true;
 
     private EntityType entityType = null;
     private Entity entity = null;
     private int localEntityId = 0;
-    private int remoteEntityId = 0;
 
     private Player player = null;
     private String playerName = null;
@@ -183,7 +181,7 @@ public final class ReservationImpl implements Reservation {
     private Location fromLocation = null;
     private Vector fromVelocity = null;
     private BlockFace fromDirection = null;
-    private LocalGateImpl fromGate = null;
+    private GateImpl fromGate = null;
     private String fromWorldName = null;
     private String fromGateName = null;
     private World fromWorld = null;
@@ -191,7 +189,7 @@ public final class ReservationImpl implements Reservation {
     private Location toLocation = null;
     private Vector toVelocity = null;
     private BlockFace toDirection = null;
-    private LocalGateImpl toGate = null;
+    private GateImpl toGate = null;
     private String toWorldName = null;
     private String toGateName = null;
     private World toWorld = null;
@@ -199,14 +197,14 @@ public final class ReservationImpl implements Reservation {
     private boolean createdEntity = false;
 
     // player stepping into gate
-    public ReservationImpl(Player player, LocalGateImpl fromGate) throws ReservationException {
+    public ReservationImpl(Player player, GateImpl fromGate) throws ReservationException {
         addGateLock(player);
         extractPlayer(player);
         extractFromGate(fromGate);
     }
 
     // vehicle moving into gate
-    public ReservationImpl(Vehicle vehicle, LocalGateImpl fromGate) throws ReservationException {
+    public ReservationImpl(Vehicle vehicle, GateImpl fromGate) throws ReservationException {
         addGateLock(vehicle);
         extractVehicle(vehicle);
         extractFromGate(fromGate);
@@ -310,7 +308,7 @@ public final class ReservationImpl implements Reservation {
         Utils.debug("vehicle velocity: %s", fromVelocity);
     }
 
-    private void extractFromGate(LocalGateImpl fromGate) throws ReservationException {
+    private void extractFromGate(GateImpl fromGate) throws ReservationException {
         this.fromGate = fromGate;
         fromGateName = fromGate.getFullName();
         fromDirection = fromGate.getDirection();
@@ -332,15 +330,6 @@ public final class ReservationImpl implements Reservation {
 
         toGateName = toGate.getFullName();
         toWorld = toGate.getWorld();
-    }
-
-    private void extractToGate(LocalGateImpl toGate) {
-        this.toGate = toGate;
-        toGateName = toGate.getFullName();
-        toWorld = toGate.getWorld();
-        toDirection = toGate.getDirection();
-        if (fromDirection == null)
-            fromDirection = toDirection;
     }
 
     public TypeMap encode() {
@@ -402,14 +391,14 @@ public final class ReservationImpl implements Reservation {
             if (entity != player)
                 addGateLock(player);
 
-            checkLocalDepartureGate();
-            checkLocalArrivalGate();
+            checkDepartureGate();
+            checkArrivalGate();
 
             EntityDepartEvent event = new EntityDepartEvent(this);
             Bukkit.getPluginManager().callEvent(event);
 
             arrive();
-            completeLocalDepartureGate();
+            completeDepartureGate();
         } catch (ReservationException e) {
             remove(this);
             throw e;
@@ -443,7 +432,7 @@ public final class ReservationImpl implements Reservation {
 
         Utils.debug("%s arrived at %s", getTraveler(), getDestination());
 
-        completeLocalArrivalGate();
+        completeArrivalGate();
 
         arrived();
     }
@@ -453,7 +442,7 @@ public final class ReservationImpl implements Reservation {
         Utils.debug("reservation to send %s to %s was approved", getTraveler(), getDestination());
 
         if (player != null) {
-            completeLocalDepartureGate();
+            completeDepartureGate();
         }
         if ((entity != null) && (entity != player))
             entity.remove();
@@ -499,7 +488,7 @@ public final class ReservationImpl implements Reservation {
     }
 
 
-    private void checkLocalDepartureGate() throws ReservationException {
+    private void checkDepartureGate() throws ReservationException {
         if (fromGate == null) return;
 
         if (player != null) {
@@ -524,7 +513,7 @@ public final class ReservationImpl implements Reservation {
         }
     }
 
-    private void checkLocalArrivalGate() throws ReservationException {
+    private void checkArrivalGate() throws ReservationException {
         if (toGate == null) return;
 
         if (player != null) {
@@ -566,7 +555,7 @@ public final class ReservationImpl implements Reservation {
             throw new ReservationException("remote gate won't allow some potion effects");
     }
 
-    private void completeLocalDepartureGate() {
+    private void completeDepartureGate() {
         if (fromGate == null) return;
 
         // Handle lightning strike...
@@ -575,7 +564,7 @@ public final class ReservationImpl implements Reservation {
 
     }
 
-    private void completeLocalArrivalGate() {
+    private void completeArrivalGate() {
         if (toGate == null) return;
 
         toGate.onReceive(entity);

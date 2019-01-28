@@ -66,6 +66,27 @@ public interface Gate {
     /* Options */
 
     /**
+     * Returns the name of the design this gate is based on.
+     *
+     * @return the name of the design
+     */
+    public String getDesignName();
+
+    /**
+     * Returns the value of the "restoreOnClose" option.
+     *
+     * @return  the option value
+     */
+    public boolean getRestoreOnClose();
+
+    /**
+     * Sets the "restoreOnClose" option.
+     *
+     * @param b     the option value
+     */
+    public void setRestoreOnClose(boolean b);
+
+    /**
      * Returns the value of the "duration" option.
      *
      * @return      the option value

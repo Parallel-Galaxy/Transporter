@@ -52,6 +52,20 @@ public final class TestGate extends GateImpl {
     public void rebuild() {}
 
     @Override
+    public String getDesignName() {
+        return null;
+    }
+
+    @Override
+    public boolean getRestoreOnClose() {
+        return false;
+    }
+
+    @Override
+    public void setRestoreOnClose(boolean b) {
+    }
+
+    @Override
     public void onProtect(Location loc) {}
 
     @Override
@@ -83,15 +97,6 @@ public final class TestGate extends GateImpl {
 
     @Override
     protected void calculateCenter() {}
-
-    /*
-    public OldGateMap getOldGateMap() {
-        OldGateMap map = new OldGateMap();
-        for (Location l : getBlocks())
-            map.put(this, l);
-        return map;
-    }
-    */
 
     public Volume getVolume() {
         Volume vol = new Volume(this);

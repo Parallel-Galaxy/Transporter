@@ -19,7 +19,6 @@ import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.GateMap.Point;
 import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.BlockGate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,7 +40,7 @@ import org.bukkit.util.Vector;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class BlockGateImpl extends GateImpl implements BlockGate {
+public final class BlockGateImpl extends GateImpl {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\\\n");
 

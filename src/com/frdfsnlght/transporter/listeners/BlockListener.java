@@ -13,10 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
+package com.frdfsnlght.transporter.listeners;
 
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.Config;
+import com.frdfsnlght.transporter.Context;
+import com.frdfsnlght.transporter.DesignBlockDetail;
+import com.frdfsnlght.transporter.DesignMatch;
+import com.frdfsnlght.transporter.Designs;
+import com.frdfsnlght.transporter.GateImpl;
+import com.frdfsnlght.transporter.Gates;
+import com.frdfsnlght.transporter.Permissions;
+import com.frdfsnlght.transporter.Utils;
+import com.frdfsnlght.transporter.exceptions.GateException;
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +38,7 @@ import org.bukkit.event.block.*;
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public class BlockListenerImpl implements Listener {
+public class BlockListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockCanBuild(BlockCanBuildEvent event) {

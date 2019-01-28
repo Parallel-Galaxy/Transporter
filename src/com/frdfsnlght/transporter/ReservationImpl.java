@@ -40,11 +40,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.frdfsnlght.transporter.api.Gate;
-import com.frdfsnlght.transporter.api.GateException;
 import com.frdfsnlght.transporter.api.Reservation;
-import com.frdfsnlght.transporter.api.ReservationException;
 import com.frdfsnlght.transporter.api.event.EntityArriveEvent;
 import com.frdfsnlght.transporter.api.event.EntityDepartEvent;
+import com.frdfsnlght.transporter.exceptions.GateException;
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+import com.frdfsnlght.transporter.exceptions.ReservationException;
 
 /**
  *

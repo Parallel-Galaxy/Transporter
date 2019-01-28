@@ -25,6 +25,7 @@ import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.ReservationImpl;
 import com.frdfsnlght.transporter.Worlds;
+import com.frdfsnlght.transporter.exceptions.ReservationException;
 
 /**
  *  This class provides the top level API for the Transporter plugin.

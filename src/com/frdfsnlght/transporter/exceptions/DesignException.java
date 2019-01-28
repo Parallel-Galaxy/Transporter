@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
-
-import com.frdfsnlght.transporter.api.TransporterException;
+package com.frdfsnlght.transporter.exceptions;
 
 /**
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class OptionsException extends TransporterException {
+public class DesignException extends TransporterException {
 
-    public OptionsException(String msg, Object ... args) {
+    public DesignException(String msg, Object ... args) {
         super(String.format(msg, args));
     }
 

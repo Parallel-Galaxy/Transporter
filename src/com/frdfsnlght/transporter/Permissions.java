@@ -27,6 +27,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+
 /**
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */

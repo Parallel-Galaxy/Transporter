@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter.api;
+package com.frdfsnlght.transporter.exceptions;
 
 /**
- * Represents an exception about a teleportation reservation.
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public class ReservationException extends TransporterException {
+public class WorldException extends TransporterException {
 
-    /**
-     * Creates a new exception.
-     *
-     * @param msg   a format string
-     * @param args  zero or more optional arguments used by the format string
-     */
-    public ReservationException(String msg, Object ... args) {
+    public WorldException(String msg, Object ... args) {
         super(String.format(msg, args));
     }
 

@@ -20,7 +20,8 @@ import com.frdfsnlght.transporter.WorldImpl;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.Utils;
 import com.frdfsnlght.transporter.Worlds;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

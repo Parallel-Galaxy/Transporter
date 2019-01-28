@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.frdfsnlght.transporter.api.TypeMap;
+import com.frdfsnlght.transporter.exceptions.OptionsException;
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+import com.frdfsnlght.transporter.listeners.OptionsListener;
 
 /**
  *

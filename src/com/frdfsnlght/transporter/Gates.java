@@ -16,10 +16,12 @@
 package com.frdfsnlght.transporter;
 
 import com.frdfsnlght.transporter.GateMap.Volume;
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.TransporterException;
 import com.frdfsnlght.transporter.api.event.GateCreateEvent;
 import com.frdfsnlght.transporter.api.event.GateDestroyEvent;
+import com.frdfsnlght.transporter.exceptions.GateException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+import com.frdfsnlght.transporter.exceptions.WorldException;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
+package com.frdfsnlght.transporter.listeners;
 
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.Context;
 
 /**
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public class BlockException extends TransporterException {
+public interface OptionsListener {
 
-    public BlockException(String msg, Object ... args) {
-        super(String.format(msg, args));
-    }
+    public void onOptionSet(Context ctx, String name, String value);
+    public String getOptionPermission(Context ctx, String name);
 
 }

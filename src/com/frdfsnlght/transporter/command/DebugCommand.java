@@ -22,8 +22,8 @@ import org.bukkit.command.Command;
 
 import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.Gates;
-import com.frdfsnlght.transporter.PlayerListenerImpl;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+import com.frdfsnlght.transporter.listeners.PlayerListener;
 
 /**
  *
@@ -60,11 +60,11 @@ public class DebugCommand extends TrpCommandProcessor {
         if ("interact".startsWith(subCmd)) {
             if (! ctx.isPlayer())
                 throw new CommandException("this command is only available to players");
-            if (PlayerListenerImpl.testPlayer != ctx.getPlayer()) {
-                PlayerListenerImpl.testPlayer = ctx.getPlayer();
+            if (PlayerListener.testPlayer != ctx.getPlayer()) {
+                PlayerListener.testPlayer = ctx.getPlayer();
                 ctx.send("player interaction debug is on");
             } else {
-                PlayerListenerImpl.testPlayer = null;
+                PlayerListener.testPlayer = null;
                 ctx.send("player interaction debug is off");
             }
             return;

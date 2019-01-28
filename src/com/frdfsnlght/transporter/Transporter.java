@@ -30,9 +30,14 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.frdfsnlght.transporter.api.API;
-import com.frdfsnlght.transporter.api.TransporterException;
 import com.frdfsnlght.transporter.command.CommandException;
 import com.frdfsnlght.transporter.command.CommandProcessor;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+import com.frdfsnlght.transporter.listeners.BlockListener;
+import com.frdfsnlght.transporter.listeners.EntityListener;
+import com.frdfsnlght.transporter.listeners.PlayerListener;
+import com.frdfsnlght.transporter.listeners.VehicleListener;
+import com.frdfsnlght.transporter.listeners.WorldListener;
 
 
 /**
@@ -41,11 +46,11 @@ import com.frdfsnlght.transporter.command.CommandProcessor;
  */
 public class Transporter extends JavaPlugin {
 
-    private BlockListenerImpl blockListener;
-    private PlayerListenerImpl playerListener;
-    private VehicleListenerImpl vehicleListener;
-    private WorldListenerImpl worldListener;
-    private EntityListenerImpl entityListener;
+    private BlockListener blockListener;
+    private PlayerListener playerListener;
+    private VehicleListener vehicleListener;
+    private WorldListener worldListener;
+    private EntityListener entityListener;
 
     private API api = null;
 
@@ -101,11 +106,11 @@ public class Transporter extends JavaPlugin {
 
         Config.load(ctx);
 
-        blockListener = new BlockListenerImpl();
-        playerListener = new PlayerListenerImpl();
-        vehicleListener = new VehicleListenerImpl();
-        worldListener = new WorldListenerImpl();
-        entityListener = new EntityListenerImpl();
+        blockListener = new BlockListener();
+        playerListener = new PlayerListener();
+        vehicleListener = new VehicleListener();
+        worldListener = new WorldListener();
+        entityListener = new EntityListener();
 
         Designs.load(ctx);
 

@@ -16,6 +16,8 @@
 package com.frdfsnlght.transporter;
 
 import com.frdfsnlght.transporter.api.TypeMap;
+import com.frdfsnlght.transporter.exceptions.InventoryException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

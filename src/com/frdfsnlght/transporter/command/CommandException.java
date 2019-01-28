@@ -15,7 +15,7 @@
  */
 package com.frdfsnlght.transporter.command;
 
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
 
 /**
  *

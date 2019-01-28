@@ -16,6 +16,11 @@
 package com.frdfsnlght.transporter;
 
 import com.frdfsnlght.transporter.api.TypeMap;
+import com.frdfsnlght.transporter.exceptions.OptionsException;
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+import com.frdfsnlght.transporter.exceptions.WorldException;
+import com.frdfsnlght.transporter.listeners.OptionsListener;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -112,24 +117,6 @@ public final class WorldImpl implements OptionsListener, LocalWorld {
         if (environment == null) environment = Environment.NORMAL;
         this.environment = environment;
     }
-
-    /*
-    public String getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(String environment) {
-        if ((environment == null) ||
-            (environment.isEmpty() ||
-            environment.equals("-"))) environment = "NORMAL";
-        try {
-            environment = Utils.valueOf(Environment.class, environment).toString();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("unknown or ambiguous environment");
-        }
-        this.environment = environment;
-    }
-*/
 
     
     public String getGenerator() {

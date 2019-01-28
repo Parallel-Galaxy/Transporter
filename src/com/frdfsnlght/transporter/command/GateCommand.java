@@ -28,7 +28,7 @@ import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Permissions;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
 
 /**
  *

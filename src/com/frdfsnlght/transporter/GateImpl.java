@@ -38,12 +38,16 @@ import org.bukkit.util.Vector;
 import com.frdfsnlght.transporter.GateMap.Point;
 import com.frdfsnlght.transporter.GateMap.Volume;
 import com.frdfsnlght.transporter.api.Gate;
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.TransporterException;
 import com.frdfsnlght.transporter.api.TypeMap;
 import com.frdfsnlght.transporter.api.event.GateClosedEvent;
 import com.frdfsnlght.transporter.api.event.GateOpenedEvent;
 import com.frdfsnlght.transporter.command.CommandException;
+import com.frdfsnlght.transporter.exceptions.BlockException;
+import com.frdfsnlght.transporter.exceptions.GateException;
+import com.frdfsnlght.transporter.exceptions.OptionsException;
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+import com.frdfsnlght.transporter.listeners.OptionsListener;
 
 /**
  *

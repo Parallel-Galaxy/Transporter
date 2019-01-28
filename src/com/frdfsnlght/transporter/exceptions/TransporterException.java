@@ -13,17 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
-
-import com.frdfsnlght.transporter.api.TransporterException;
+package com.frdfsnlght.transporter.exceptions;
 
 /**
+ * Base class for all Transporter exceptions.
+ * <p>
+ * All Transporter exceptions support a format string that can use
+ * optionally supplied arguments during exception creation. The
+ * format string follows the same rules as the <code>java.lang.String.format</code>
+ * method.
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public class DesignException extends TransporterException {
+public class TransporterException extends java.lang.Exception {
 
-    public DesignException(String msg, Object ... args) {
+    /**
+     * Creates a new exception.
+     *
+     * @param msg   a format string
+     * @param args  zero or more optional arguments used by the format string
+     */
+    public TransporterException(String msg, Object ... args) {
         super(String.format(msg, args));
     }
 

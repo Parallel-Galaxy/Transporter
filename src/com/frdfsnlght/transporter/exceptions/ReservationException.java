@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter.api;
+package com.frdfsnlght.transporter.exceptions;
 
 /**
- * Base class for all Transporter exceptions.
- * <p>
- * All Transporter exceptions support a format string that can use
- * optionally supplied arguments during exception creation. The
- * format string follows the same rules as the <code>java.lang.String.format</code>
- * method.
+ * Represents an exception about a teleportation reservation.
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public class TransporterException extends java.lang.Exception {
+public class ReservationException extends TransporterException {
 
     /**
      * Creates a new exception.
@@ -33,7 +28,7 @@ public class TransporterException extends java.lang.Exception {
      * @param msg   a format string
      * @param args  zero or more optional arguments used by the format string
      */
-    public TransporterException(String msg, Object ... args) {
+    public ReservationException(String msg, Object ... args) {
         super(String.format(msg, args));
     }
 

@@ -30,8 +30,8 @@ import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.GateImpl;
 import com.frdfsnlght.transporter.Permissions;
 import com.frdfsnlght.transporter.ReservationImpl;
-import com.frdfsnlght.transporter.api.ReservationException;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.exceptions.ReservationException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
 
 /**
  *

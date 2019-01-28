@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
+package com.frdfsnlght.transporter.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+
+import com.frdfsnlght.transporter.ReservationImpl;
 
 /**
  *
- * @author frdfsnlght <frdfsnlght@gmail.com>
+ * @author Thomas Bennedum <frdfsnlght@gmail.com>
  */
-public class WorldListenerImpl implements Listener {
+public final class EntityListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onWorldLoad(WorldLoadEvent event) {
-        Utils.debug("world '%s' loaded", event.getWorld().getName());
-        Gates.loadGatesForWorld(new Context(), event.getWorld());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onWorldUnload(WorldUnloadEvent event) {
-        Utils.debug("world '%s' unloaded", event.getWorld().getName());
-        Gates.removeGatesForWorld(event.getWorld());
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (ReservationImpl.isGateLocked(event.getEntity()))
+            event.setCancelled(true);
     }
 
 }

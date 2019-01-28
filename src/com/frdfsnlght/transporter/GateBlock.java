@@ -16,6 +16,8 @@
 package com.frdfsnlght.transporter;
 
 import com.frdfsnlght.transporter.api.TypeMap;
+import com.frdfsnlght.transporter.exceptions.BlockException;
+
 import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.World;

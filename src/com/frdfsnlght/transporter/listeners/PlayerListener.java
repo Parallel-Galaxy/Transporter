@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
+package com.frdfsnlght.transporter.listeners;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,15 +29,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.frdfsnlght.transporter.api.GateException;
-import com.frdfsnlght.transporter.api.ReservationException;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.Context;
+import com.frdfsnlght.transporter.Countdown;
+import com.frdfsnlght.transporter.GateImpl;
+import com.frdfsnlght.transporter.Gates;
+import com.frdfsnlght.transporter.Permissions;
+import com.frdfsnlght.transporter.ReservationImpl;
+import com.frdfsnlght.transporter.Utils;
+import com.frdfsnlght.transporter.exceptions.GateException;
+import com.frdfsnlght.transporter.exceptions.ReservationException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
 
 /**
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class PlayerListenerImpl implements Listener {
+public final class PlayerListener implements Listener {
 
     // Logic map for player interaction
     private static final Map<Integer,String> ACTIONS = new HashMap<Integer,String>();

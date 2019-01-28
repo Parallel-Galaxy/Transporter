@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
-
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
+package com.frdfsnlght.transporter.exceptions;
 
 /**
  *
- * @author Thomas Bennedum <frdfsnlght@gmail.com>
+ * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public final class EntityListenerImpl implements Listener {
+public final class OptionsException extends TransporterException {
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (ReservationImpl.isGateLocked(event.getEntity()))
-            event.setCancelled(true);
+    public OptionsException(String msg, Object ... args) {
+        super(String.format(msg, args));
     }
 
 }

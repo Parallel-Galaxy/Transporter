@@ -15,11 +15,12 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.ReservationException;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
+
+import com.frdfsnlght.transporter.exceptions.ReservationException;
 
 /**
  *

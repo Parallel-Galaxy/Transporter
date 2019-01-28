@@ -15,6 +15,8 @@
  */
 package com.frdfsnlght.transporter.api;
 
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+
 /**
  * Represents a task to be executed after an asynchronous API call has completed.
  * <p>

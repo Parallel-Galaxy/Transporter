@@ -20,7 +20,8 @@ import com.frdfsnlght.transporter.Context;
 import com.frdfsnlght.transporter.Designs;
 import com.frdfsnlght.transporter.Gates;
 import com.frdfsnlght.transporter.Permissions;
-import com.frdfsnlght.transporter.api.TransporterException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.command.Command;

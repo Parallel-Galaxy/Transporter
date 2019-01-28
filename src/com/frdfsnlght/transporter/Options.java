@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
+import com.frdfsnlght.transporter.exceptions.OptionsException;
+import com.frdfsnlght.transporter.exceptions.PermissionsException;
+import com.frdfsnlght.transporter.listeners.OptionsListener;
+
 /**
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>

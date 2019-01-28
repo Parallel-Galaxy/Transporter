@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frdfsnlght.transporter;
-
-import com.frdfsnlght.transporter.api.ReservationException;
+package com.frdfsnlght.transporter.listeners;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,11 +23,18 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
+import com.frdfsnlght.transporter.Context;
+import com.frdfsnlght.transporter.GateImpl;
+import com.frdfsnlght.transporter.Gates;
+import com.frdfsnlght.transporter.ReservationImpl;
+import com.frdfsnlght.transporter.Utils;
+import com.frdfsnlght.transporter.exceptions.ReservationException;
+
 /**
  *
  * @author frdfsnlght <frdfsnlght@gmail.com>
  */
-public class VehicleListenerImpl implements Listener {
+public class VehicleListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onVehicleMove(VehicleMoveEvent event) {

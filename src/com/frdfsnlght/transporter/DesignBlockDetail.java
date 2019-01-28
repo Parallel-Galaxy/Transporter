@@ -34,12 +34,10 @@ public final class DesignBlockDetail {
     private boolean isScreen = false;
     private boolean isPortal = false;
     private boolean isTrigger = false;
-    private boolean isSwitch = false;
     private boolean isInsert = false;
     private SpawnDirection spawn = null;
     private RedstoneMode triggerOpenMode = RedstoneMode.HIGH;
     private RedstoneMode triggerCloseMode = RedstoneMode.LOW;
-    private RedstoneMode switchMode = RedstoneMode.HIGH;
 
     public DesignBlockDetail(DesignBlockDetail src, BlockFace direction) {
         if (src.buildBlock != null)
@@ -49,13 +47,11 @@ public final class DesignBlockDetail {
         isScreen = src.isScreen;
         isPortal = src.isPortal;
         isTrigger = src.isTrigger;
-        isSwitch = src.isSwitch;
         isInsert = src.isInsert;
         if (src.spawn != null)
             spawn = src.spawn.rotate(direction);
         triggerOpenMode = src.triggerOpenMode;
         triggerCloseMode = src.triggerCloseMode;
-        switchMode = src.switchMode;
     }
 
     public DesignBlockDetail(String blockType) throws BlockException {
@@ -88,7 +84,6 @@ public final class DesignBlockDetail {
         isScreen = map.getBoolean("screen", false);
         isPortal = map.getBoolean("portal", false);
         isTrigger = map.getBoolean("trigger", false);
-        isSwitch = map.getBoolean("switch", false);
         isInsert = map.getBoolean("insert", false);
 
         str = map.getString("spawn");
@@ -114,13 +109,6 @@ public final class DesignBlockDetail {
             throw new BlockException(iae.getMessage() + " triggerCloseMode '%s'", str);
         }
 
-        str = map.getString("switchMode", "HIGH");
-        try {
-            switchMode = Utils.valueOf(RedstoneMode.class, str);
-        } catch (IllegalArgumentException iae) {
-            throw new BlockException(iae.getMessage() + " switchMode '%s'", str);
-        }
-
         if (isScreen && ((buildBlock == null) || (! buildBlock.isSign())))
             throw new BlockException("screen blocks must be wall signs or sign posts");
 
@@ -133,12 +121,10 @@ public final class DesignBlockDetail {
         if (isScreen) node.put("screen", isScreen);
         if (isPortal) node.put("portal", isPortal);
         if (isTrigger) node.put("trigger", isTrigger);
-        if (isSwitch) node.put("switch", isSwitch);
         if (isInsert) node.put("insert", isInsert);
         if (spawn != null) node.put("spawn", spawn.toString());
         if (triggerOpenMode != RedstoneMode.HIGH) node.put("triggerOpenMode", triggerOpenMode.toString());
         if (triggerCloseMode != RedstoneMode.LOW) node.put("triggerCloseMode", triggerCloseMode.toString());
-        if (switchMode != RedstoneMode.HIGH) node.put("switchMode", switchMode.toString());
         return node;
     }
 
@@ -162,10 +148,6 @@ public final class DesignBlockDetail {
         return isTrigger;
     }
 
-    public boolean isSwitch() {
-        return isSwitch;
-    }
-
     public boolean isInsert() {
         return isInsert;
     }
@@ -184,10 +166,6 @@ public final class DesignBlockDetail {
 
     public RedstoneMode getTriggerCloseMode() {
         return triggerCloseMode;
-    }
-
-    public RedstoneMode getSwitchMode() {
-        return switchMode;
     }
 
     public boolean isInventory() {
@@ -214,12 +192,10 @@ public final class DesignBlockDetail {
                 (isScreen ? 10 : 0) +
                 (isPortal ? 100 : 0) +
                 (isTrigger ? 1000 : 0) +
-                (isSwitch ? 10000 : 0) +
                 (isInsert ? 100000 : 0) +
                 ((spawn != null) ? spawn.hashCode() : 0) +
                 triggerOpenMode.hashCode() +
-                triggerCloseMode.hashCode() +
-                switchMode.hashCode();
+                triggerCloseMode.hashCode();
     }
 
     @Override
@@ -241,12 +217,10 @@ public final class DesignBlockDetail {
         if (isScreen != other.isScreen) return false;
         if (isPortal != other.isPortal) return false;
         if (isTrigger != other.isTrigger) return false;
-        if (isSwitch != other.isSwitch) return false;
         if (isInsert != other.isInsert) return false;
         if (spawn != other.spawn) return false;
         if (triggerOpenMode != other.triggerOpenMode) return false;
         if (triggerCloseMode != other.triggerCloseMode) return false;
-        if (switchMode != other.switchMode) return false;
 
         return true;
     }
@@ -257,12 +231,10 @@ public final class DesignBlockDetail {
         buf.append("scr=").append(isScreen).append(",");
         buf.append("prt=").append(isPortal).append(",");
         buf.append("trg=").append(isTrigger).append(",");
-        buf.append("swt=").append(isSwitch).append(",");
         buf.append("ins=").append(isInsert).append(",");
         buf.append("spw=").append(spawn).append(",");
         buf.append("trgOpnMod=").append(triggerOpenMode).append(",");
         buf.append("trgClsMod=").append(triggerOpenMode).append(",");
-        buf.append("swtMod=").append(switchMode).append(",");
         buf.append(buildBlock).append(",");
         buf.append(openBlock);
         buf.append("]");

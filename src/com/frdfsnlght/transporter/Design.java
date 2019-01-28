@@ -785,8 +785,8 @@ public class Design {
     }
 
     // Returns a new gate if a match in the surrounding blocks is found, otherwise null.
-    public BlockGateImpl create(DesignMatch match, Player player, String gateName) throws GateException {
-        BlockGateImpl gate = new BlockGateImpl(match.world, gateName, player, match.direction, this, match.tDesign);
+    public GateImpl create(DesignMatch match, Player player, String gateName) throws GateException {
+        GateImpl gate = new GateImpl(match.world, gateName, player, match.direction, this, match.tDesign);
         return gate;
     }
 

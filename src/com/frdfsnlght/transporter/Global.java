@@ -29,7 +29,6 @@ import com.frdfsnlght.transporter.command.HelpCommand;
 import com.frdfsnlght.transporter.command.ReloadCommand;
 import com.frdfsnlght.transporter.command.SaveCommand;
 import com.frdfsnlght.transporter.command.WorldCommand;
-import com.frdfsnlght.transporter.test.TestCommand;
 
 /**
  *
@@ -56,15 +55,6 @@ public final class Global {
         commands.add(new GateCommand());
         commands.add(new WorldCommand());
         commands.add(new DebugCommand());
-
-        if (isTesting()) {
-            System.out.println("**** Transporter testing mode is enabled! ****");
-            commands.add(new TestCommand());
-        }
-    }
-
-    public static boolean isTesting() {
-        return System.getenv("TRANSPORTER_TEST") != null;
     }
 
     public static void setPlugin(Transporter plugin) {

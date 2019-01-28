@@ -68,30 +68,22 @@ public final class BuildableBlock {
         String str;
         if (type == null) return;
         if (data != null) {
+            str = map.getString("data");
+            if (str != null) {
+                // Initial conversion
+                data.setData(Byte.parseByte(str));
+            }
             if (data instanceof Directional) {
                 str = map.getString("facing");
                 if (str != null) {
-                    try {
-                        ((Directional)data).setFacingDirection(Utils.valueOf(BlockFace.class, str));
-                    } catch (IllegalArgumentException iae) {
-                        throw new BlockException(iae.getMessage() + " facing '%s'", str);
-                    }
+                    ((Directional)data).setFacingDirection(BlockFace.valueOf(str));
                 }
             }
             if (data instanceof Colorable) {
                 str = map.getString("color");
                 if (str != null) {
-                    try {
-                        ((Colorable)data).setColor(Utils.valueOf(DyeColor.class, str));
-                    } catch (IllegalArgumentException iae) {
-                        throw new BlockException(iae.getMessage() + " color '%s'", str);
-                    }
+                    ((Colorable)data).setColor(DyeColor.valueOf(str));
                 }
-            }
-            if (data instanceof Openable) {
-                str = map.getString("open");
-                if (str != null)
-                    ((Openable)data).setOpen(map.getBoolean("open"));
             }
         }
 
@@ -110,7 +102,12 @@ public final class BuildableBlock {
     public Map<String,Object> encode() {
         Map<String,Object> node = new HashMap<String,Object>();
         node.put("type", type.toString());
-        node.put("data", data.getData());
+        if (data instanceof Colorable) {
+            node.put("color", ((Colorable)data).getColor().toString());
+        }
+        if (data instanceof Directional) {
+            node.put("facing", ((Directional)data).getFacing().toString());
+        }
         if (physics) node.put("physics", physics);
         if (lines != null) {
             StringBuilder buf = new StringBuilder();

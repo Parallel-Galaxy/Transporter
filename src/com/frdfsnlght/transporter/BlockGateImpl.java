@@ -34,7 +34,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -141,46 +140,6 @@ public final class BlockGateImpl extends GateImpl implements BlockGate {
         toLocation.setYaw(block.getDetail().getSpawn().calculateYaw(fromLocation.getYaw(), fromDirection, getDirection()));
         toLocation.setPitch(fromLocation.getPitch());
         return toLocation;
-    }
-
-    @Override
-    public void onSend(Entity entity) {
-        List<GateBlock> gbs = new ArrayList<GateBlock>();
-        for (GateBlock gb : blocks) {
-            if (gb.getDetail().getSendLightningMode() != LightningMode.NONE)
-                gbs.add(gb);
-        }
-        if (gbs.isEmpty()) return;
-        GateBlock block = gbs.get((new Random()).nextInt(gbs.size()));
-        switch (block.getDetail().getSendLightningMode()) {
-            case NORMAL:
-                world.strikeLightning(block.getLocation());
-                break;
-            case SAFE:
-                world.strikeLightningEffect(block.getLocation());
-                break;
-            default: break;
-        }
-    }
-
-    @Override
-    public void onReceive(Entity entity) {
-        List<GateBlock> gbs = new ArrayList<GateBlock>();
-        for (GateBlock gb : blocks) {
-            if (gb.getDetail().getReceiveLightningMode() != LightningMode.NONE)
-                gbs.add(gb);
-        }
-        if (gbs.isEmpty()) return;
-        GateBlock block = gbs.get((new Random()).nextInt(gbs.size()));
-        switch (block.getDetail().getReceiveLightningMode()) {
-            case NORMAL:
-                world.strikeLightning(block.getLocation());
-                break;
-            case SAFE:
-                world.strikeLightningEffect(block.getLocation());
-                break;
-            default: break;
-        }
     }
 
     @Override

@@ -323,7 +323,6 @@ public final class ReservationImpl implements Reservation {
             Bukkit.getPluginManager().callEvent(event);
 
             arrive();
-            completeDepartureGate();
         } catch (ReservationException e) {
             remove(this);
             throw e;
@@ -364,9 +363,6 @@ public final class ReservationImpl implements Reservation {
     public void approved() {
         Utils.debug("reservation to send %s to %s was approved", getTraveler(), getDestination());
 
-        if (player != null) {
-            completeDepartureGate();
-        }
         if ((entity != null) && (entity != player))
             entity.remove();
 
@@ -437,19 +433,8 @@ public final class ReservationImpl implements Reservation {
         }
     }
 
-    private void completeDepartureGate() {
-        if (fromGate == null) return;
-
-        // Handle lightning strike...
-
-        fromGate.onSend(entity);
-
-    }
-
     private void completeArrivalGate() {
         if (toGate == null) return;
-
-        toGate.onReceive(entity);
 
         if (player != null) {
 

@@ -26,7 +26,6 @@ import com.frdfsnlght.transporter.api.GateException;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 /**
@@ -51,12 +50,6 @@ public final class TestGate extends GateImpl {
     public Location getSpawnLocation(Location fromLoc, BlockFace fromDirection) { return null; }
 
     public void rebuild() {}
-
-    @Override
-    public void onSend(Entity entity) {}
-
-    @Override
-    public void onReceive(Entity entity) {}
 
     @Override
     public void onProtect(Location loc) {}

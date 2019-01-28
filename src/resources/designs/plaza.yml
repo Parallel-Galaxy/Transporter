@@ -21,7 +21,6 @@ blockKey:
   W: { build: { type: WALL_SIGN, facing: WEST }, screen: true, trigger: false, switch: false }
   X: { build: { type: STONE_PLATE }, screen: false, trigger: true, switch: false, triggerOpenMode: HIGH, triggerCloseMode: NONE }
   x: { build: { type: STONE_PLATE }, screen: false, trigger: false, switch: true }
-  Z: { build: AIR, sendLightningMode: SAFE, receiveLightningMode: SAFE }
   P: { build: AIR, open: STATIONARY_WATER, portal: true }
   a: { build: AIR, open: STATIONARY_WATER, portal: true, spawn: NORTH }
   b: { build: AIR, open: STATIONARY_WATER, portal: true, spawn: SOUTH }
@@ -373,7 +372,7 @@ blocks:
 #slice 20 - center
   -
     - "AAOAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAOAA"
-    - "AAAAAAAAAAAAAAAAAAAAZAAAAAAAAAAAAAAAAAAAA"
+    - "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     - "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     - "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     - "AAOAOAAAAAAAAAAAAAWOAOEAAAAAAAAAAAAAOAOAA"

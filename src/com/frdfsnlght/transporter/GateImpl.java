@@ -25,7 +25,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -190,8 +189,6 @@ public abstract class GateImpl implements Gate, OptionsListener {
 
     public abstract Location getSpawnLocation(Location fromLoc, BlockFace fromDirection);
 
-    public abstract void onSend(Entity entity);
-    public abstract void onReceive(Entity entity);
     public abstract void onProtect(Location loc);
 
     protected abstract void onValidate() throws GateException;

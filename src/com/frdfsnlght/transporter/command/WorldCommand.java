@@ -56,7 +56,6 @@ public class WorldCommand extends TrpCommandProcessor {
         cmds.add(getPrefix(ctx) + GROUP + "unload <world>");
         if (ctx.isPlayer())
             cmds.add(getPrefix(ctx) + GROUP + "go [<coords>] [<world>]");
-        cmds.add(getPrefix(ctx) + GROUP + "spawn [<coords>] [<world>]");
         cmds.add(getPrefix(ctx) + GROUP + "get <world> <option>|*");
         cmds.add(getPrefix(ctx) + GROUP + "set <world> <option> <value>");
         return cmds;
@@ -230,61 +229,6 @@ public class WorldCommand extends TrpCommandProcessor {
 
             ctx.getPlayer().teleport(location);
             ctx.sendLog("teleported to world '%s'", world.getName());
-
-            return;
-        }
-
-        if ("spawn".startsWith(subCmd)) {
-            World world = ctx.isPlayer() ? ctx.getPlayer().getWorld() : null;
-            Location location = ctx.isPlayer() ? ctx.getPlayer().getLocation() : null;
-            String locationString = null;
-
-            if ((! args.isEmpty()) && (args.get(0).indexOf(',') != -1))
-                locationString = args.remove(0);
-            if (! args.isEmpty()) {
-                String name = args.remove(0);
-                WorldImpl bworld = Worlds.find(name);
-                if (bworld == null)
-                    throw new CommandException("unknown world '%s'", name);
-                if (! bworld.isLoaded())
-                    throw new CommandException("world '%s' is not loaded", bworld.getName());
-                world = bworld.getWorld();
-            }
-
-            if ((world != null) && (locationString != null)) {
-                String ordStrings[] = locationString.split(",");
-                double ords[] = new double[ordStrings.length];
-                for (int i = 0; i < ordStrings.length; i++)
-                    try {
-                        ords[i] = Double.parseDouble(ordStrings[i]);
-                    } catch (NumberFormatException e) {
-                        throw new CommandException("invalid ordinate '%s'", ordStrings[i]);
-                    }
-                if (ords.length == 2) {
-                    // given x,z, so figure out sensible y
-                    int y = world.getHighestBlockYAt((int)ords[0], (int)ords[1]) + 1;
-                    while (y > 1) {
-                        if ((world.getBlockAt((int)ords[0], y, (int)ords[1]).getType() == Material.AIR) &&
-                            (world.getBlockAt((int)ords[0], y, (int)ords[1]).getType() == Material.AIR)) break;
-                        y--;
-                    }
-                    if (y == 1)
-                        throw new CommandException("unable to locate a space big enough for a player");
-                    location = new Location(world, ords[0], y, ords[1]);
-                } else if (ords.length == 3)
-                    location = new Location(world, ords[0], ords[1], ords[2]);
-                else
-                    throw new CommandException("expected 2 or 3 ordinates");
-            }
-            if ((world != null) && (location == null))
-                throw new CommandException("location required");
-            if (world == null)
-                throw new CommandException("world name required");
-
-            Permissions.require(ctx.getPlayer(), "trp.world.spawn");
-
-            world.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            ctx.sendLog("set spawn location for world '%s'", world.getName());
 
             return;
         }

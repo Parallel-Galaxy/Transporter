@@ -57,7 +57,6 @@ public class GateCommand extends TrpCommandProcessor {
         cmds.add(getPrefix(ctx) + GROUP + "rename <newname> [<gate>]");
         cmds.add(getPrefix(ctx) + GROUP + "link add [<from>] <to> [rev]");
         cmds.add(getPrefix(ctx) + GROUP + "link remove [<from>] <to> [rev]");
-        cmds.add(getPrefix(ctx) + GROUP + "link next [<gate>]");
 
         cmds.add(getPrefix(ctx) + GROUP + "get <option>|* [<gate>]");
         cmds.add(getPrefix(ctx) + GROUP + "set <option> <value> [<gate>]");
@@ -172,12 +171,6 @@ public class GateCommand extends TrpCommandProcessor {
             if (args.isEmpty())
                 throw new CommandException("do what with a link?");
             subCmd = args.remove(0).toLowerCase();
-
-            if ("next".startsWith(subCmd)) {
-                GateImpl fromGate = getGate(ctx, args);
-                fromGate.nextLink();
-                return;
-            }
 
             if (args.isEmpty())
                 throw new CommandException("destination endpoint required");

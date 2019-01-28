@@ -51,9 +51,6 @@ public final class Gates {
     // Gate screens for local gates
     private static final GateMap screenMap = new GateMap();
 
-    // Gate switches for local gates
-    public static final GateMap switchMap = new GateMap();
-
     // Gate triggers for local gates
     public static final GateMap triggerMap = new GateMap();
 
@@ -246,18 +243,6 @@ public final class Gates {
         screenMap.removeGate(gate);
     }
 
-    public static GateImpl findGateForSwitch(Location loc) {
-        return switchMap.getGate(loc);
-    }
-
-    public static void addSwitchVolume(Volume vol) {
-        switchMap.put(vol);
-    }
-
-    public static void removeSwitchVolume(GateImpl gate) {
-        switchMap.removeGate(gate);
-    }
-
     public static GateImpl findGateForTrigger(Location loc) {
         return triggerMap.getGate(loc);
     }
@@ -278,7 +263,6 @@ public final class Gates {
         Utils.debug("portalMap=%s", portalMap);
         Utils.debug("protectionMap=%s", protectionMap);
         Utils.debug("screenMap=%s", screenMap);
-        Utils.debug("switchMap=%s", switchMap);
         Utils.debug("triggerMap=%s", triggerMap);
     }
 

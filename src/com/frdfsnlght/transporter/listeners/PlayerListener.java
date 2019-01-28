@@ -54,31 +54,18 @@ public final class PlayerListener implements Listener {
     // 0 1  : Is the gate currently open?
     // 1 2  : Does the player have trp.gate.open permission?
     // 2 4  : Does the player have trp.gate.close permission?
-    // 3 8  : Does the player have trp.gate.changeLink permission?
-    // 4 16 : Does the gate have a valid destination?
-    // 5 32 : Is the gate on its last link?
-    // 6 64 : Is the gate block a trigger?
-    // 7 128: Is the gate block a switch?
+    // 3 8 : Is the gate block a trigger?
 
     // Values are a comma separated list of actions to perform:
     // OPEN: open the gate
     // CLOSE: close the gate
-    // CHANGELINK: change the gate's link
 
     static {
         // gate is closed
-        addAction("01xxxx1x", "OPEN");
-        addAction("0xx1xx01", "CHANGELINK");
-        addAction("00x1xxx1", "CHANGELINK");
-        addAction("01x10x11", "CHANGELINK,OPEN");
+        addAction("01x1", "OPEN");
 
         // gate is open
-        addAction("1x1xxx10", "CLOSE");
-        addAction("1x10xx11", "CLOSE");
-        addAction("1x11x111", "CLOSE,CHANGELINK");
-        addAction("1x01xxx1", "CHANGELINK");
-        addAction("1xx1xx01", "CHANGELINK");
-        addAction("1xx1x011", "CHANGELINK");
+        addAction("1x11", "CLOSE");
     }
 
     private static void addAction(String mask, String action) {
@@ -124,34 +111,24 @@ public final class PlayerListener implements Listener {
         Context ctx = new Context(event.getPlayer());
 
         GateImpl triggerGate = Gates.findGateForTrigger(location);
-        GateImpl switchGate = Gates.findGateForSwitch(location);
         if (event.getPlayer() == testPlayer) {
             Utils.debug("-Interaction-----------------------------------------");
             Utils.debug("location: %s", Utils.blockCoords(location));
             Utils.debug("triggerGate: %s", (triggerGate == null) ? "none" : triggerGate.getFullName());
-            Utils.debug("switchGate: %s", (switchGate == null) ? "none" : switchGate.getFullName());
-            if ((triggerGate == null) && (switchGate == null)) {
+            if (triggerGate == null) {
                 Utils.debug("triggerMap: %s", Gates.triggerMap.toString(testPlayer.getWorld()));
-                Utils.debug("switchMap: %s", Gates.switchMap.toString(testPlayer.getWorld()));
             }
         }
+        if (triggerGate == null) return;
 
-        if ((triggerGate == null) && (switchGate == null)) return;
-        if ((triggerGate != null) && (switchGate != null) && (triggerGate != switchGate)) switchGate = null;
-
-        GateImpl testGate = (triggerGate == null) ? switchGate : triggerGate;
         Player player = event.getPlayer();
-        Gates.setSelectedGate(player, testGate);
+        Gates.setSelectedGate(player, triggerGate);
 
         int key =
-                (testGate.isOpen() ? 1 : 0) +
-                (Permissions.has(player, "trp.gate.open." + testGate.getFullName()) ? 2 : 0) +
-                (Permissions.has(player, "trp.gate.close." + testGate.getFullName()) ? 4 : 0) +
-                (Permissions.has(player, "trp.gate.changeLink." + testGate.getFullName()) ? 8 : 0) +
-                (testGate.hasValidDestination() ? 16 : 0) +
-                (testGate.isLastLink() ? 32 : 0) +
-                ((triggerGate != null) ? 64 : 0) +
-                ((switchGate != null) ? 128 : 0);
+                (triggerGate.isOpen() ? 1 : 0) +
+                (Permissions.has(player, "trp.gate.open." + triggerGate.getFullName()) ? 2 : 0) +
+                (Permissions.has(player, "trp.gate.close." + triggerGate.getFullName()) ? 4 : 0) +
+                (triggerGate.hasValidDestination() ? 8 : 0);
         String value = ACTIONS.get(key);
         Utils.debug("gate key/action is %s/%s", key, value);
 
@@ -165,27 +142,18 @@ public final class PlayerListener implements Listener {
 
             if (action.equals("OPEN")) {
                 try {
-                    testGate.open();
-                    ctx.send("opened gate '%s'", testGate.getName());
-                    Utils.debug("player '%s' open gate '%s'", player.getName(), testGate.getName());
+                    triggerGate.open();
+                    ctx.send("opened gate '%s'", triggerGate.getName());
+                    Utils.debug("player '%s' open gate '%s'", player.getName(), triggerGate.getName());
                 } catch (GateException ee) {
                     ctx.warnLog(ee.getMessage());
                 }
             }
 
             if (action.equals("CLOSE")) {
-                testGate.close();
-                ctx.send("closed gate '%s'", testGate.getName());
-                Utils.debug("player '%s' closed gate '%s'", player.getName(), testGate.getName());
-            }
-
-            if (action.equals("CHANGELINK")) {
-                try {
-                    testGate.nextLink();
-                    Utils.debug("player '%s' changed link for gate '%s'", player.getName(), testGate.getName());
-                } catch (TransporterException te) {
-                    ctx.warnLog(te.getMessage());
-                }
+                triggerGate.close();
+                ctx.send("closed gate '%s'", triggerGate.getName());
+                Utils.debug("player '%s' closed gate '%s'", player.getName(), triggerGate.getName());
             }
         }
 

@@ -337,7 +337,6 @@ public final class GateImpl implements Gate, OptionsListener {
         Gates.removeProtectionVolume(this);
         Gates.removeScreenVolume(this);
         Gates.removeTriggerVolume(this);
-        Gates.removeSwitchVolume(this);
         if (unbuild) {
             for (GateBlock gb : blocks) {
                 if (! gb.getDetail().isBuildable()) continue;
@@ -350,7 +349,6 @@ public final class GateImpl implements Gate, OptionsListener {
     protected void onAdd() {
         Gates.addScreenVolume(getScreenVolume());
         Gates.addTriggerVolume(getTriggerVolume());
-        Gates.addSwitchVolume(getSwitchVolume());
         if (portalOpen)
             Gates.addPortalVolume(getPortalVolume());
         if (protect)
@@ -363,7 +361,6 @@ public final class GateImpl implements Gate, OptionsListener {
         Gates.removeProtectionVolume(this);
         Gates.removeScreenVolume(this);
         Gates.removeTriggerVolume(this);
-        Gates.removeSwitchVolume(this);
     }
 
     // Gate interface
@@ -689,15 +686,6 @@ public final class GateImpl implements Gate, OptionsListener {
         Volume vol = new Volume(this);
         for (GateBlock gb : blocks) {
             if (! gb.getDetail().isTrigger()) continue;
-            vol.addPoint(new Point(gb.getLocation()));
-        }
-        return vol;
-    }
-
-    private Volume getSwitchVolume() {
-        Volume vol = new Volume(this);
-        for (GateBlock gb : blocks) {
-            if (! gb.getDetail().isSwitch()) continue;
             vol.addPoint(new Point(gb.getLocation()));
         }
         return vol;

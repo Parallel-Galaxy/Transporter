@@ -15,30 +15,28 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.frdfsnlght.transporter.api.TypeMap;
-import com.frdfsnlght.transporter.exceptions.BlockException;
-import com.frdfsnlght.transporter.exceptions.DesignException;
-import com.frdfsnlght.transporter.exceptions.GateException;
-import com.frdfsnlght.transporter.exceptions.TransporterException;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.bukkit.GameMode;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+
+import com.frdfsnlght.transporter.api.TypeMap;
+import com.frdfsnlght.transporter.exceptions.BlockException;
+import com.frdfsnlght.transporter.exceptions.DesignException;
+import com.frdfsnlght.transporter.exceptions.GateException;
+import com.frdfsnlght.transporter.exceptions.TransporterException;
 
 /**
  *
@@ -65,49 +63,19 @@ public class Design {
     private String linkOfflineFormat;
     private String linkLocalFormat;
     private String linkWorldFormat;
-    private boolean multiLink;
     private boolean restoreOnClose;
-    private boolean requirePin;
-    private boolean requireValidPin;
-    private int requireLevel;
-    private int invalidPinDamage;
     private boolean protect;
-    private boolean sendChat;
-    private String sendChatFilter;
-    private String sendChatFormatFilter;
-    private int sendChatDistance;
-    private boolean receiveChat;
-    private String receiveChatFilter;
-    private int receiveChatDistance;
-    private boolean requireAllowedItems;
-    private boolean receiveInventory;
-    private boolean deleteInventory;
-    private boolean receiveGameMode;
-    private String allowGameModes;
-    private GameMode gameMode;
-    private boolean receiveXP;
-    private boolean receivePotions;
-    private boolean requireAllowedPotions;
-    private boolean receiveStats;
-    private boolean randomNextLink;
-    private boolean sendNextLink;
     private String teleportFormat;
     private String noLinksFormat;
     private String noLinkSelectedFormat;
     private String invalidLinkFormat;
     private String unknownLinkFormat;
-    private String markerFormat;
     protected boolean hidden;
-    protected int linkAddDistance;
     private int countdown;
     private int countdownInterval;
     private String countdownFormat;
     private String countdownIntervalFormat;
     private String countdownCancelFormat;
-
-    private Set<String> bannedItems = new HashSet<String>();
-    private Set<String> allowedItems = new HashSet<String>();
-    private Map<String,String> replaceItems = new HashMap<String,String>();
 
     private List<Pattern> buildWorlds = null;
     private List<DesignBlock> blocks = null;
@@ -139,85 +107,19 @@ public class Design {
         linkOfflineFormat = conf.getString("linkOfflineFormat", "%fromGate%\\n\\n<offline>");
         linkLocalFormat = conf.getString("linkLocalFormat", "%fromGate%\\n%toGate%");
         linkWorldFormat = conf.getString("linkWorldFormat", "%fromGate%\\n%toWorld%\\n%toGate%");
-        multiLink = conf.getBoolean("multiLink", true);
         restoreOnClose = conf.getBoolean("restoreOnClose", false);
-        requirePin = conf.getBoolean("requirePin", false);
-        requireValidPin = conf.getBoolean("requireValidPin", true);
-        requireLevel = conf.getInt("requireLevel", 0);
-        invalidPinDamage = conf.getInt("invalidPinDamage", 0);
         protect = conf.getBoolean("protect", false);
-        sendChat = conf.getBoolean("sendChat", false);
-        sendChatFilter = conf.getString("sendChatFilter");
-        sendChatFormatFilter = conf.getString("sendChatFormatFilter");
-        sendChatDistance = conf.getInt("sendChatDistance", 1000);
-        receiveChat = conf.getBoolean("receiveChat", false);
-        receiveChatFilter = conf.getString("receiveChatFilter");
-        receiveChatDistance = conf.getInt("receiveChatDistance", 1000);
-        requireAllowedItems = conf.getBoolean("requireAllowedItems", true);
-        receiveInventory = conf.getBoolean("receiveInventory", true);
-        deleteInventory = conf.getBoolean("deleteInventory", false);
-        receiveGameMode = conf.getBoolean("receiveGameMode", false);
-        allowGameModes = conf.getString("allowGameModes", "*");
-        receiveXP = conf.getBoolean("receiveXP", false);
-        receivePotions = conf.getBoolean("receivePotions", false);
-        requireAllowedPotions = conf.getBoolean("requireAllowedPotions", true);
-        receiveStats = conf.getBoolean("receiveStats", true);
-        randomNextLink = conf.getBoolean("randomNextLink", false);
-        sendNextLink = conf.getBoolean("sendNextLink", false);
         teleportFormat = conf.getString("teleportFormat", "%GOLD%teleported to '%toGateCtx%'");
         noLinksFormat = conf.getString("noLinksFormat", "this gate has no links");
         noLinkSelectedFormat = conf.getString("noLinkSelectedFormat", "no link is selected");
         invalidLinkFormat = conf.getString("invalidLinkFormat", "invalid link selected");
         unknownLinkFormat = conf.getString("unknownLinkFormat", "unknown or offline destination endpoint");
-        markerFormat = conf.getString("markerFormat", "%name%");
         hidden = conf.getBoolean("hidden", false);
-        linkAddDistance = conf.getInt("linkAddDistance", -1);
         countdown = conf.getInt("countdown", -1);
         countdownInterval = conf.getInt("countdownInterval", 1000);
         countdownFormat = conf.getString("countdownFormat", "%RED%Teleport countdown started...");
         countdownIntervalFormat = conf.getString("countdownIntervalFormat", "%RED%Teleport in %time% seconds...");
         countdownCancelFormat = conf.getString("countdownCancelFormat", "%RED%Teleport canceled");
-
-        String gameModeStr = conf.getString("gameMode", null);
-        if (gameModeStr == null)
-            gameMode = null;
-        else {
-            try {
-                gameMode = Utils.valueOf(GameMode.class, gameModeStr);
-            } catch (IllegalArgumentException iae) {
-                throw new DesignException(iae.getMessage() + " game mode '%s'", gameModeStr);
-            }
-        }
-
-        List<String> items = conf.getStringList("bannedItems", new ArrayList<String>());
-        for (String item : items) {
-            String i = Inventory.normalizeItem(item);
-            if (i == null)
-                throw new DesignException("invalid banned item '%s'", item);
-            bannedItems.add(i);
-        }
-
-        items = conf.getStringList("allowedItems", new ArrayList<String>());
-        for (String item : items) {
-            String i = Inventory.normalizeItem(item);
-            if (i == null)
-                throw new DesignException("invalid allowed item '%s'", item);
-            allowedItems.add(i);
-        }
-
-        items = conf.getKeys("replaceItems");
-        if (items != null) {
-            for (String oldItem : items) {
-                String oi = Inventory.normalizeItem(oldItem);
-                if (oi == null)
-                    throw new DesignException("invalid replace item '%s'", oldItem);
-                String newItem = conf.getString("replaceItems." + oldItem);
-                String ni = Inventory.normalizeItem(newItem);
-                if (ni == null)
-                    throw new DesignException("invalid replace item '%s'", newItem);
-                replaceItems.put(oi, ni);
-            }
-        }
 
         buildWorlds = new ArrayList<Pattern>();
         String pattern = conf.getString("buildWorlds");
@@ -320,7 +222,6 @@ public class Design {
 
         int screenCount = 0,
             triggerCount = 0,
-            switchCount = 0,
             spawnCount = 0,
             portalCount = 0,
             insertCount = 0;
@@ -328,7 +229,6 @@ public class Design {
             DesignBlockDetail d = db.getDetail();
             if (d.isScreen()) screenCount++;
             if (d.isTrigger()) triggerCount++;
-            if (d.isSwitch()) switchCount++;
             if (d.isPortal()) portalCount++;
             if (d.isInsert()) insertCount++;
             if (d.isSpawn()) spawnCount++;
@@ -338,8 +238,6 @@ public class Design {
             throw new DesignException("must have at least one screen block");
         if (triggerCount == 0)
             throw new DesignException("must have at least one trigger block");
-        if (multiLink && (switchCount == 0))
-            throw new DesignException("must have at least one switch block because multiLink is true");
         if (insertCount != 1)
             throw new DesignException("must have exactly one insert block");
         if (portalCount == 0)
@@ -425,120 +323,12 @@ public class Design {
         return linkWorldFormat;
     }
 
-    public boolean getMultiLink() {
-        return multiLink;
-    }
-
     public boolean getRestoreOnClose() {
         return restoreOnClose;
     }
 
-    public boolean getRequirePin() {
-        return requirePin;
-    }
-
-    public boolean getRequireValidPin() {
-        return requireValidPin;
-    }
-
-    public int getInvalidPinDamage() {
-        return invalidPinDamage;
-    }
-
-    public int getRequireLevel() {
-        return requireLevel;
-    }
-
     public boolean getProtect() {
         return protect;
-    }
-
-    public boolean getSendChat() {
-        return sendChat;
-    }
-
-    public String getSendChatFilter() {
-        return sendChatFilter;
-    }
-
-    public String getSendChatFormatFilter() {
-        return sendChatFormatFilter;
-    }
-
-    public int getSendChatDistance() {
-        return sendChatDistance;
-    }
-
-    public boolean getReceiveChat() {
-        return receiveChat;
-    }
-
-    public String getReceiveChatFilter() {
-        return receiveChatFilter;
-    }
-
-    public int getReceiveChatDistance() {
-        return receiveChatDistance;
-    }
-
-    public boolean getRequireAllowedItems() {
-        return requireAllowedItems;
-    }
-
-    public Set<String> getBannedItems() {
-        return bannedItems;
-    }
-
-    public Set<String> getAllowedItems() {
-        return allowedItems;
-    }
-
-    public Map<String,String> getReplaceItems() {
-        return replaceItems;
-    }
-
-    public boolean getReceiveInventory() {
-        return receiveInventory;
-    }
-
-    public boolean getDeleteInventory() {
-        return deleteInventory;
-    }
-
-    public boolean getReceiveGameMode() {
-        return receiveGameMode;
-    }
-
-    public String getAllowGameModes() {
-        return allowGameModes;
-    }
-
-    public GameMode getGameMode() {
-        return gameMode;
-    }
-
-    public boolean getReceiveXP() {
-        return receiveXP;
-    }
-
-    public boolean getReceivePotions() {
-        return receivePotions;
-    }
-
-    public boolean getRequireAllowedPotions() {
-        return requireAllowedPotions;
-    }
-
-    public boolean getReceiveStats() {
-        return receiveStats;
-    }
-
-    public boolean getRandomNextLink() {
-        return randomNextLink;
-    }
-
-    public boolean getSendNextLink() {
-        return sendNextLink;
     }
 
     public String getTeleportFormat() {
@@ -561,16 +351,8 @@ public class Design {
         return unknownLinkFormat;
     }
 
-    public String getMarkerFormat() {
-        return markerFormat;
-    }
-
     public boolean getHidden() {
         return hidden;
-    }
-
-    public int getLinkAddDistance() {
-        return linkAddDistance;
     }
 
     public int getCountdown() {

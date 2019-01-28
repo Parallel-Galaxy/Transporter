@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -98,6 +99,7 @@ public final class GateImpl implements Gate, OptionsListener {
 
     protected File file;
     private String designName;
+    private Player creator;
     protected World world;
     protected Vector center;
     protected BlockFace direction;
@@ -140,6 +142,12 @@ public final class GateImpl implements Gate, OptionsListener {
     protected GateImpl(World world, TypeMap conf) throws GateException {
         this.file = conf.getFile();
         designName = conf.getString("designName");
+        String creatorStr = conf.getString("creatorUUID");
+        if (creatorStr != null) {
+            creator = Bukkit.getPlayer(UUID.fromString(creatorStr));
+        } else {
+            creator = Bukkit.getPlayer(conf.getString("creatorName"));
+        }
         this.world = world;
         name = conf.getString("name");
         try {
@@ -215,6 +223,7 @@ public final class GateImpl implements Gate, OptionsListener {
     public GateImpl(World world, String gateName, Player player, BlockFace direction, Design design, TransformedDesign tDesign) throws GateException {
         this.world = world;
         name = gateName;
+        creator = player;
         this.direction = direction;
         setDefaults();
         
@@ -371,23 +380,6 @@ public final class GateImpl implements Gate, OptionsListener {
 
     protected void onDestinationChanged() {
         updateScreens();
-    }
-
-    protected void onSave(TypeMap conf) {
-        conf.set("designName", designName);
-        conf.set("restoreOnClose", restoreOnClose);
-
-        List<Object> mapList = new ArrayList<Object>();
-        for (GateBlock block : blocks)
-            mapList.add(block.encode());
-        conf.set("blocks", mapList);
-
-        if (savedBlocks != null) {
-            mapList = new ArrayList<Object>();
-            for (SavedBlock block : savedBlocks)
-                mapList.add(block.encode());
-            conf.set("saved", mapList);
-        }
     }
 
     // Gate interface
@@ -612,10 +604,11 @@ public final class GateImpl implements Gate, OptionsListener {
     public void save(boolean force) {
         if ((! dirty) && (! force)) return;
         if (file == null) return;
-        dirty = false;
 
         TypeMap conf = new TypeMap(file);
         conf.set("name", name);
+        conf.set("designName", designName);
+        conf.set("creatorUUID", creator.getUniqueId().toString());
         conf.set("direction", direction.toString());
         conf.set("duration", duration);
         conf.set("linkLocal", linkLocal);
@@ -629,6 +622,7 @@ public final class GateImpl implements Gate, OptionsListener {
 
         conf.set("links", links);
         conf.set("protect", protect);
+        conf.set("restoreOnClose", restoreOnClose);
         conf.set("teleportFormat", teleportFormat);
         conf.set("noLinksFormat", noLinksFormat);
         conf.set("noLinkSelectedFormat", noLinkSelectedFormat);
@@ -646,12 +640,23 @@ public final class GateImpl implements Gate, OptionsListener {
         if (! incoming.isEmpty()) conf.set("incoming", new ArrayList<String>(incoming));
         if (outgoing != null) conf.set("outgoing", outgoing);
 
-        onSave(conf);
+        List<Object> mapList = new ArrayList<Object>();
+        for (GateBlock block : blocks)
+            mapList.add(block.encode());
+        conf.set("blocks", mapList);
+
+        if (savedBlocks != null) {
+            mapList = new ArrayList<Object>();
+            for (SavedBlock block : savedBlocks)
+                mapList.add(block.encode());
+            conf.set("saved", mapList);
+        }
 
         File parent = file.getParentFile();
         if (! parent.exists())
             parent.mkdirs();
         conf.save();
+        dirty = false;
     }
 
     protected void validate() throws GateException {
@@ -659,6 +664,8 @@ public final class GateImpl implements Gate, OptionsListener {
             throw new GateException("name is required");
         if (! isValidName(name))
             throw new GateException("name is not valid");
+        if (creator == null)
+            throw new GateException("creator is required");
         onValidate();
     }
 

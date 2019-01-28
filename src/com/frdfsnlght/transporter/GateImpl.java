@@ -366,22 +366,6 @@ public final class GateImpl implements Gate, OptionsListener {
         Gates.removeSwitchVolume(this);
     }
 
-    protected void onOpen() {
-        openPortal();
-    }
-
-    protected void onClose() {
-        closePortal();
-    }
-
-    protected void onNameChanged() {
-        updateScreens();
-    }
-
-    protected void onDestinationChanged() {
-        updateScreens();
-    }
-
     // Gate interface
 
     public String getFullName() {
@@ -414,7 +398,7 @@ public final class GateImpl implements Gate, OptionsListener {
         portalOpen = true;
         portalOpenTime = System.currentTimeMillis();
 
-        onOpen();
+        openPortal();
 
         // try to attach to our destination
         if ((outgoing == null) || (! hasLink(outgoing))) {
@@ -422,7 +406,7 @@ public final class GateImpl implements Gate, OptionsListener {
                 outgoing = null;
             else
                 outgoing = getLinks().get(0);
-            onDestinationChanged();
+            updateScreens();
         }
         if (outgoing != null) {
             GateImpl gate = Gates.get(outgoing);
@@ -458,7 +442,7 @@ public final class GateImpl implements Gate, OptionsListener {
         file.delete();
         generateFile();
         save(true);
-        onNameChanged();
+        updateScreens();
     }
 
     public void onGateAdded(GateImpl gate) {
@@ -466,7 +450,7 @@ public final class GateImpl implements Gate, OptionsListener {
             onAdd();
         else {
             if ((outgoing != null) && outgoing.equals(gate.getFullName()))
-                onDestinationChanged();
+                updateScreens();
         }
     }
 
@@ -478,7 +462,7 @@ public final class GateImpl implements Gate, OptionsListener {
             if (gateName.equals(outgoing)) {
                 //outgoing = null;
                 //dirty = true;
-                onDestinationChanged();
+                updateScreens();
             }
             closeIfAllowed();
         }
@@ -492,7 +476,7 @@ public final class GateImpl implements Gate, OptionsListener {
         if (gateName.equals(outgoing)) {
             outgoing = null;
             dirty = true;
-            onDestinationChanged();
+            updateScreens();
         }
         if (incoming.contains(gateName)) {
             incoming.remove(gateName);
@@ -511,7 +495,7 @@ public final class GateImpl implements Gate, OptionsListener {
         if (oldFullName.equals(outgoing)) {
             outgoing = newName;
             dirty = true;
-            onDestinationChanged();
+            updateScreens();
         }
         if (incoming.contains(oldFullName)) {
             incoming.remove(oldFullName);
@@ -563,8 +547,8 @@ public final class GateImpl implements Gate, OptionsListener {
         portalOpen = true;
         portalOpenTime = System.currentTimeMillis();
         gate.attach(this);
-        onOpen();
-        onDestinationChanged();
+        openPortal();
+        updateScreens();
 
         GateOpenedEvent event = new GateOpenedEvent(this);
         Bukkit.getPluginManager().callEvent(event);
@@ -586,8 +570,8 @@ public final class GateImpl implements Gate, OptionsListener {
 
         ReservationImpl.removeCountdowns(this);
         incoming.clear();
-        onClose();
-        onDestinationChanged();
+        closePortal();
+        updateScreens();
 
         GateClosedEvent event = new GateClosedEvent(this);
         Bukkit.getPluginManager().callEvent(event);
@@ -1211,7 +1195,7 @@ public final class GateImpl implements Gate, OptionsListener {
         links.add(link);
         if (links.size() == 1)
             outgoing = link;
-        onDestinationChanged();
+        updateScreens();
         dirty = true;
         return true;
     }
@@ -1233,7 +1217,7 @@ public final class GateImpl implements Gate, OptionsListener {
         links.remove(link);
         if (link.equals(outgoing))
             outgoing = null;
-        onDestinationChanged();
+        updateScreens();
         closeIfAllowed();
         dirty = true;
         return true;
@@ -1267,7 +1251,7 @@ public final class GateImpl implements Gate, OptionsListener {
             dirty = true;
         }
 
-        onDestinationChanged();
+        updateScreens();
 
         // attach to the next gate
         if (portalOpen && (outgoing != null)) {

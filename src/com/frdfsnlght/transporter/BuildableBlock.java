@@ -19,15 +19,14 @@ import com.frdfsnlght.transporter.api.TypeMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.block.Sign;
-import org.bukkit.material.Colorable;
 import org.bukkit.material.Directional;
 import org.bukkit.material.Openable;
 
@@ -72,33 +71,34 @@ public final class BuildableBlock {
 
         if (type == null) return;
 
-        String str = map.getString("data");
-        if (str != null) {
-            if (data instanceof Directional) {
-                str = map.getString("facing");
-                if (str != null) {
+        String str;
+        if (data instanceof Directional) {
+            str = map.getString("facing");
+            if (str != null) {
+                try {
+                    ((Directional)data).setFacingDirection(Utils.valueOf(BlockFace.class, str));
+                } catch (IllegalArgumentException iae) {
+                    throw new BlockException(iae.getMessage() + " facing '%s'", str);
+                }
+            }
+        }
+        if (data instanceof MultipleFacing) {
+            str = map.getString("mfacing");
+            if (str != null) {
+                String[] faces = str.split("\n");
+                for(int i = 0; i < faces.length; i++) {
                     try {
-                        ((Directional)data).setFacingDirection(Utils.valueOf(BlockFace.class, str));
+                        ((MultipleFacing)data).setFace(Utils.valueOf(BlockFace.class, faces[i]), true);
                     } catch (IllegalArgumentException iae) {
-                        throw new BlockException(iae.getMessage() + " facing '%s'", str);
+                        throw new BlockException(iae.getMessage() + " multiple-facing '%s'", str);
                     }
                 }
             }
-            if (data instanceof Colorable) {
-                str = map.getString("color");
-                if (str != null) {
-                    try {
-                        ((Colorable)data).setColor(Utils.valueOf(DyeColor.class, str));
-                    } catch (IllegalArgumentException iae) {
-                        throw new BlockException(iae.getMessage() + " color '%s'", str);
-                    }
-                }
-            }
-            if (data instanceof Openable) {
-                str = map.getString("open");
-                if (str != null)
-                    ((Openable)data).setOpen(map.getBoolean("open"));
-            }
+        }
+        if (data instanceof Openable) {
+            str = map.getString("open");
+            if (str != null)
+                ((Openable)data).setOpen(map.getBoolean("open"));
         }
 
         str = map.getString("lines");
@@ -116,7 +116,20 @@ public final class BuildableBlock {
     public Map<String,Object> encode() {
         Map<String,Object> node = new HashMap<String,Object>();
         node.put("type", type.toString());
-        node.put("data", data.getAsString());
+        if (data instanceof Directional) {
+            node.put("facing", ((Directional)data).toString());
+        }
+        if (data instanceof MultipleFacing) {
+            StringBuilder buf = new StringBuilder();
+            for (BlockFace face: ((MultipleFacing)data).getFaces()) {
+                if (buf.length() > 0) buf.append("\n");
+                buf.append(face.toString());
+            }
+            node.put("mfacing", buf.toString());
+        }
+        if (data instanceof Openable) {
+            node.put("open", ((Openable)data).toString());
+        }
         if (physics) node.put("physics", physics);
         if (lines != null) {
             StringBuilder buf = new StringBuilder();

@@ -1,6 +1,6 @@
-name: Nether              # must be unique on the server
-duration: 2000            # millis until gate closes, -1 means always on
-buildable: false          # can a user build the gate automatically?
+name: World               # must be unique on the server
+duration: 5000            # millis until gate closes, -1 means always on
+buildable: true           # can a user build the gate automatically?
 buildFromInventory: false # when building the gate, take the blocks from the user's inventory?
 buildWorlds: .*           # list of world name patterns where this gate can be built and created
 linkLocal: false          # can be linked to another gate in same world?
@@ -15,23 +15,27 @@ requireAllowedItems: true # don't allow reception of banned items
 
 blockKey:
   X: NONE
-  O: OBSIDIAN
-  C: { build: OBSIDIAN, open: GLOWSTONE }
-  P: { build: AIR, open: PURPLE_STAINED_GLASS_PANE, portal: true  }
-  p: { build: AIR, open: PURPLE_STAINED_GLASS_PANE, portal: true, spawn: FORWARD }
-  I: { build: AIR, open: PURPLE_STAINED_GLASS_PANE, portal: true, spawn: FORWARD, insert: true }
-  S: { build: { type: WALL_SIGN, facing: SOUTH }, screen: true, trigger: true, switch: true }
+  G: BEDROCK
+  C: { build: BEDROCK, open: GLOWSTONE }
+  P: { build: AIR, open: { type: BLUE_STAINED_GLASS_PANE }, portal: true  }
+  p: { build: AIR, open: { type: BLUE_STAINED_GLASS_PANE }, portal: true, spawn: REVERSE }
+  I: { build: AIR, open: { type: BLUE_STAINED_GLASS_PANE }, portal: true, spawn: REVERSE, insert: true }
+  S: { build: WALL_SIGN, screen: true }
+  T: { build: STONE_PLATE, trigger: true }
 
 blocks:
   -
-    - "COOC"
-    - "OPPO"
-    - "OPPO"
-    - "OIpO"
-    - "COOC"
+    - "CGGGC"
+    - "GPPPG"
+    - "GPPPG"
+    - "GpIpG"
   -
-    - "XXXX"
-    - "XXXX"
-    - "SXXX"
-    - "XXXX"
-    - "XXXX"
+    - "XXSXX"
+    - "XXXXX"
+    - "XXXXX"
+    - "XXXXX"
+  -
+    - "XXXXX"
+    - "XXXXX"
+    - "XXXXX"
+    - "XXTXX"

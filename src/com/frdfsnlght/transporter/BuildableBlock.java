@@ -85,12 +85,12 @@ public final class BuildableBlock {
         if (data instanceof MultipleFacing) {
             str = map.getString("mfacing");
             if (str != null) {
-                String[] faces = str.split("\n");
+                String[] faces = str.split(",");
                 for(int i = 0; i < faces.length; i++) {
                     try {
                         ((MultipleFacing)data).setFace(Utils.valueOf(BlockFace.class, faces[i]), true);
                     } catch (IllegalArgumentException iae) {
-                        throw new BlockException(iae.getMessage() + " multiple-facing '%s'", str);
+                        throw new BlockException(iae.getMessage() + " facing '%s'", faces[i]);
                     }
                 }
             }
@@ -122,10 +122,12 @@ public final class BuildableBlock {
         if (data instanceof MultipleFacing) {
             StringBuilder buf = new StringBuilder();
             for (BlockFace face: ((MultipleFacing)data).getFaces()) {
-                if (buf.length() > 0) buf.append("\n");
+                if (buf.length() > 0) buf.append(",");
                 buf.append(face.toString());
             }
-            node.put("mfacing", buf.toString());
+            if(buf.length() > 0) {
+                node.put("mfacing", buf.toString());
+            }
         }
         if (data instanceof Openable) {
             node.put("open", ((Openable)data).toString());

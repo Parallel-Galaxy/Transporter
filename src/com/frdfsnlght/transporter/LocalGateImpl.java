@@ -38,6 +38,7 @@ import java.util.regex.PatternSyntaxException;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -146,7 +147,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
     protected File file;
     protected World world;
     protected Vector center;
-    protected Player creator;
+    protected OfflinePlayer creator;
     protected BlockFace direction;
 
     protected int duration;
@@ -230,10 +231,10 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         this.world = world;
         name = conf.getString("name");
         String creatorRef = conf.getString("creatorUUID");
-        if (creatorRef == null) {
-            creator = Bukkit.getPlayer(UUID.fromString(conf.getString("creatorUUID")));
+        if (creatorRef != null) {
+            creator = Bukkit.getOfflinePlayer(UUID.fromString(conf.getString("creatorUUID")));
         } else {
-            creator = Bukkit.getPlayer(conf.getString("creatorName"));
+            creator = Bukkit.getOfflinePlayer(conf.getString("creatorName"));
         }
         try {
             direction = Utils.valueOf(BlockFace.class, conf.getString("direction", "NORTH"));
@@ -804,7 +805,7 @@ public abstract class LocalGateImpl extends GateImpl implements LocalGate, Optio
         return center;
     }
 
-    public Player getCreator() {
+    public OfflinePlayer getCreator() {
         return creator;
     }
 

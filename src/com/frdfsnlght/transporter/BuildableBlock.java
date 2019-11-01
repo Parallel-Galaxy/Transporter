@@ -229,7 +229,7 @@ public final class BuildableBlock {
     }
 
     public boolean isSign() {
-        return type == Material.WALL_SIGN;
+        return type == Material.LEGACY_WALL_SIGN;
     }
 
     public void rotate(BlockFace to) {

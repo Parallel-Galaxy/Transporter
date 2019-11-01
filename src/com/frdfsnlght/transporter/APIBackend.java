@@ -139,8 +139,8 @@ public final class APIBackend {
             out.put("result", server.getDefaultGameMode().toString());
         else if (method.equals("getName"))
             out.put("result", server.getName());
-        else if (method.equals("getServerId"))
-            out.put("result", server.getServerId());
+        /*else if (method.equals("getServerId"))
+            out.put("result", server.getServerId());*/
         else if (method.equals("getVersion"))
             out.put("result", server.getVersion());
         else

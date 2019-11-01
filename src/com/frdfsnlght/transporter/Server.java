@@ -1323,7 +1323,7 @@ public final class Server implements OptionsListener, RemoteServer {
         TypeMap out = createMessage("refreshData");
 
         out.put("publicAddress", normalizedPublicAddress);
-        out.put("server", Global.plugin.getServer().getServerName());
+        out.put("server", Global.plugin.getServer().getName());
         out.put("cluster", Network.getClusterName());
         out.put("realm", Realm.isStarted() ? Realm.getName() : null);
         out.put("bungeeServer", Network.getBungeeServer());

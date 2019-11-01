@@ -153,7 +153,7 @@ public class Transporter extends JavaPlugin {
 
         Global.started = true;
 
-        ctx.sendLog("ready on server '%s'", getServer().getServerName());
+        ctx.sendLog("ready on server '%s'", getServer().getName());
 
     }
 

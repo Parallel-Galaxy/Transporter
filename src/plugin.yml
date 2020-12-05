@@ -1,11 +1,11 @@
 name: Transporter
 main: com.frdfsnlght.transporter.Transporter
-version: "9.2"
-api-version: 1.14
+version: "9.3"
+api-version: 1.15
 authors:
   - frdfsnlght
   - Qalthos
-website: https://github.com/SurtursRevenge/Transporter/
+website: https://github.com/Parallel-Galaxy/Transporter/
 description: >
   Provides teleportation through gates between worlds and servers.
 softdepend: [Vault, PermissionsEx]

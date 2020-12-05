@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.frdfsnlght.transporter</groupId>
   <artifactId>Transporter</artifactId>
-  <version>9.2</version>
+  <version>9.3</version>
   <name>Transporter</name>
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -50,16 +50,14 @@
   </distributionManagement>
   <dependencies>
       <dependency>
-         <groupId>org.bukkit</groupId>
-         <artifactId>bukkit</artifactId>
-         <version>1.14.4-R0.1-SNAPSHOT</version>
-         <type>jar</type>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>LATEST</version>
       </dependency>
       <dependency>
-         <groupId>net.milkbowl.vault</groupId>
-         <artifactId>VaultAPI</artifactId>
-         <version>1.7</version>
-         <optional>true</optional>
+          <groupId>net.milkbowl.vault</groupId>
+          <artifactId>Vault</artifactId>
+          <version>1.7.3</version>
       </dependency>
   </dependencies>
 </project>

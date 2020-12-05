@@ -224,8 +224,8 @@ public final class Inventory {
             int needed = blocks.get(material);
             if (needed <= 0) continue;
             switch (material) {
-                case LEGACY_WALL_SIGN:
-                    material = Material.LEGACY_WALL_SIGN;
+                case OAK_WALL_SIGN:
+                    material = Material.OAK_WALL_SIGN;
                     break;
                  default: break;
             }
@@ -247,8 +247,8 @@ public final class Inventory {
             int needed = blocks.get(material);
             if (needed <= 0) continue;
             switch (material) {
-                case LEGACY_WALL_SIGN:
-                    material = Material.LEGACY_WALL_SIGN;
+                case OAK_WALL_SIGN:
+                    material = Material.OAK_WALL_SIGN;
                     break;
                  default: break;
             }

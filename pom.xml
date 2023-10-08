@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.frdfsnlght.transporter</groupId>
   <artifactId>Transporter</artifactId>
-  <version>9.3</version>
+  <version>9.4</version>
   <name>Transporter</name>
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
